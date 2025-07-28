@@ -18,6 +18,9 @@ export default {
 			}
 		},
 		extend: {
+			  fontFamily: {
+        rowdies: ['"Rowdies"', 'cursive'],
+      },
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',

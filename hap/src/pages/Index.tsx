@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Zap, Star, Calendar, Users, TrendingUp, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import heroImage from "@/assets/hero-image.jpg";
+import heroImage from "@/assets/hero-image.avif";
 
 const Index = () => {
   const featuredEvents = [
@@ -14,7 +14,7 @@ const Index = () => {
       category: "comedy" as const,
       date: "Dec 15, 8:00 PM",
       location: "Comedy Club Downtown",
-      price: "$25",
+      price: "25",
       rating: 4.8,
       attendees: 156,
       points: 50
@@ -24,7 +24,7 @@ const Index = () => {
       category: "movie" as const,
       date: "Dec 16, 7:30 PM",
       location: "Grand Cinema",
-      price: "$15",
+      price: "300",
       rating: 4.9,
       attendees: 203,
       points: 30
@@ -34,7 +34,7 @@ const Index = () => {
       category: "music" as const,
       date: "Dec 20, 9:00 PM",
       location: "Rooftop Lounge",
-      price: "$35",
+      price: "35",
       rating: 4.6,
       attendees: 124,
       points: 60
@@ -61,21 +61,22 @@ const Index = () => {
       {/* Hero Section */}
       <div className="relative overflow-hidden">
         <div 
-          className="bg-cover bg-center bg-no-repeat min-h-[600px] flex items-center"
+          className="bg-contain bg-center bg-fixed flex items-center mr-0 ml-0"
           style={{ backgroundImage: `url(${heroImage})` }}
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/70 to-transparent"></div>
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+          <div className="absolute inset-0 bg-gradient-to-r from-background/50 via-background/30 "></div>
+          <div className="relative max-w-7xl mx-25 px-4 sm:px-6 lg:px-8 py-20">
             <div className="max-w-2xl">
               <div className="flex items-center space-x-3 mb-6">
                 <div className="w-16 h-16 rounded-xl bg-gradient-to-r from-primary to-secondary flex items-center justify-center shadow-lg">
                   <Zap className="w-8 h-8 text-primary-foreground" />
+                  
                 </div>
                 <div>
-                  <h1 className="text-6xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                    HAP
+                  <h1 className="text-6xl text-purple-800 font-bold font-Rowdies ml-7px">
+                    hap
                   </h1>
-                  <p className="text-lg text-muted-foreground font-medium">make it happen!</p>
+                  <p className="text-lg text-gray text-muted-foreground font-medium">MAKE IT HAPPEN!</p>
                 </div>
               </div>
               

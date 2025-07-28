@@ -11,16 +11,16 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     <div className="min-h-screen bg-background">
       {/* Navigation */}
       <nav className="border-b border-border/20 bg-background/80 backdrop-blur-md sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-2 px-2 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <Link to="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-primary to-secondary flex items-center justify-center">
-                <Zap className="w-5 h-5 text-primary-foreground" />
+              <div>
+              <img src="favicon.ico"/>
               </div>
               <div>
-                <span className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                  HAP
+                <span className="text-2xl text-violet-800 font-bold font-Playwrite AU QLD">
+                  hap
                 </span>
                 <p className="text-xs text-muted-foreground -mt-1">make it happen!</p>
               </div>

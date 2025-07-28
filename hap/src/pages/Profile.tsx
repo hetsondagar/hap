@@ -8,7 +8,7 @@ import { Star, Trophy, Calendar, TrendingUp, Zap, Gift } from "lucide-react";
 
 const Profile = () => {
   const userStats = {
-    name: "Alex Chen",
+    name: "Prateek Sharma",
     level: 5,
     totalPoints: 1250,
     nextLevelPoints: 1500,
