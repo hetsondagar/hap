@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { MapPin, Calendar, Trophy, Zap } from "lucide-react";
 import heroImage from "@/assets/hero-image.jpg";
@@ -55,7 +56,7 @@ const HeroSection = () => {
         <div className="space-y-8">
           {/* Main Heading */}
           <div className="space-y-4">
-            <h1 className="text-6xl md:text-8xl font-gaming font-black bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent animate-glow">
+            <h1 className="text-6xl md:text-8xl font-gaming font-black bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent animate-gradient">
               HAP
             </h1>
             <h2 className="text-3xl md:text-5xl font-bold text-foreground">
@@ -69,21 +70,25 @@ const HeroSection = () => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button 
-              size="lg" 
-              className="bg-gradient-primary hover:opacity-90 border-none text-white text-lg px-8 py-4 h-auto font-semibold hover-lift"
-            >
-              <MapPin className="w-5 h-5 mr-2" />
-              Discover Events
-            </Button>
-            <Button 
-              size="lg" 
-              variant="outline"
-              className="glass border-primary/50 text-foreground text-lg px-8 py-4 h-auto font-semibold hover-lift hover:bg-primary/10"
-            >
-              <Zap className="w-5 h-5 mr-2" />
-              Host an Event
-            </Button>
+            <Link to="/dashboard">
+              <Button 
+                size="lg" 
+                className="bg-gradient-primary hover:opacity-90 border-none text-white text-lg px-8 py-4 h-auto font-semibold hover-lift ripple animate-pulse-glow"
+              >
+                <MapPin className="w-5 h-5 mr-2" />
+                Discover Events
+              </Button>
+            </Link>
+            <Link to="/admin">
+              <Button 
+                size="lg" 
+                variant="outline"
+                className="glass border-primary/50 text-foreground text-lg px-8 py-4 h-auto font-semibold hover-lift hover:bg-primary/10 ripple"
+              >
+                <Zap className="w-5 h-5 mr-2" />
+                Host an Event
+              </Button>
+            </Link>
           </div>
 
           {/* Feature Cards */}
