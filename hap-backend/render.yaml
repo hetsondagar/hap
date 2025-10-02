@@ -3,6 +3,7 @@ services:
     name: hap-backend
     env: node
     plan: free
+    rootDir: hap-backend
     buildCommand: npm install && npm run build
     startCommand: npm start
     envVars:
