@@ -1,59 +1,90 @@
 # 🚀 Complete Deployment Guide: HAP FlashCard App
 
 This guide will walk you through deploying your HAP FlashCard application with:
-- **Backend API** → Railway
+- **Backend API** → Render
 - **Frontend React App** → Vercel
-- **Database** → MongoDB Atlas
+- **Database** → Render PostgreSQL (or MongoDB Atlas)
 
 ## 📋 Prerequisites
 
 Before starting, ensure you have:
 - [ ] GitHub account
-- [ ] Railway account (sign up at [railway.app](https://railway.app))
+- [ ] Render account (sign up at [render.com](https://render.com))
 - [ ] Vercel account (sign up at [vercel.com](https://vercel.com))
-- [ ] MongoDB Atlas account (sign up at [cloud.mongodb.com](https://cloud.mongodb.com))
+- [ ] MongoDB Atlas account (optional - for MongoDB) OR use Render PostgreSQL
 - [ ] Git installed locally
 - [ ] Node.js installed locally
 
 ---
 
-## 🗄️ Part 1: MongoDB Atlas Setup
+## 🗄️ Part 1: Database Setup (Choose One)
 
-### Step 1.1: Create MongoDB Atlas Account
+### Option A: Render PostgreSQL (Recommended)
+
+#### Step 1.1: Create Render Account
+1. Go to [Render](https://render.com)
+2. Sign up with GitHub
+3. Verify your email address
+
+#### Step 1.2: Create PostgreSQL Database
+1. In your Render dashboard, click "New +"
+2. Select "PostgreSQL"
+3. Configure your database:
+   - **Name**: `hap-flashcard-db`
+   - **Database**: `hap_flashcard`
+   - **User**: `hap_user`
+   - **Region**: Choose closest to your users
+   - **Plan**: Free (for development) or Starter (for production)
+4. Click "Create Database"
+5. Wait for the database to be created (2-3 minutes)
+
+#### Step 1.3: Get Connection Details
+1. Click on your database in the dashboard
+2. Go to "Connections" tab
+3. Copy the **External Database URL**
+4. Save these details for later use
+
+**Your connection string will look like:**
+```
+postgres://hap_user:password@dpg-xxxxx-a.oregon-postgres.render.com/hap_flashcard
+```
+
+### Option B: MongoDB Atlas (Alternative)
+
+#### Step 1.1: Create MongoDB Atlas Account
 1. Go to [MongoDB Atlas](https://cloud.mongodb.com)
 2. Click "Try Free" and create an account
 3. Verify your email address
 
-### Step 1.2: Create a New Project
+#### Step 1.2: Create a New Project
 1. Click "New Project"
 2. Name it "HAP FlashCard"
-3. Click "Next"
-4. Click "Create Project"
+3. Click "Next" → "Create Project"
 
-### Step 1.3: Build a Database
+#### Step 1.3: Build a Database
 1. Click "Build a Database"
 2. Choose "FREE" tier (M0 Sandbox)
-3. Select a region close to your users (e.g., US East)
+3. Select a region close to your users
 4. Name your cluster: `hap-flashcard-cluster`
 5. Click "Create"
 
-### Step 1.4: Create Database User
+#### Step 1.4: Create Database User
 1. Go to "Database Access" in the left sidebar
 2. Click "Add New Database User"
 3. Choose "Password" authentication
-4. Create a username: `hap-user`
+4. Create username: `hap-user`
 5. Generate a strong password (save it!)
 6. Set privileges to "Read and write to any database"
 7. Click "Add User"
 
-### Step 1.5: Configure Network Access
+#### Step 1.5: Configure Network Access
 1. Go to "Network Access" in the left sidebar
 2. Click "Add IP Address"
 3. Click "Allow Access from Anywhere" (0.0.0.0/0)
-4. Add a comment: "Railway deployment"
+4. Add comment: "Render deployment"
 5. Click "Confirm"
 
-### Step 1.6: Get Connection String
+#### Step 1.6: Get Connection String
 1. Go to "Database" in the left sidebar
 2. Click "Connect" on your cluster
 3. Choose "Connect your application"
@@ -62,14 +93,14 @@ Before starting, ensure you have:
 6. Replace `<password>` with your database user password
 7. Replace `<dbname>` with `hap-flashcard`
 
-**Your connection string should look like:**
+**Your MongoDB connection string:**
 ```
 mongodb+srv://hap-user:your-password@hap-flashcard-cluster.xxxxx.mongodb.net/hap-flashcard?retryWrites=true&w=majority
 ```
 
 ---
 
-## 🚂 Part 2: Backend Deployment on Railway
+## 🚀 Part 2: Backend Deployment on Render
 
 ### Step 2.1: Prepare Backend Repository
 1. Open terminal in your project directory
@@ -100,43 +131,59 @@ mongodb+srv://hap-user:your-password@hap-flashcard-cluster.xxxxx.mongodb.net/hap
    git push -u origin main
    ```
 
-### Step 2.2: Deploy to Railway
-1. Go to [Railway](https://railway.app)
-2. Sign up/login with GitHub
-3. Click "New Project"
-4. Select "Deploy from GitHub repo"
-5. Choose your `hap-backend` repository
-6. Click "Deploy Now"
-7. Wait for the initial deployment (2-3 minutes)
+### Step 2.2: Create Render Web Service
+1. Go to [Render Dashboard](https://dashboard.render.com)
+2. Click "New +"
+3. Select "Web Service"
+4. Connect your GitHub account if not already connected
+5. Select your `hap-backend` repository
+6. Configure the service:
+
+**Basic Settings:**
+- **Name**: `hap-backend`
+- **Environment**: `Node`
+- **Region**: Choose closest to your users
+- **Branch**: `main`
+- **Root Directory**: Leave empty (or `hap-backend` if deploying from monorepo)
+
+**Build & Deploy:**
+- **Build Command**: `npm install && npm run build`
+- **Start Command**: `npm start`
+- **Plan**: Free (for development) or Starter (for production)
 
 ### Step 2.3: Configure Environment Variables
-1. In your Railway project dashboard, click on your deployed service
-2. Go to the "Variables" tab
-3. Add the following environment variables:
+In your Render service dashboard, go to "Environment" tab and add:
 
+**For PostgreSQL (Option A):**
 ```
-MONGO_URI=mongodb+srv://hap-user:your-password@hap-flashcard-cluster.xxxxx.mongodb.net/hap-flashcard?retryWrites=true&w=majority
+NODE_ENV=production
+PORT=10000
+DATABASE_URL=postgres://hap_user:password@dpg-xxxxx-a.oregon-postgres.render.com/hap_flashcard
 JWT_SECRET=your-super-secret-jwt-key-here-make-it-at-least-32-characters-long
 JWT_EXPIRES_IN=7d
-PORT=5000
-NODE_ENV=production
 FRONTEND_URL=https://your-vercel-app.vercel.app
 ```
 
-**Important Notes:**
-- Replace `MONGO_URI` with your actual MongoDB connection string
-- Generate a strong `JWT_SECRET` (at least 32 characters)
-- We'll update `FRONTEND_URL` after deploying the frontend
+**For MongoDB (Option B):**
+```
+NODE_ENV=production
+PORT=10000
+MONGO_URI=mongodb+srv://hap-user:your-password@hap-flashcard-cluster.xxxxx.mongodb.net/hap-flashcard?retryWrites=true&w=majority
+JWT_SECRET=your-super-secret-jwt-key-here-make-it-at-least-32-characters-long
+JWT_EXPIRES_IN=7d
+FRONTEND_URL=https://your-vercel-app.vercel.app
+```
 
-### Step 2.4: Test Backend Deployment
-1. Wait for Railway to redeploy with the new environment variables
-2. Click on your service to get the deployment URL (e.g., `https://hap-backend-production.up.railway.app`)
-3. Test the health endpoint:
+### Step 2.4: Deploy and Test
+1. Click "Create Web Service"
+2. Wait for deployment (5-10 minutes)
+3. Get your Render URL (e.g., `https://hap-backend.onrender.com`)
+4. Test the health endpoint:
    ```
-   https://your-railway-url.railway.app/health
+   https://your-render-url.onrender.com/health
    ```
 
-4. You should see:
+5. You should see:
    ```json
    {
      "success": true,
@@ -146,14 +193,14 @@ FRONTEND_URL=https://your-vercel-app.vercel.app
    }
    ```
 
-**Save your Railway URL - you'll need it for the frontend!**
+**Save your Render URL - you'll need it for the frontend!**
 
 ---
 
 ## ⚡ Part 3: Frontend Deployment on Vercel
 
 ### Step 3.1: Prepare Frontend for Deployment
-1. In your main project directory (not hap-backend), create a `vercel.json` file:
+1. In your main project directory, ensure you have the `vercel.json` file:
    ```json
    {
      "buildCommand": "npm run build",
@@ -168,29 +215,14 @@ FRONTEND_URL=https://your-vercel-app.vercel.app
    }
    ```
 
-2. Update your frontend to use the Railway API URL. Create or update your API configuration file:
+2. Update your frontend API configuration in `src/lib/api.ts`:
    ```typescript
-   // src/lib/api.ts or src/config/api.ts
-   const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://your-railway-url.railway.app/api';
-   
-   export default API_BASE_URL;
+   const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://your-render-url.onrender.com/api';
    ```
 
 3. Create a `.env` file in your frontend root directory:
    ```
-   VITE_API_URL=https://your-railway-url.railway.app/api
-   ```
-
-4. Update your API calls to use the environment variable:
-   ```typescript
-   // Example in your API service files
-   const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/login`, {
-     method: 'POST',
-     headers: {
-       'Content-Type': 'application/json',
-     },
-     body: JSON.stringify(loginData),
-   });
+   VITE_API_URL=https://your-render-url.onrender.com/api
    ```
 
 ### Step 3.2: Deploy to Vercel
@@ -204,16 +236,16 @@ FRONTEND_URL=https://your-vercel-app.vercel.app
    - **Build Command**: `npm run build`
    - **Output Directory**: `dist`
 6. Add environment variables:
-   - `VITE_API_URL` = `https://your-railway-url.railway.app/api`
+   - `VITE_API_URL` = `https://your-render-url.onrender.com/api`
 7. Click "Deploy"
 
 ### Step 3.3: Update Backend CORS
-1. Go back to your Railway dashboard
+1. Go back to your Render dashboard
 2. Update the `FRONTEND_URL` environment variable:
    ```
    FRONTEND_URL=https://your-vercel-app.vercel.app
    ```
-3. Railway will automatically redeploy with the new CORS settings
+3. Render will automatically redeploy with the new CORS settings
 
 ---
 
@@ -222,7 +254,7 @@ FRONTEND_URL=https://your-vercel-app.vercel.app
 ### Step 4.1: Test Full Integration
 1. **Test Backend Health:**
    ```bash
-   curl https://your-railway-url.railway.app/health
+   curl https://your-render-url.onrender.com/health
    ```
 
 2. **Test Frontend:**
@@ -233,7 +265,7 @@ FRONTEND_URL=https://your-vercel-app.vercel.app
 3. **Test API Endpoints:**
    ```bash
    # Test signup
-   curl -X POST https://your-railway-url.railway.app/api/auth/signup \
+   curl -X POST https://your-render-url.onrender.com/api/auth/signup \
      -H "Content-Type: application/json" \
      -d '{
        "username": "testuser",
@@ -279,12 +311,12 @@ Test these endpoints to ensure your backend is working:
 
 1. **Health Check:**
    ```
-   GET https://your-railway-url.railway.app/health
+   GET https://your-render-url.onrender.com/health
    ```
 
 2. **User Registration:**
    ```
-   POST https://your-railway-url.railway.app/api/auth/signup
+   POST https://your-render-url.onrender.com/api/auth/signup
    Content-Type: application/json
    
    {
@@ -296,7 +328,7 @@ Test these endpoints to ensure your backend is working:
 
 3. **User Login:**
    ```
-   POST https://your-railway-url.railway.app/api/auth/login
+   POST https://your-render-url.onrender.com/api/auth/login
    Content-Type: application/json
    
    {
@@ -314,14 +346,8 @@ Test these endpoints to ensure your backend is working:
 6. Check browser console for any errors
 
 ### Step 5.3: Database Verification
-1. Go to MongoDB Atlas
-2. Click "Browse Collections"
-3. You should see your database with collections:
-   - `users`
-   - `flashcards`
-   - `decks`
-   - `quizzes`
-   - `analytics`
+1. **For PostgreSQL**: Check Render dashboard for database status
+2. **For MongoDB**: Go to MongoDB Atlas and check your database collections
 
 ---
 
@@ -329,14 +355,14 @@ Test these endpoints to ensure your backend is working:
 
 ### Step 6.1: Environment Variables Security
 - ✅ JWT_SECRET is strong and unique
-- ✅ MongoDB password is secure
+- ✅ Database password is secure
 - ✅ No sensitive data in code
 - ✅ CORS is properly configured
 
 ### Step 6.2: Database Security
 - ✅ Database user has minimal required permissions
 - ✅ Network access is properly configured
-- ✅ Regular backups (MongoDB Atlas handles this)
+- ✅ Regular backups (Render handles this automatically)
 
 ### Step 6.3: Application Security
 - ✅ Rate limiting is enabled
@@ -348,11 +374,11 @@ Test these endpoints to ensure your backend is working:
 
 ## 📊 Part 7: Monitoring & Maintenance
 
-### Step 7.1: Railway Monitoring
-1. **Check Railway Dashboard:**
-   - Monitor resource usage
+### Step 7.1: Render Monitoring
+1. **Check Render Dashboard:**
+   - Monitor service status
    - Check deployment logs
-   - Set up alerts for failures
+   - Monitor resource usage
 
 2. **Monitor Performance:**
    - Check response times
@@ -370,16 +396,16 @@ Test these endpoints to ensure your backend is working:
    - Monitor build times
    - Watch for build failures
 
-### Step 7.3: MongoDB Atlas Monitoring
-1. **Database Monitoring:**
+### Step 7.3: Database Monitoring
+1. **Render PostgreSQL:**
    - Monitor storage usage
    - Check connection count
    - Watch query performance
 
-2. **Set Up Alerts:**
-   - Storage approaching limit
-   - Unusual activity
-   - Connection issues
+2. **MongoDB Atlas (if used):**
+   - Monitor storage usage
+   - Check connection count
+   - Watch query performance
 
 ---
 
@@ -388,16 +414,16 @@ Test these endpoints to ensure your backend is working:
 ### Issue 1: CORS Errors
 **Symptoms:** Frontend can't connect to backend
 **Solution:**
-1. Check `FRONTEND_URL` in Railway environment variables
+1. Check `FRONTEND_URL` in Render environment variables
 2. Ensure it matches your Vercel URL exactly
-3. Redeploy Railway after updating
+3. Redeploy Render after updating
 
 ### Issue 2: Database Connection Failed
-**Symptoms:** Backend logs show MongoDB connection errors
+**Symptoms:** Backend logs show database connection errors
 **Solution:**
-1. Verify MongoDB Atlas connection string
-2. Check network access (0.0.0.0/0)
-3. Verify database user permissions
+1. Verify database connection string
+2. Check database user permissions
+3. Ensure database is running
 
 ### Issue 3: Build Failures
 **Symptoms:** Vercel deployment fails
@@ -413,6 +439,14 @@ Test these endpoints to ensure your backend is working:
 2. Ensure variables start with `VITE_`
 3. Redeploy after adding variables
 
+### Issue 5: Render Service Not Starting
+**Symptoms:** Backend service fails to start
+**Solution:**
+1. Check Render logs for errors
+2. Verify start command is correct
+3. Check environment variables
+4. Ensure all dependencies are installed
+
 ---
 
 ## 🎉 Success! Your App is Live
@@ -421,8 +455,8 @@ Once everything is deployed and working:
 
 ### Your URLs:
 - **Frontend:** `https://your-app.vercel.app`
-- **Backend API:** `https://your-app.railway.app`
-- **Health Check:** `https://your-app.railway.app/health`
+- **Backend API:** `https://your-app.onrender.com`
+- **Health Check:** `https://your-app.onrender.com/health`
 
 ### What You Can Do Now:
 - ✅ Users can register and login
@@ -443,14 +477,30 @@ Once everything is deployed and working:
 ## 📞 Support & Resources
 
 ### Documentation:
-- [Railway Docs](https://docs.railway.app)
+- [Render Docs](https://render.com/docs)
 - [Vercel Docs](https://vercel.com/docs)
+- [PostgreSQL Docs](https://www.postgresql.org/docs/)
 - [MongoDB Atlas Docs](https://docs.atlas.mongodb.com)
 
 ### Getting Help:
 - Check deployment logs in respective dashboards
 - Use browser developer tools for frontend issues
 - Monitor network requests for API issues
+
+---
+
+## 💰 Cost Breakdown
+
+### Free Tier Limits:
+- **Render**: 750 hours/month (free tier)
+- **Vercel**: 100GB bandwidth/month
+- **PostgreSQL**: 1GB storage (Render free tier)
+- **MongoDB Atlas**: 512MB storage (free tier)
+
+### Paid Plans (when you need to scale):
+- **Render**: $7/month for always-on service
+- **Vercel Pro**: $20/month for team features
+- **Database**: Scales with usage
 
 ---
 

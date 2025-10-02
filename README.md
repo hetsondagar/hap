@@ -15,9 +15,9 @@ A comprehensive flashcard application built with React, TypeScript, and modern w
 
 - **Frontend**: React + TypeScript + Vite
 - **UI Components**: shadcn/ui + Tailwind CSS
-- **Backend**: Node.js + Express + MongoDB
+- **Backend**: Node.js + Express + MongoDB/PostgreSQL
 - **Authentication**: JWT-based auth
-- **Deployment**: Vercel (Frontend) + Railway (Backend)
+- **Deployment**: Vercel (Frontend) + Render (Backend)
 
 ## 📁 Project Structure
 
@@ -82,9 +82,9 @@ hap/
 2. Set environment variables in Vercel dashboard
 3. Deploy automatically on push to main branch
 
-### Backend (Railway)
+### Backend (Render)
 1. Push hap-backend/ to GitHub
-2. Connect to Railway
+2. Connect to Render
 3. Set environment variables
 4. Deploy automatically
 
@@ -139,6 +139,7 @@ See `COMPLETE_DEPLOYMENT_GUIDE.md` for detailed instructions.
 
 - [Complete Deployment Guide](COMPLETE_DEPLOYMENT_GUIDE.md)
 - [Deployment Checklist](DEPLOYMENT_CHECKLIST.md)
+- [Render Development Guide](RENDER_DEVELOPMENT_GUIDE.md)
 - [Backend API Documentation](hap-backend/README.md)
 
 ## 🤝 Contributing

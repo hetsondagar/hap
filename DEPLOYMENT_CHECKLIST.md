@@ -17,41 +17,42 @@
 - [ ] All dependencies are installed
 
 ### 3. Database Setup
-- [ ] MongoDB Atlas account created
-- [ ] Database cluster created
+- [ ] Render account created
+- [ ] PostgreSQL database created (OR MongoDB Atlas)
 - [ ] Database user created
 - [ ] Network access configured
 - [ ] Connection string obtained
 
 ---
 
-## 🚂 Railway Deployment Steps
+## 🚀 Render Deployment Steps
 
 ### Step 1: GitHub Repository
 - [ ] Create GitHub repository for backend
 - [ ] Push backend code to GitHub
-- [ ] Repository is public or connected to Railway
+- [ ] Repository is public or connected to Render
 
-### Step 2: Railway Setup
-- [ ] Sign up for Railway account
+### Step 2: Render Setup
+- [ ] Sign up for Render account
 - [ ] Connect GitHub account
-- [ ] Create new project from GitHub repo
+- [ ] Create new web service from GitHub repo
+- [ ] Configure build and start commands
 - [ ] Wait for initial deployment
 
 ### Step 3: Environment Variables
-- [ ] Add `MONGO_URI` with your MongoDB connection string
+- [ ] Add `NODE_ENV=production`
+- [ ] Add `PORT=10000`
+- [ ] Add database connection string (PostgreSQL or MongoDB)
 - [ ] Add `JWT_SECRET` with a strong secret key
 - [ ] Add `JWT_EXPIRES_IN=7d`
-- [ ] Add `PORT=5000`
-- [ ] Add `NODE_ENV=production`
 - [ ] Add `FRONTEND_URL` (update after Vercel deployment)
 
 ### Step 4: Test Backend
-- [ ] Get Railway deployment URL
-- [ ] Test health endpoint: `https://your-url.railway.app/health`
+- [ ] Get Render deployment URL
+- [ ] Test health endpoint: `https://your-url.onrender.com/health`
 - [ ] Test signup endpoint
 - [ ] Test login endpoint
-- [ ] Check Railway logs for errors
+- [ ] Check Render logs for errors
 
 ---
 
@@ -70,13 +71,13 @@
 - [ ] Configure build settings
 
 ### Step 3: Environment Variables
-- [ ] Add `VITE_API_URL` with your Railway URL
+- [ ] Add `VITE_API_URL` with your Render URL
 - [ ] Deploy the application
 - [ ] Get Vercel deployment URL
 
 ### Step 4: Update Backend CORS
-- [ ] Update `FRONTEND_URL` in Railway with Vercel URL
-- [ ] Wait for Railway redeployment
+- [ ] Update `FRONTEND_URL` in Render with Vercel URL
+- [ ] Wait for Render redeployment
 - [ ] Test CORS configuration
 
 ---
@@ -112,7 +113,7 @@
 
 ### Environment Variables
 - [ ] JWT_SECRET is strong and unique
-- [ ] MongoDB password is secure
+- [ ] Database password is secure
 - [ ] No sensitive data in code
 - [ ] Environment variables are properly set
 
@@ -131,23 +132,23 @@
 
 ## 📊 Monitoring Setup
 
-### Railway Monitoring
-- [ ] Check deployment logs
+### Render Monitoring
+- [ ] Check service status in Render dashboard
+- [ ] Monitor deployment logs
+- [ ] Set up alerts for failures
 - [ ] Monitor resource usage
-- [ ] Set up alerts if available
-- [ ] Check for any errors
 
 ### Vercel Monitoring
-- [ ] Check build logs
-- [ ] Monitor deployment status
+- [ ] Check build status in Vercel dashboard
+- [ ] Monitor deployment logs
 - [ ] Check for build errors
-- [ ] Monitor performance
+- [ ] Monitor bandwidth usage
 
 ### Database Monitoring
-- [ ] Check MongoDB Atlas dashboard
+- [ ] Check database status in Render dashboard
 - [ ] Monitor storage usage
 - [ ] Check connection count
-- [ ] Set up alerts
+- [ ] Set up alerts for issues
 
 ---
 
@@ -178,13 +179,14 @@
 ## 🚨 Troubleshooting
 
 ### Common Issues
-- [ ] CORS errors → Check FRONTEND_URL in Railway
-- [ ] Database connection → Check MONGO_URI
+- [ ] CORS errors → Check FRONTEND_URL in Render
+- [ ] Database connection → Check connection string
 - [ ] Build failures → Check dependencies and build logs
 - [ ] Environment variables → Verify all are set correctly
+- [ ] Render service not starting → Check logs and start command
 
 ### Debug Steps
-- [ ] Check Railway logs for backend issues
+- [ ] Check Render logs for backend issues
 - [ ] Check Vercel logs for frontend issues
 - [ ] Use browser dev tools for API calls
 - [ ] Test endpoints individually
@@ -207,8 +209,9 @@ Your deployment is successful when:
 ## 📞 Support Resources
 
 ### Documentation
-- [Railway Docs](https://docs.railway.app)
+- [Render Docs](https://render.com/docs)
 - [Vercel Docs](https://vercel.com/docs)
+- [PostgreSQL Docs](https://www.postgresql.org/docs/)
 - [MongoDB Atlas Docs](https://docs.atlas.mongodb.com)
 
 ### Getting Help
@@ -216,6 +219,21 @@ Your deployment is successful when:
 - Use browser developer tools
 - Test API endpoints with curl/Postman
 - Check GitHub issues for common problems
+
+---
+
+## 💰 Cost Considerations
+
+### Free Tier Limits
+- [ ] Render: 750 hours/month (free tier)
+- [ ] Vercel: 100GB bandwidth/month
+- [ ] PostgreSQL: 1GB storage (Render free tier)
+- [ ] MongoDB Atlas: 512MB storage (free tier)
+
+### When to Upgrade
+- [ ] Render: When you need always-on service ($7/month)
+- [ ] Vercel: When you need team features ($20/month)
+- [ ] Database: When you exceed storage limits
 
 ---
 
