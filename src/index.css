@@ -1,0 +1,249 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* HAP - Modern Flashcard Platform Design System
+All colors MUST be HSL. Dark theme with aqua-blue to purple gradient.
+*/
+
+@layer base {
+  :root {
+    /* Dark Theme Base Colors */
+    --background: 240 10% 8%;
+    --foreground: 210 40% 95%;
+
+    --card: 240 8% 12%;
+    --card-foreground: 210 40% 95%;
+
+    --popover: 240 8% 12%;
+    --popover-foreground: 210 40% 95%;
+
+    /* Aqua-Blue Primary (#4FACFE) */
+    --primary: 203 100% 64%;
+    --primary-foreground: 240 10% 8%;
+
+    /* Purple Secondary (#7366FF) */
+    --secondary: 247 100% 70%;
+    --secondary-foreground: 210 40% 95%;
+
+    --muted: 240 6% 20%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 203 80% 45%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 240 6% 20%;
+    --input: 240 6% 16%;
+    --ring: 203 100% 64%;
+
+    --radius: 0.75rem;
+
+    /* HAP Custom Design Tokens */
+    --gradient-primary: linear-gradient(135deg, hsl(203 100% 64%) 0%, hsl(247 100% 70%) 100%);
+    --gradient-subtle: linear-gradient(135deg, hsl(240 8% 12%) 0%, hsl(240 6% 16%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(240 8% 12% / 0.8) 0%, hsl(240 6% 16% / 0.9) 100%);
+    
+    /* Gamification Colors */
+    --success: 142 76% 36%;
+    --warning: 48 96% 53%;
+    --info: 203 100% 64%;
+    --achievement: 47 100% 63%;
+    
+    /* Badge Colors */
+    --badge-bronze: 30 67% 45%;
+    --badge-silver: 210 16% 60%;
+    --badge-gold: 48 96% 53%;
+    --badge-diamond: 283 100% 80%;
+    
+    /* Shadows with gradient glow */
+    --shadow-glow: 0 0 30px hsl(203 100% 64% / 0.3);
+    --shadow-card: 0 8px 32px hsl(240 10% 3% / 0.6);
+    --shadow-intense: 0 0 50px hsl(247 100% 70% / 0.4);
+    
+    /* Animation & Transitions */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  /* Light theme (optional fallback - HAP is primarily dark) */
+  .light {
+    --background: 210 40% 98%;
+    --foreground: 240 10% 8%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 8%;
+    --gradient-primary: linear-gradient(135deg, hsl(203 100% 64%) 0%, hsl(247 100% 70%) 100%);
+    --shadow-glow: 0 0 30px hsl(203 100% 64% / 0.2);
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+    background: var(--gradient-subtle);
+    min-height: 100vh;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  /* HAP Component Styles */
+  .gradient-text {
+    background: var(--gradient-primary);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 200% 200%;
+    animation: gradient-flow 3s ease infinite;
+  }
+
+  .card-gradient {
+    background: var(--gradient-card);
+    backdrop-filter: blur(20px);
+    border: 1px solid hsl(var(--border));
+  }
+
+  .glow-effect {
+    box-shadow: var(--shadow-glow);
+  }
+
+  .hero-card {
+    background: var(--gradient-card);
+    backdrop-filter: blur(20px);
+    border: 1px solid hsl(var(--border));
+    box-shadow: var(--shadow-card);
+    transition: var(--transition-smooth);
+  }
+
+  .hero-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-intense);
+  }
+
+  .badge-glow {
+    background: var(--gradient-primary);
+    box-shadow: 0 0 20px hsl(var(--primary) / 0.4);
+    animation: pulse-glow 2s ease-in-out infinite alternate;
+  }
+
+  .department-card {
+    background: var(--gradient-card);
+    backdrop-filter: blur(20px);
+    border: 1px solid hsl(var(--border));
+    transition: var(--transition-bounce);
+  }
+
+  .department-card:hover {
+    transform: scale(1.05);
+    border-color: hsl(var(--primary));
+    box-shadow: var(--shadow-glow);
+  }
+}
+
+@layer utilities {
+  .animate-fade-in {
+    animation: fade-in 0.6s ease-out forwards;
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.8s ease-out forwards;
+  }
+
+  .animate-glow-pulse {
+    animation: glow-pulse 2s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes gradient-flow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse-glow {
+  from { box-shadow: 0 0 20px hsl(var(--primary) / 0.4); }
+  to { box-shadow: 0 0 30px hsl(var(--primary) / 0.8); }
+}
+
+@keyframes glow-pulse {
+  from { box-shadow: 0 0 20px hsl(var(--primary) / 0.3); }
+  to { box-shadow: 0 0 40px hsl(var(--secondary) / 0.6); }
+}
+/* 3D flip helpers for flashcards */
+.card-perspective {
+  perspective: 1200px;
+}
+
+.card-3d {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(.2,.8,.2,1);
+  -webkit-transform-style: preserve-3d;
+  -webkit-backface-visibility: hidden;
+}
+
+.card-3d.is-flipped {
+  transform: rotateY(180deg);
+}
+
+.card-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.75rem; /* matches rounded-xl */
+  padding: 1rem;
+}
+
+.card-face.back {
+  transform: rotateY(180deg);
+}
