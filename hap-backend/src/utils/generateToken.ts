@@ -9,7 +9,7 @@ export interface TokenPayload {
 
 export const generateToken = (user: IUser): string => {
   const payload: TokenPayload = {
-    userId: user._id.toString(),
+    userId: (user._id as any).toString(),
     username: user.username,
     email: user.email
   };
@@ -20,7 +20,7 @@ export const generateToken = (user: IUser): string => {
   }
 
   const options: SignOptions = {
-    expiresIn: process.env.JWT_EXPIRES_IN || '7d'
+    expiresIn: (process.env.JWT_EXPIRES_IN || '7d') as string
   };
 
   return jwt.sign(payload, secret, options);

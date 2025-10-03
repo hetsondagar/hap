@@ -202,7 +202,7 @@ export const getFlashcard = async (req: Request, res: Response): Promise<void> =
     }
 
     // Check if user can access this flashcard
-    if (flashcard.ownerId.toString() !== userId && !flashcard.public) {
+    if (flashcard.ownerId.toString() !== userId && !(flashcard as any).public) {
       res.status(403).json({
         success: false,
         message: 'Access denied to this flashcard'

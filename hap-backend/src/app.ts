@@ -123,7 +123,7 @@ app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
   }
 
   // Default error
-  res.status(500).json({
+  return res.status(500).json({
     success: false,
     message: process.env.NODE_ENV === 'production' 
       ? 'Internal server error' 
