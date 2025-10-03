@@ -162,16 +162,45 @@ All colors MUST be HSL. Dark theme with aqua-blue to purple gradient.
   }
 
   .department-card {
-    background: var(--gradient-card);
-    backdrop-filter: blur(20px);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    backdrop-filter: blur(10px);
     border: 1px solid hsl(var(--border));
     transition: var(--transition-bounce);
+    position: relative;
+    overflow: hidden;
   }
 
-  .department-card:hover {
-    transform: scale(1.05);
-    border-color: hsl(var(--primary));
-    box-shadow: var(--shadow-glow);
+  .department-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(0, 0, 0, 0.55),
+      rgba(0, 0, 0, 0.35)
+    );
+    z-index: 0;
+  }
+
+  .department-card > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .dept-card-header {
+    position: relative;
+    border-bottom: 1px solid hsl(var(--border));
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  .dept-card-header h3,
+  .dept-card-header span {
+    color: #fff;
   }
 }
 
