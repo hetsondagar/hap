@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Zap, Trophy, BookOpen, Users } from 'lucide-react';
+import { Menu, X, Trophy, BookOpen, Users } from 'lucide-react';
+import HapLogo from '@/assets/hap-logo-3.png';
 import { authAPI } from '@/lib/api';
 
 const Header = () => {
@@ -57,9 +58,7 @@ const Header = () => {
       <nav className="container mx-auto px-4 py-4 flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center space-x-2 group">
-          <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center glow-effect">
-            <Zap className="w-5 h-5 text-white" />
-          </div>
+          <img src={HapLogo} alt="Hap Logo" className="w-8 h-8 object-contain" />
           <span className="text-2xl font-display font-bold gradient-text">
             hap
           </span>
