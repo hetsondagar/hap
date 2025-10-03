@@ -1,11 +1,83 @@
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { communityAPI } from "@/lib/api";
+import { Badge } from "@/components/ui/badge";
+import { Heart, MessageSquare, Loader2 } from "lucide-react";
+
+type Deck = {
+  _id: string;
+  title?: string;
+  description?: string;
+  department?: string;
+  difficulty?: string;
+  tags?: string[];
+  likes?: any[] | number;
+  comments?: any[] | number;
+  creator?: { username?: string } | string;
+  createdAt?: string;
+};
+
+const departments = [
+  "Computer Science",
+  "Mechanical",
+  "Civil",
+  "Electrical",
+  "Biotech",
+  "Mathematics",
+];
 
 const CommunityPage: React.FC = () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [decks, setDecks] = useState<Deck[]>([]);
+  const [activeTab, setActiveTab] = useState("browse");
+  const [query, setQuery] = useState("");
+  const [department, setDepartment] = useState<string | undefined>(undefined);
+  const [sortBy, setSortBy] = useState<string | undefined>("trending");
+
+  const likeCount = (d: Deck) => (Array.isArray(d.likes) ? d.likes.length : Number(d.likes || 0));
+  const commentCount = (d: Deck) => (Array.isArray(d.comments) ? d.comments.length : Number(d.comments || 0));
+
+  const loadDecks = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      if (activeTab === "search" && query.trim()) {
+        const res = await communityAPI.searchDecks({ q: query.trim(), department, sortBy });
+        const items: Deck[] = res?.data?.decks || res?.decks || res?.data || res || [];
+        setDecks(items);
+      } else {
+        const res = await communityAPI.getDecks({ department, sortBy });
+        const items: Deck[] = res?.data?.decks || res?.decks || res?.data || res || [];
+        setDecks(items);
+      }
+    } catch (e: any) {
+      setError(e?.message || "Failed to load community decks");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadDecks();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab, department, sortBy]);
+
+  const handleLike = async (id: string) => {
+    try {
+      await communityAPI.likeDeck(id);
+      await loadDecks();
+    } catch (e) {
+      // no-op; could show toast
+    }
+  };
+
+  const visibleDecks = useMemo(() => decks.slice(0, 24), [decks]);
+
   return (
     <div className="p-6 space-y-10">
       <h1 className="text-3xl font-bold text-primary">Community Sharing</h1>
@@ -16,7 +88,7 @@ const CommunityPage: React.FC = () => {
       {/* Content Discovery */}
       <section className="space-y-4">
         <h2 className="text-2xl font-semibold">Content Discovery</h2>
-        <Tabs defaultValue="browse">
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList>
             <TabsTrigger value="browse">Browse Decks</TabsTrigger>
             <TabsTrigger value="search">Search & Filter</TabsTrigger>
@@ -30,16 +102,57 @@ const CommunityPage: React.FC = () => {
                 <CardTitle>Browse by Category</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  {[
-                    "CSE",
-                    "Mechanical",
-                    "Civil",
-                    "Electrical",
-                    "Biotech",
-                    "Maths",
-                  ].map((dept) => (
-                    <Button key={dept} variant="outline">{dept}</Button>
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {departments.map((dept) => (
+                    <Button
+                      key={dept}
+                      variant={department === dept ? "default" : "outline"}
+                      onClick={() => setDepartment(dept === department ? undefined : dept)}
+                    >
+                      {dept}
+                    </Button>
+                  ))}
+                  <Button variant="ghost" onClick={() => setDepartment(undefined)}>Clear</Button>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {loading && (
+                    <div className="col-span-full flex items-center justify-center py-8 text-muted-foreground">
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Loading decks…
+                    </div>
+                  )}
+                  {error && (
+                    <div className="col-span-full text-sm text-red-500">{error}</div>
+                  )}
+                  {!loading && !error && visibleDecks.map((deck) => (
+                    <Card key={deck._id} className="hover:shadow-md transition">
+                      <CardHeader>
+                        <CardTitle className="text-lg">
+                          {deck.title || "Untitled Deck"}
+                        </CardTitle>
+                        <div className="flex gap-2">
+                          {deck.department && <Badge variant="secondary">{deck.department}</Badge>}
+                          {deck.difficulty && <Badge>{deck.difficulty}</Badge>}
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-sm text-muted-foreground line-clamp-3 mb-3">
+                          {deck.description || "No description provided."}
+                        </p>
+                        <div className="flex items-center justify-between">
+                          <div className="text-xs text-muted-foreground">
+                            by {typeof deck.creator === 'string' ? deck.creator : deck.creator?.username || 'Unknown'}
+                          </div>
+                          <div className="flex items-center gap-4 text-xs">
+                            <button className="flex items-center gap-1 hover:text-primary" onClick={() => handleLike(deck._id)}>
+                              <Heart className="w-4 h-4" /> {likeCount(deck)}
+                            </button>
+                            <div className="flex items-center gap-1">
+                              <MessageSquare className="w-4 h-4" /> {commentCount(deck)}
+                            </div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
                   ))}
                 </div>
               </CardContent>
@@ -47,15 +160,146 @@ const CommunityPage: React.FC = () => {
           </TabsContent>
 
           <TabsContent value="search">
-            <Input placeholder="Search decks by subject, tags, difficulty..." />
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Input
+                placeholder="Search decks by subject, tags, difficulty..."
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') loadDecks(); }}
+              />
+              <Button onClick={loadDecks}>Search</Button>
+            </div>
+            <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {loading && (
+                <div className="col-span-full flex items-center justify-center py-8 text-muted-foreground">
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Searching…
+                </div>
+              )}
+              {error && (
+                <div className="col-span-full text-sm text-red-500">{error}</div>
+              )}
+              {!loading && !error && visibleDecks.map((deck) => (
+                <Card key={deck._id} className="hover:shadow-md transition">
+                  <CardHeader>
+                    <CardTitle className="text-lg">{deck.title || "Untitled Deck"}</CardTitle>
+                    <div className="flex gap-2">
+                      {deck.department && <Badge variant="secondary">{deck.department}</Badge>}
+                      {deck.difficulty && <Badge>{deck.difficulty}</Badge>}
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground line-clamp-3 mb-3">
+                      {deck.description || "No description provided."}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <div className="text-xs text-muted-foreground">
+                        by {typeof deck.creator === 'string' ? deck.creator : deck.creator?.username || 'Unknown'}
+                      </div>
+                      <div className="flex items-center gap-4 text-xs">
+                        <button className="flex items-center gap-1 hover:text-primary" onClick={() => handleLike(deck._id)}>
+                          <Heart className="w-4 h-4" /> {likeCount(deck)}
+                        </button>
+                        <div className="flex items-center gap-1">
+                          <MessageSquare className="w-4 h-4" /> {commentCount(deck)}
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </TabsContent>
 
           <TabsContent value="trending">
-            <p>🔥 Decks with high engagement this week.</p>
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-sm text-muted-foreground">🔥 Decks with high engagement this week.</p>
+              <div className="flex gap-2">
+                <Button variant={sortBy === 'trending' ? 'default' : 'outline'} onClick={() => setSortBy('trending')}>Trending</Button>
+                <Button variant={sortBy === 'new' ? 'default' : 'outline'} onClick={() => setSortBy('new')}>Newest</Button>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {loading && (
+                <div className="col-span-full flex items-center justify-center py-8 text-muted-foreground">
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Loading…
+                </div>
+              )}
+              {error && (
+                <div className="col-span-full text-sm text-red-500">{error}</div>
+              )}
+              {!loading && !error && visibleDecks.map((deck) => (
+                <Card key={deck._id} className="hover:shadow-md transition">
+                  <CardHeader>
+                    <CardTitle className="text-lg">{deck.title || "Untitled Deck"}</CardTitle>
+                    <div className="flex gap-2">
+                      {deck.department && <Badge variant="secondary">{deck.department}</Badge>}
+                      {deck.difficulty && <Badge>{deck.difficulty}</Badge>}
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground line-clamp-3 mb-3">
+                      {deck.description || "No description provided."}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <div className="text-xs text-muted-foreground">
+                        by {typeof deck.creator === 'string' ? deck.creator : deck.creator?.username || 'Unknown'}
+                      </div>
+                      <div className="flex items-center gap-4 text-xs">
+                        <button className="flex items-center gap-1 hover:text-primary" onClick={() => handleLike(deck._id)}>
+                          <Heart className="w-4 h-4" /> {likeCount(deck)}
+                        </button>
+                        <div className="flex items-center gap-1">
+                          <MessageSquare className="w-4 h-4" /> {commentCount(deck)}
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </TabsContent>
 
           <TabsContent value="new">
-            <p>🆕 Latest contributions from the community.</p>
+            <p className="text-sm text-muted-foreground mb-3">🆕 Latest contributions from the community.</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {loading && (
+                <div className="col-span-full flex items-center justify-center py-8 text-muted-foreground">
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Loading…
+                </div>
+              )}
+              {error && (
+                <div className="col-span-full text-sm text-red-500">{error}</div>
+              )}
+              {!loading && !error && visibleDecks.map((deck) => (
+                <Card key={deck._id} className="hover:shadow-md transition">
+                  <CardHeader>
+                    <CardTitle className="text-lg">{deck.title || "Untitled Deck"}</CardTitle>
+                    <div className="flex gap-2">
+                      {deck.department && <Badge variant="secondary">{deck.department}</Badge>}
+                      {deck.difficulty && <Badge>{deck.difficulty}</Badge>}
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground line-clamp-3 mb-3">
+                      {deck.description || "No description provided."}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <div className="text-xs text-muted-foreground">
+                        by {typeof deck.creator === 'string' ? deck.creator : deck.creator?.username || 'Unknown'}
+                      </div>
+                      <div className="flex items-center gap-4 text-xs">
+                        <button className="flex items-center gap-1 hover:text-primary" onClick={() => handleLike(deck._id)}>
+                          <Heart className="w-4 h-4" /> {likeCount(deck)}
+                        </button>
+                        <div className="flex items-center gap-1">
+                          <MessageSquare className="w-4 h-4" /> {commentCount(deck)}
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </TabsContent>
         </Tabs>
       </section>
