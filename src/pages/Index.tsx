@@ -19,9 +19,29 @@ import {
   Award
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { authAPI } from '@/lib/api';
 import heroImage from '@/assets/hero-flashcards.jpg';
 
 const Index = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) { setIsAuthenticated(false); return; }
+        await authAPI.getProfile();
+        if (!mounted) return;
+        setIsAuthenticated(true);
+      } catch {
+        if (!mounted) return;
+        setIsAuthenticated(false);
+      }
+    })();
+    return () => { mounted = false; };
+  }, []);
   const features = [
     {
       icon: Brain,
@@ -102,12 +122,21 @@ const Index = () => {
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 mb-8">
-                <Link to = "/signup">
-                <Button size="lg" className="bg-gradient-primary hover:opacity-90 text-white font-medium shadow-glow">
-                  Get Started Free
-                  <ArrowRight className="w-5 h-5 ml-2" />
-                </Button>
-                </Link>
+                {isAuthenticated ? (
+                  <Link to="/analytics">
+                    <Button size="lg" className="bg-gradient-primary hover:opacity-90 text-white font-medium shadow-glow">
+                      Go to Dashboard
+                      <ArrowRight className="w-5 h-5 ml-2" />
+                    </Button>
+                  </Link>
+                ) : (
+                  <Link to="/signup">
+                    <Button size="lg" className="bg-gradient-primary hover:opacity-90 text-white font-medium shadow-glow">
+                      Get Started Free
+                      <ArrowRight className="w-5 h-5 ml-2" />
+                    </Button>
+                  </Link>
+                )}
               </div>
               
               <div className="flex items-center space-x-6 text-sm text-muted-foreground">

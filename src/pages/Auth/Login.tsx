@@ -1,17 +1,33 @@
-import React from "react";
+import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import AuthLayout from "./AuthLayout";
 import HapLogo from "../../assets/hap-logo-3.png"; // 👈 add your logo here
+import { authAPI } from "@/lib/api";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // TODO: Integrate real authentication. On success, redirect to dashboard
-    navigate("/analytics");
+    setError(null);
+    try {
+      setLoading(true);
+      const res = await authAPI.login({ email, password });
+      const token = res?.token || res?.data?.token;
+      if (!token) throw new Error(res?.message || "Login failed");
+      localStorage.setItem("token", token);
+      navigate("/analytics");
+    } catch (e: any) {
+      setError(e?.message || "Login failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -24,9 +40,12 @@ const Login: React.FC = () => {
       }
     >
       <form className="space-y-4" onSubmit={handleSubmit}>
-        <Input type="email" placeholder="Email" className="bg-background" />
-        <Input type="password" placeholder="Password" className="bg-background" />
-        <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">Login</Button>
+        {error && (
+          <p className="text-sm text-red-500">{error}</p>
+        )}
+        <Input type="email" placeholder="Email" className="bg-background" value={email} onChange={(e) => setEmail(e.target.value)} />
+        <Input type="password" placeholder="Password" className="bg-background" value={password} onChange={(e) => setPassword(e.target.value)} />
+        <Button disabled={loading} type="submit" className="w-full bg-blue-600 hover:bg-blue-700">{loading ? "Logging in..." : "Login"}</Button>
       </form>
       <p className="mt-4 text-center text-sm text-muted-foreground">
         Don’t have an account?{" "}

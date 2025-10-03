@@ -1,17 +1,34 @@
-import React from "react";
+import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import AuthLayout from "./AuthLayout";
 import HapLogo from "../../assets/hap-logo-3.png"; // 👈 add your logo here
+import { authAPI } from "@/lib/api";
 
 const Signup: React.FC = () => {
   const navigate = useNavigate();
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // TODO: Integrate real signup. On success, redirect to new user dashboard
-    navigate("/flashcards");
+    setError(null);
+    try {
+      setLoading(true);
+      const res = await authAPI.signup({ username, email, password });
+      const token = res?.token || res?.data?.token;
+      if (!token) throw new Error(res?.message || "Signup failed");
+      localStorage.setItem("token", token);
+      navigate("/flashcards");
+    } catch (e: any) {
+      setError(e?.message || "Signup failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -24,10 +41,13 @@ const Signup: React.FC = () => {
       }
     >
       <form className="space-y-4" onSubmit={handleSubmit}>
-        <Input type="text" placeholder="Full Name" className="bg-background" />
-        <Input type="email" placeholder="Email" className="bg-background" />
-        <Input type="password" placeholder="Password" className="bg-background" />
-        <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">Sign Up</Button>
+        {error && (
+          <p className="text-sm text-red-500">{error}</p>
+        )}
+        <Input type="text" placeholder="Full Name" className="bg-background" value={username} onChange={(e) => setUsername(e.target.value)} />
+        <Input type="email" placeholder="Email" className="bg-background" value={email} onChange={(e) => setEmail(e.target.value)} />
+        <Input type="password" placeholder="Password" className="bg-background" value={password} onChange={(e) => setPassword(e.target.value)} />
+        <Button disabled={loading} type="submit" className="w-full bg-blue-600 hover:bg-blue-700">{loading ? "Creating account..." : "Sign Up"}</Button>
       </form>
       <p className="mt-4 text-center text-sm text-muted-foreground">
         Already have an account?{" "}
