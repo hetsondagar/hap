@@ -1,5 +1,6 @@
 import React from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import HapLogo from "../../assets/hap-logo-3.png";
 
 
  // ✅ fix alias path
@@ -14,7 +15,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ title, children }) => {
     <div className="flex items-center justify-center min-h-screen bg-black">
       <Card className="w-full max-w-md p-6 shadow-lg border border-gray-800 bg-background">
         <CardHeader className="flex flex-col items-center">
-          
+          <img src={HapLogo} alt="Hap Logo" className="h-20 w-20 object-contain mb-2" />
           <CardTitle className="text-2xl font-bold text-primary">{title}</CardTitle>
         </CardHeader>
         <CardContent>{children}</CardContent>

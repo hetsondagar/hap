@@ -22,6 +22,7 @@ import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { authAPI } from '@/lib/api';
 import heroImage from '@/assets/hero-flashcards.jpg';
+import HapLogo from '@/assets/hap-logo-3.png';
 
 const Index = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -106,6 +107,9 @@ const Index = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Left Content */}
             <div className="animate-fade-in">
+              <div className="flex justify-start mb-4">
+                <img src={HapLogo} alt="Hap Logo" className="h-16 w-16 object-contain" />
+              </div>
               <Badge className="mb-6 bg-primary/10 text-primary border-primary/20">
                 <Zap className="w-3 h-3 mr-1" />
                 Gamified Learning Platform
