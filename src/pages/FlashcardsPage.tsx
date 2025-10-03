@@ -17,44 +17,39 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
-import { useFlashcards } from "@/context/FlashcardsContext"; // ✅ use context
+import { useFlashcards } from "@/context/FlashcardsContext";
+import { departmentMap } from "@/utils/flashcardMapping"; // ✅ mapping
 
-const departments = [
-  "Computer Science",
-  "Mechanical",
-  "Electrical",
-  "Chemical",
-  "Civil",
-  "Other",
-];
+// Use the full department names from mapping
+const departments = Object.values(departmentMap);
 
 const years = ["1st Year", "2nd Year", "3rd Year", "4th Year"];
 const phases = ["Mid-Semester", "End-Semester"];
 
 const FlashcardsPage = () => {
-  const { cards, addCard, deleteCard } = useFlashcards(); // ✅ context
+  const { cards, addCard, deleteCard } = useFlashcards();
   const [front, setFront] = useState("");
   const [back, setBack] = useState("");
   const [department, setDepartment] = useState("");
   const [year, setYear] = useState("");
   const [phase, setPhase] = useState("");
 
-const handleAddCard = () => {
-  if (front.trim() && back.trim() && department && year && phase) {
-    addCard({
-      front,
-      back,
-      department,
-      year,
-      phase,
-    }); // ✅ no `id` here
-    setFront("");
-    setBack("");
-    setDepartment("");
-    setYear("");
-    setPhase("");
-  }
-};
+  const handleAddCard = () => {
+    if (front.trim() && back.trim() && department && year && phase) {
+      addCard({
+        front,
+        back,
+        department, // now matches mapping
+        year,
+        phase,
+      });
+      setFront("");
+      setBack("");
+      setDepartment("");
+      setYear("");
+      setPhase("");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-subtle">
@@ -84,10 +79,7 @@ const handleAddCard = () => {
               onChange={(e) => setBack(e.target.value)}
             />
             {/* Department */}
-            <Select
-              onValueChange={(value) => setDepartment(value)}
-              value={department}
-            >
+            <Select onValueChange={setDepartment} value={department}>
               <SelectTrigger>
                 <SelectValue placeholder="Select Department" />
               </SelectTrigger>
@@ -99,8 +91,9 @@ const handleAddCard = () => {
                 ))}
               </SelectContent>
             </Select>
+
             {/* Year */}
-            <Select onValueChange={(value) => setYear(value)} value={year}>
+            <Select onValueChange={setYear} value={year}>
               <SelectTrigger>
                 <SelectValue placeholder="Select Year" />
               </SelectTrigger>
@@ -112,8 +105,9 @@ const handleAddCard = () => {
                 ))}
               </SelectContent>
             </Select>
+
             {/* Exam Phase */}
-            <Select onValueChange={(value) => setPhase(value)} value={phase}>
+            <Select onValueChange={setPhase} value={phase}>
               <SelectTrigger>
                 <SelectValue placeholder="Select Exam Phase" />
               </SelectTrigger>
@@ -125,6 +119,7 @@ const handleAddCard = () => {
                 ))}
               </SelectContent>
             </Select>
+
             <Button
               onClick={handleAddCard}
               className="bg-gradient-primary text-white"
@@ -135,7 +130,7 @@ const handleAddCard = () => {
         </Card>
 
         {/* Flashcards by Department Tabs */}
-        <Tabs defaultValue="Computer Science" className="w-full">
+        <Tabs defaultValue={departments[0]} className="w-full">
           <TabsList className="flex flex-wrap justify-center mb-8">
             {departments.map((dept) => (
               <TabsTrigger key={dept} value={dept}>
