@@ -16,9 +16,6 @@ dotenv.config();
 
 const app: Application = express();
 
-// Security middleware
-app.use(helmet());
-
 // CORS configuration (supports multiple comma-separated origins)
 const allowedOrigins = (process.env.FRONTEND_URLS || process.env.FRONTEND_URL || 'http://localhost:5173')
   .split(',')
@@ -37,9 +34,22 @@ const corsConfig = {
   optionsSuccessStatus: 204
 } as const;
 
-app.use(cors(corsConfig));
-// Explicitly handle preflight
-app.options('*', cors(corsConfig));
+// CORS MUST come before helmet/ratelimiter and routes
+// Support wildcard via FRONTEND_URLS='*'
+const useWildcard = allowedOrigins.includes('*');
+const dynamicCors = useWildcard ? cors({
+  origin: true,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  optionsSuccessStatus: 204
+}) : cors(corsConfig);
+
+app.use(dynamicCors);
+app.options('*', dynamicCors);
+
+// Security middleware (after CORS to avoid interfering with preflight)
+app.use(helmet());
 
 // Rate limiting
 const limiter = rateLimit({
