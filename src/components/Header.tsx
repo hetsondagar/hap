@@ -1,11 +1,49 @@
-import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Menu, X, Zap, Trophy, BookOpen, Users } from 'lucide-react';
+import { authAPI } from '@/lib/api';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [username, setUsername] = useState<string | null>(null);
   const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    let mounted = true;
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setIsAuthenticated(false);
+      setUsername(null);
+      return;
+    }
+    (async () => {
+      try {
+        const prof = await authAPI.getProfile();
+        if (!mounted) return;
+        const user = prof?.user || prof?.data || prof;
+        setIsAuthenticated(true);
+        setUsername(user?.username || null);
+      } catch {
+        if (!mounted) return;
+        setIsAuthenticated(false);
+        setUsername(null);
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, [location.pathname]);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setIsAuthenticated(false);
+    setUsername(null);
+    if (isMenuOpen) setIsMenuOpen(false);
+    navigate('/');
+  };
 
   const navItems = [
     { name: 'Home', path: '/', icon: Zap },
@@ -47,16 +85,34 @@ const Header = () => {
 
         {/* CTA Buttons */}
         <div className="hidden md:flex items-center space-x-4">
-          <Link to = "/login">
-          <Button variant="outline" className="border-primary/20 hover:border-primary">
-            Log In
-          </Button>
-          </Link>
-          <Link to = "/signup">
-          <Button className="bg-gradient-primary hover:opacity-90 text-white font-medium shadow-glow">
-            Sign Up
-          </Button>
-          </Link>
+          {isAuthenticated ? (
+            <>
+              <span className="text-sm text-muted-foreground mr-2 hidden lg:inline">
+                {username ? `Hi, ${username}` : 'Signed in'}
+              </span>
+              <Link to="/analytics">
+                <Button variant="outline" className="border-primary/20 hover:border-primary">
+                  Dashboard
+                </Button>
+              </Link>
+              <Button onClick={handleLogout} className="bg-gradient-primary hover:opacity-90 text-white font-medium shadow-glow">
+                Logout
+              </Button>
+            </>
+          ) : (
+            <>
+              <Link to = "/login">
+                <Button variant="outline" className="border-primary/20 hover:border-primary">
+                  Log In
+                </Button>
+              </Link>
+              <Link to = "/signup">
+                <Button className="bg-gradient-primary hover:opacity-90 text-white font-medium shadow-glow">
+                  Sign Up
+                </Button>
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Mobile Menu Button */}
@@ -91,19 +147,42 @@ const Header = () => {
             ))}
             
             <div className="pt-4 space-y-3">
-              <Button 
-                variant="outline" 
-                className="w-full border-primary/20 hover:border-primary"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Log In
-              </Button>
-              <Button 
-                className="w-full bg-gradient-primary hover:opacity-90 text-white font-medium shadow-glow"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Sign Up
-              </Button>
+              {isAuthenticated ? (
+                <>
+                  <Link to="/analytics" onClick={() => setIsMenuOpen(false)}>
+                    <Button 
+                      variant="outline" 
+                      className="w-full border-primary/20 hover:border-primary"
+                    >
+                      Dashboard
+                    </Button>
+                  </Link>
+                  <Button 
+                    className="w-full bg-gradient-primary hover:opacity-90 text-white font-medium shadow-glow"
+                    onClick={handleLogout}
+                  >
+                    Logout
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Link to="/login" onClick={() => setIsMenuOpen(false)}>
+                    <Button 
+                      variant="outline" 
+                      className="w-full border-primary/20 hover:border-primary"
+                    >
+                      Log In
+                    </Button>
+                  </Link>
+                  <Link to="/signup" onClick={() => setIsMenuOpen(false)}>
+                    <Button 
+                      className="w-full bg-gradient-primary hover:opacity-90 text-white font-medium shadow-glow"
+                    >
+                      Sign Up
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
