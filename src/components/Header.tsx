@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Trophy, BookOpen, Users } from 'lucide-react';
+import { Menu, X, Trophy, BookOpen, Users, Home } from 'lucide-react';
 import HapLogo from '@/assets/hap-logo-3.png';
 import { authAPI } from '@/lib/api';
 
@@ -47,7 +47,7 @@ const Header = () => {
   };
 
   const navItems = [
-    { name: 'Home', path: '/', icon: Zap },
+    { name: 'Home', path: '/', icon: Home },
     { name: 'Features', path: '/features', icon: BookOpen },
     { name: 'Departments', path: '/departments', icon: Users },
     { name: 'Gamification', path: '/gamification', icon: Trophy },
