@@ -57,11 +57,15 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useFlashcards } from "@/context/FlashcardsContext";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Pencil } from "lucide-react";
 import { departmentMap, yearMap, phaseMap } from "@/utils/flashcardMapping";
 
 const DeptFlashcardsPage = () => {
   const { deptId, yearId, phaseId } = useParams();
-  const { cards } = useFlashcards();
+  const { cards, addCard } = useFlashcards();
   const [flippedCards, setFlippedCards] = useState<number[]>([]); // store flipped card ids
 
   const toggleFlip = (id: number) => {
@@ -80,6 +84,20 @@ const DeptFlashcardsPage = () => {
       card.year === yearName &&
       card.phase === phaseName
   );
+
+  // Create modal state
+  const [open, setOpen] = useState(false);
+  const [front, setFront] = useState("");
+  const [back, setBack] = useState("");
+
+  const handleCreate = () => {
+    if (!front.trim() || !back.trim()) return;
+    if (!departmentName || !yearName || !phaseName) return;
+    addCard({ front, back, department: departmentName, year: yearName, phase: phaseName });
+    setFront("");
+    setBack("");
+    setOpen(false);
+  };
 
   return (
     <div className="min-h-screen p-8 bg-gradient-subtle">
@@ -111,6 +129,34 @@ const DeptFlashcardsPage = () => {
           })}
         </div>
       )}
+
+      {/* Floating Create Button and Modal */}
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+          <button
+            className="fixed bottom-6 right-6 w-12 h-12 rounded-full bg-primary text-white shadow-lg flex items-center justify-center hover:opacity-90"
+            aria-label="Create flashcard"
+          >
+            <Pencil className="w-5 h-5" />
+          </button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[480px]">
+          <DialogHeader>
+            <DialogTitle>Create Flashcard</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div className="text-sm text-muted-foreground">
+              {departmentName} • {yearName} • {phaseName}
+            </div>
+            <Input placeholder="Front (Question)" value={front} onChange={(e) => setFront(e.target.value)} />
+            <Textarea placeholder="Back (Answer)" value={back} onChange={(e) => setBack(e.target.value)} />
+            <div className="flex justify-end gap-2 pt-2">
+              <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
+              <Button onClick={handleCreate} className="bg-gradient-primary text-white">Create</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

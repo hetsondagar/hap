@@ -19,6 +19,8 @@ import {
 } from "@/components/ui/tabs";
 import { useFlashcards } from "@/context/FlashcardsContext";
 import { departmentMap } from "@/utils/flashcardMapping"; // ✅ mapping
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Pencil } from "lucide-react";
 
 // Use the full department names from mapping
 const departments = Object.values(departmentMap);
@@ -178,6 +180,70 @@ const FlashcardsPage = () => {
           ))}
         </Tabs>
       </section>
+
+      {/* Floating Create Button and Modal */}
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+          <button
+            className="fixed bottom-6 right-6 w-12 h-12 rounded-full bg-primary text-white shadow-lg flex items-center justify-center hover:opacity-90"
+            aria-label="Create flashcard"
+          >
+            <Pencil className="w-5 h-5" />
+          </button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[480px]">
+          <DialogHeader>
+            <DialogTitle>Create Flashcard</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <Input placeholder="Front (Question)" value={front} onChange={(e) => setFront(e.target.value)} />
+            <Textarea placeholder="Back (Answer)" value={back} onChange={(e) => setBack(e.target.value)} />
+            {/* Department */}
+            <Select onValueChange={setDepartment} value={department}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select Department" />
+              </SelectTrigger>
+              <SelectContent>
+                {departments.map((dept) => (
+                  <SelectItem key={dept} value={dept}>
+                    {dept}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {/* Year */}
+            <Select onValueChange={setYear} value={year}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select Year" />
+              </SelectTrigger>
+              <SelectContent>
+                {years.map((y) => (
+                  <SelectItem key={y} value={y}>
+                    {y}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {/* Exam Phase */}
+            <Select onValueChange={setPhase} value={phase}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select Exam Phase" />
+              </SelectTrigger>
+              <SelectContent>
+                {phases.map((p) => (
+                  <SelectItem key={p} value={p}>
+                    {p}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <div className="flex justify-end gap-2 pt-2">
+              <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
+              <Button onClick={handleAddCard} className="bg-gradient-primary text-white">Create</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
