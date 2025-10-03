@@ -24,8 +24,8 @@ services:
     #     name: hap-flashcard-db
     #     property: connectionString
     # For MongoDB (alternative)
-    # - key: MONGO_URI
-    #   value: mongodb+srv://username:password@cluster.mongodb.net/hap-flashcard
+    - key: MONGO_URI
+      value: mongodb+srv://username:password@cluster.mongodb.net/hap-flashcard
 
 databases:
   - name: hap-flashcard-db
