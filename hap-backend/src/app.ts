@@ -1,5 +1,5 @@
 import express, { Application, Request, Response, NextFunction } from 'express';
-import cors from 'cors';
+import cors, { CorsOptions } from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
@@ -22,31 +22,20 @@ const allowedOrigins = (process.env.FRONTEND_URLS || process.env.FRONTEND_URL ||
   .map((o) => o.trim())
   .filter(Boolean);
 
-const corsConfig = {
-  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+const corsConfig: CorsOptions = {
+  origin: (origin, callback) => {
     if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) return callback(null, true);
+    if (allowedOrigins.includes('*') || allowedOrigins.includes(origin)) return callback(null, true);
     return callback(new Error(`CORS blocked for origin ${origin}`));
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // mutable array
   allowedHeaders: ['Content-Type', 'Authorization'],
   optionsSuccessStatus: 204
-} as const;
+};
 
-// CORS MUST come before helmet/ratelimiter and routes
-// Support wildcard via FRONTEND_URLS='*'
-const useWildcard = allowedOrigins.includes('*');
-const dynamicCors = useWildcard ? cors({
-  origin: true,
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  optionsSuccessStatus: 204
-}) : cors(corsConfig);
-
-app.use(dynamicCors);
-app.options('*', dynamicCors);
+app.use(cors(corsConfig));
+app.options('*', cors(corsConfig));
 
 // Security middleware (after CORS to avoid interfering with preflight)
 app.use(helmet());

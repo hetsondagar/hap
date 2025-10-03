@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken';
+import jwt, { SignOptions } from 'jsonwebtoken';
 import { IUser } from '../models/User';
 
 export interface TokenPayload {
@@ -14,18 +14,20 @@ export const generateToken = (user: IUser): string => {
     email: user.email
   };
 
-  const secret = process.env.JWT_SECRET;
+  const secret = process.env.JWT_SECRET as string;
   if (!secret) {
     throw new Error('JWT_SECRET environment variable is not defined');
   }
 
-  const expiresIn = process.env.JWT_EXPIRES_IN || '7d';
+  const options: SignOptions = {
+    expiresIn: process.env.JWT_EXPIRES_IN || '7d'
+  };
 
-  return jwt.sign(payload, secret, { expiresIn });
+  return jwt.sign(payload, secret, options);
 };
 
 export const verifyToken = (token: string): TokenPayload => {
-  const secret = process.env.JWT_SECRET;
+  const secret = process.env.JWT_SECRET as string;
   if (!secret) {
     throw new Error('JWT_SECRET environment variable is not defined');
   }

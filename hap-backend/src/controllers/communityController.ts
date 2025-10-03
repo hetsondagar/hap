@@ -299,7 +299,8 @@ export const addComment = async (req: Request, res: Response): Promise<void> => 
     const comment = {
       userId: userId as any,
       username: user.username,
-      text
+      text,
+      createdAt: new Date()
     };
 
     deck.comments.push(comment);

@@ -38,6 +38,9 @@ export const validateQuizId = [
 export const generateQuiz = async (req: Request, res: Response): Promise<void> => {
   try {
     const { department, difficulty, limit = 10, deckId } = req.query;
+    const rawDept = String(department || '');
+    const rawDiff = String(difficulty || '');
+    const limitNum = Number(limit);
     const userId = req.user?.userId;
 
     let flashcards;
@@ -67,12 +70,12 @@ export const generateQuiz = async (req: Request, res: Response): Promise<void> =
       // Get flashcards by filters
       const filter: any = {};
 
-      if (department) {
-        filter.department = department;
+      if (rawDept) {
+        filter.department = rawDept;
       }
 
-      if (difficulty) {
-        filter.difficulty = difficulty;
+      if (rawDiff) {
+        filter.difficulty = rawDiff;
       }
 
       // Add access control
@@ -86,7 +89,7 @@ export const generateQuiz = async (req: Request, res: Response): Promise<void> =
       }
 
       flashcards = await Flashcard.find(filter)
-        .limit(Number(limit))
+        .limit(limitNum)
         .sort({ createdAt: -1 });
     }
 
@@ -99,14 +102,14 @@ export const generateQuiz = async (req: Request, res: Response): Promise<void> =
     }
 
     // Convert flashcards to quiz questions
-    const questions = flashcards.map(flashcard => {
+    const questions = flashcards.map((flashcard: any) => {
       // Create multiple choice options
       const options = [flashcard.back];
       
       // Add some random options (simplified - in real app, you'd want smarter options)
       const otherOptions = flashcards
-        .filter(f => f._id.toString() !== flashcard._id.toString())
-        .map(f => f.back)
+        .filter((f: any) => f._id.toString() !== flashcard._id.toString())
+        .map((f: any) => f.back)
         .slice(0, 3);
       
       options.push(...otherOptions);
@@ -129,8 +132,8 @@ export const generateQuiz = async (req: Request, res: Response): Promise<void> =
       data: {
         questions,
         totalQuestions: questions.length,
-        department: department || 'Mixed',
-        difficulty: difficulty || 'Mixed'
+        department: rawDept || 'Mixed',
+        difficulty: rawDiff || 'Mixed'
       }
     });
   } catch (error) {
@@ -157,6 +160,7 @@ export const submitQuiz = async (req: Request, res: Response): Promise<void> => 
 
     const { questions, timeSpent, deckId } = req.body;
     const userId = req.user?.userId;
+    const timeSpentNum = Number(timeSpent || 0);
 
     // Calculate score
     let correctAnswers = 0;
@@ -180,13 +184,13 @@ export const submitQuiz = async (req: Request, res: Response): Promise<void> => 
       deckId,
       department: questions[0]?.department || 'Mixed',
       difficulty: questions[0]?.difficulty || 'medium',
-      timeSpent
+      timeSpent: timeSpentNum
     });
 
     await quiz.save();
 
     // Update analytics
-    await updateUserAnalytics(userId, correctAnswers, totalQuestions, timeSpent);
+    await updateUserAnalytics(String(userId), correctAnswers, totalQuestions, timeSpentNum);
 
     res.status(201).json({
       success: true,
@@ -197,7 +201,7 @@ export const submitQuiz = async (req: Request, res: Response): Promise<void> => 
           score: correctAnswers,
           totalQuestions,
           percentage,
-          timeSpent,
+          timeSpent: timeSpentNum,
           completedAt: quiz.completedAt
         }
       }
@@ -217,6 +221,8 @@ export const getQuizResults = async (req: Request, res: Response): Promise<void>
     const { userId } = req.params;
     const { page = 1, limit = 20, department, difficulty } = req.query;
     const currentUserId = req.user?.userId;
+    const deptStr = String(department || '');
+    const diffStr = String(difficulty || '');
 
     // Check if user can access these results
     if (userId !== currentUserId) {
@@ -229,12 +235,12 @@ export const getQuizResults = async (req: Request, res: Response): Promise<void>
 
     const filter: any = { userId };
     
-    if (department) {
-      filter.department = department;
+    if (deptStr) {
+      filter.department = deptStr;
     }
     
-    if (difficulty) {
-      filter.difficulty = difficulty;
+    if (diffStr) {
+      filter.difficulty = diffStr;
     }
 
     const skip = (Number(page) - 1) * Number(limit);
@@ -249,7 +255,7 @@ export const getQuizResults = async (req: Request, res: Response): Promise<void>
 
     // Calculate statistics
     const stats = await Quiz.aggregate([
-      { $match: { userId: userId } },
+      { $match: { userId: String(userId) } },
       {
         $group: {
           _id: null,
@@ -304,7 +310,7 @@ export const getQuizResult = async (req: Request, res: Response): Promise<void> 
     }
 
     // Check ownership
-    if (quiz.userId.toString() !== userId) {
+    if (String(quiz.userId) !== String(userId)) {
       res.status(403).json({
         success: false,
         message: 'Not authorized to access this quiz result'
