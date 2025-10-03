@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
+import { analyticsAPI, authAPI } from "@/lib/api";
 import {
   LineChart,
   Line,
@@ -21,41 +24,122 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-// Mock Data
-const studyTimeData = [
-  { day: "Mon", hours: 2 },
-  { day: "Tue", hours: 3 },
-  { day: "Wed", hours: 1 },
-  { day: "Thu", hours: 4 },
-  { day: "Fri", hours: 2 },
-  { day: "Sat", hours: 5 },
-  { day: "Sun", hours: 3 },
-];
+type UserProfile = { _id: string; username: string; email: string };
+type UserAnalyticsResponse = {
+  success: boolean;
+  data: {
+    analytics: {
+      studiedCount: number;
+      quizAccuracy: number;
+      timeSpent: number;
+      weeklyGoal: number;
+      weeklyProgress: number;
+      streaks: { current: number; longest: number };
+      departmentStats?: { department: string; studiedCount: number; accuracy: number; timeSpent: number }[];
+    };
+    quizStats: {
+      totalQuizzes: number;
+      averageScore: number;
+      bestScore: number;
+      totalTimeSpent: number;
+      recentQuizzes: number;
+    };
+    flashcardStats: {
+      totalFlashcards: number;
+      departmentBreakdown: { department: string; count: number }[];
+    };
+    deckStats: {
+      totalDecks: number;
+      publicDecks: number;
+      totalLikes: number;
+      totalComments: number;
+    };
+  };
+};
 
-const quizPerformanceData = [
-  { quiz: "Q1", score: 65 },
-  { quiz: "Q2", score: 72 },
-  { quiz: "Q3", score: 80 },
-  { quiz: "Q4", score: 90 },
-];
-
-const topicCoverageData = [
-  { name: "Math", value: 35 },
-  { name: "Science", value: 25 },
-  { name: "History", value: 20 },
-  { name: "Literature", value: 20 },
-];
-
-const masteryData = [
-  { subject: "Math", mastery: 70 },
-  { subject: "Science", mastery: 55 },
-  { subject: "History", mastery: 40 },
-  { subject: "Literature", mastery: 65 },
-];
+type ProgressResponse = {
+  success: boolean;
+  data: {
+    period: "week" | "month" | "year";
+    progress: { _id: string; quizzesCompleted: number; averageScore: number; totalTimeSpent: number }[];
+  };
+};
 
 const COLORS = ["#4ade80", "#60a5fa", "#facc15", "#f87171"];
 
 const AnalyticsPage: React.FC = () => {
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [analytics, setAnalytics] = useState<UserAnalyticsResponse["data"] | null>(null);
+  const [progress, setProgress] = useState<ProgressResponse["data"] | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        setLoading(true);
+        const prof = await authAPI.getProfile();
+        const user: UserProfile = prof?.user || prof?.data || prof; // tolerant shape
+        if (!user?._id) throw new Error("Unable to load user profile");
+        if (!mounted) return;
+        setProfile(user);
+        const [a, p] = await Promise.all([
+          analyticsAPI.getUserAnalytics(user._id) as Promise<UserAnalyticsResponse>,
+          analyticsAPI.getProgressTracking(user._id, "week") as Promise<ProgressResponse>,
+        ]);
+        if (!mounted) return;
+        setAnalytics(a.data);
+        setProgress(p.data);
+        setError(null);
+      } catch (e: any) {
+        if (!mounted) return;
+        setError(e?.message || "Failed to load analytics");
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const studyTimeData = useMemo(() => {
+    if (!progress?.progress) return [] as { day: string; hours: number }[];
+    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    return progress.progress.map((bucket) => {
+      const date = new Date(bucket._id);
+      return { day: days[date.getDay()], hours: Number((bucket.totalTimeSpent / 60).toFixed(2)) };
+    });
+  }, [progress]);
+
+  const quizPerformanceData = useMemo(() => {
+    if (!progress?.progress) return [] as { quiz: string; score: number }[];
+    return progress.progress.map((bucket, idx) => ({ quiz: `Q${idx + 1}`, score: Math.round(bucket.averageScore || 0) }));
+  }, [progress]);
+
+  const topicCoverageData = useMemo(() => {
+    if (!analytics?.flashcardStats?.departmentBreakdown) return [] as { name: string; value: number }[];
+    const merged: Record<string, number> = {};
+    analytics.flashcardStats.departmentBreakdown.forEach(({ department, count }) => {
+      merged[department] = (merged[department] || 0) + count;
+    });
+    return Object.entries(merged).map(([name, value]) => ({ name, value }));
+  }, [analytics]);
+
+  const masteryData = useMemo(() => {
+    const depts = analytics?.analytics?.departmentStats || [];
+    return depts.slice(0, 8).map((d) => ({ subject: d.department, mastery: Math.round(d.accuracy || 0) }));
+  }, [analytics]);
+
+  const weeklyGoalPct = useMemo(() => {
+    if (!analytics?.analytics) return 0;
+    const goalHours = analytics.analytics.weeklyGoal;
+    const progressHours = analytics.analytics.weeklyProgress;
+    if (!goalHours) return 0;
+    return Math.min(100, Math.round((progressHours / goalHours) * 100));
+  }, [analytics]);
+
   return (
     <div className="p-8 space-y-10 bg-background min-h-screen">
       <header className="space-y-2">
@@ -66,7 +150,37 @@ const AnalyticsPage: React.FC = () => {
           Gain insights into your study habits, performance trends, and progress
           towards your learning goals.
         </p>
+        <div className="flex gap-3 pt-2">
+          <Link to="/">
+            <Button variant="outline" className="border-primary/20 hover:border-primary">Home</Button>
+          </Link>
+          <Link to="/flashcards">
+            <Button className="bg-gradient-primary hover:opacity-90 text-white">Go to Flashcards</Button>
+          </Link>
+        </div>
       </header>
+
+      {loading && (
+        <Card className="shadow-md">
+          <CardHeader>
+            <CardTitle>Loading analytics…</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Progress value={30} />
+          </CardContent>
+        </Card>
+      )}
+
+      {!loading && error && (
+        <Card className="shadow-md">
+          <CardHeader>
+            <CardTitle>Error</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-red-500">{error}</p>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Study Progress & Activity */}
       <section>
@@ -100,10 +214,10 @@ const AnalyticsPage: React.FC = () => {
               <CardTitle>Active Study Streak</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold text-primary">5 Days 🔥</p>
-              <Progress value={70} className="mt-3" />
+              <p className="text-3xl font-bold text-primary">{analytics?.analytics?.streaks?.current || 0} Days 🔥</p>
+              <Progress value={weeklyGoalPct} className="mt-3" />
               <p className="text-sm text-muted-foreground mt-2">
-                Keep it up to reach your 7-day streak!
+                Longest streak: {analytics?.analytics?.streaks?.longest || 0} days. Weekly goal progress: {weeklyGoalPct}%
               </p>
             </CardContent>
           </Card>
@@ -195,16 +309,16 @@ const AnalyticsPage: React.FC = () => {
             </CardHeader>
             <CardContent className="space-y-3">
               <div>
-                <p className="text-sm font-medium">New</p>
-                <Progress value={40} />
+                <p className="text-sm font-medium">Studied Count</p>
+                <Progress value={Math.min(100, (analytics?.analytics?.studiedCount || 0) % 100)} />
               </div>
               <div>
-                <p className="text-sm font-medium">Learning</p>
-                <Progress value={30} />
+                <p className="text-sm font-medium">Average Quiz Score</p>
+                <Progress value={Math.round(analytics?.quizStats?.averageScore || 0)} />
               </div>
               <div>
-                <p className="text-sm font-medium">Mastered</p>
-                <Progress value={30} />
+                <p className="text-sm font-medium">Overall Accuracy</p>
+                <Progress value={Math.round(analytics?.analytics?.quizAccuracy || 0)} />
               </div>
             </CardContent>
           </Card>
@@ -220,10 +334,10 @@ const AnalyticsPage: React.FC = () => {
               <CardTitle>Weekly Study Goal</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-lg font-semibold">12 / 15 Hours</p>
-              <Progress value={80} className="mt-3" />
+              <p className="text-lg font-semibold">{analytics?.analytics?.weeklyProgress || 0} / {analytics?.analytics?.weeklyGoal || 0} Hours</p>
+              <Progress value={weeklyGoalPct} className="mt-3" />
               <p className="text-sm text-muted-foreground mt-2">
-                Almost there! Just 3 hours left to hit your goal.
+                Keep it up! Update your goal in settings if needed.
               </p>
             </CardContent>
           </Card>
@@ -234,9 +348,9 @@ const AnalyticsPage: React.FC = () => {
             </CardHeader>
             <CardContent>
               <ul className="list-disc list-inside space-y-2 text-sm">
-                <li>🏆 Completed 100 Flashcards</li>
-                <li>🔥 7-Day Study Streak</li>
-                <li>⭐ Scored 90% on Quiz 4</li>
+                <li>🏆 Quizzes completed: {analytics?.quizStats?.totalQuizzes || 0}</li>
+                <li>🔥 Recent quizzes (7d): {analytics?.quizStats?.recentQuizzes || 0}</li>
+                <li>⭐ Best score: {Math.round(analytics?.quizStats?.bestScore || 0)}%</li>
               </ul>
             </CardContent>
           </Card>
