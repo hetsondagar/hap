@@ -21,7 +21,7 @@ import { useFlashcards } from "@/context/FlashcardsContext";
 import { departmentMap } from "@/utils/flashcardMapping"; // ✅ mapping
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Pencil } from "lucide-react";
-import { authAPI } from "@/lib/api";
+import { authAPI, flashcardAPI } from "@/lib/api";
 import { useNavigate } from "react-router-dom";
 
 // Use the full department names from mapping
@@ -39,6 +39,7 @@ const FlashcardsPage = () => {
   const [department, setDepartment] = useState("");
   const [year, setYear] = useState("");
   const [phase, setPhase] = useState("");
+  const [creating, setCreating] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -58,20 +59,29 @@ const FlashcardsPage = () => {
   }, [navigate]);
 
   const handleAddCard = () => {
-    if (front.trim() && back.trim() && department && year && phase) {
-      addCard({
-        front,
-        back,
-        department, // now matches mapping
-        year,
-        phase,
-      });
-      setFront("");
-      setBack("");
-      setDepartment("");
-      setYear("");
-      setPhase("");
-    }
+    (async () => {
+      if (front.trim() && back.trim() && department && year && phase) {
+        try {
+          setCreating(true);
+          // Map to backend department options loosely
+          const backendDept = department.includes('Computer') ? 'Computer Science' : 'Engineering';
+          await flashcardAPI.create({
+            front,
+            back,
+            department: backendDept,
+            tags: [year, phase],
+          } as any);
+          addCard({ front, back, department, year, phase });
+          setFront("");
+          setBack("");
+          setDepartment("");
+          setYear("");
+          setPhase("");
+        } finally {
+          setCreating(false);
+        }
+      }
+    })();
   };
 
   if (!authChecked) return null;
@@ -145,12 +155,9 @@ const FlashcardsPage = () => {
               </SelectContent>
             </Select>
 
-            <Button
-              onClick={handleAddCard}
-              className="bg-gradient-primary text-white"
-            >
-              Add Flashcard
-            </Button>
+              <Button onClick={handleAddCard} disabled={creating} className="bg-gradient-primary text-white">
+                {creating ? 'Saving…' : 'Add Flashcard'}
+              </Button>
           </div>
         </Card>
 

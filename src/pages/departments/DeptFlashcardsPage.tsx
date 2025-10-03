@@ -62,7 +62,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Pencil } from "lucide-react";
 import { departmentMap, yearMap, phaseMap } from "@/utils/flashcardMapping";
-import { authAPI } from "@/lib/api";
+import { authAPI, flashcardAPI } from "@/lib/api";
 
 const DeptFlashcardsPage = () => {
   const { deptId, yearId, phaseId } = useParams();
@@ -80,12 +80,43 @@ const DeptFlashcardsPage = () => {
   const yearName = yearId ? yearMap[yearId] : "";
   const phaseName = phaseId ? phaseMap[phaseId] : "";
 
-  const filteredCards = cards.filter(
-    (card) =>
-      card.department === departmentName &&
-      card.year === yearName &&
-      card.phase === phaseName
-  );
+  // Map UI department to backend enum
+  const backendDepartment = (() => {
+    if (!departmentName) return "Engineering";
+    if (departmentName.toLowerCase().includes("computer")) return "Computer Science";
+    if (departmentName.toLowerCase().includes("electrical")) return "Engineering";
+    if (departmentName.toLowerCase().includes("mechanical")) return "Engineering";
+    if (departmentName.toLowerCase().includes("civil")) return "Engineering";
+    if (departmentName.toLowerCase().includes("chemical")) return "Engineering";
+    return "Engineering";
+  })();
+
+  // Server-side list
+  const [serverCards, setServerCards] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const refreshFromServer = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await flashcardAPI.getByDepartment(backendDepartment);
+      const items = res?.data?.flashcards || res?.flashcards || [];
+      // Filter by year/phase tags
+      const yr = yearName?.toLowerCase();
+      const ph = phaseName?.toLowerCase();
+      const filtered = items.filter((fc: any) => {
+        const tags: string[] = fc?.tags || [];
+        const t = tags.map((x) => String(x).toLowerCase());
+        return (!yr || t.includes(yr)) && (!ph || t.includes(ph));
+      });
+      setServerCards(filtered);
+    } catch (e: any) {
+      setError(e?.message || "Failed to load flashcards");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // auth guard
   const [authChecked, setAuthChecked] = useState(false);
@@ -98,6 +129,7 @@ const DeptFlashcardsPage = () => {
         await authAPI.getProfile();
         if (!mounted) return;
         setAuthChecked(true);
+        await refreshFromServer();
       } catch {
         if (!mounted) return;
         navigate('/login');
@@ -111,13 +143,27 @@ const DeptFlashcardsPage = () => {
   const [front, setFront] = useState("");
   const [back, setBack] = useState("");
 
-  const handleCreate = () => {
+  const [creating, setCreating] = useState(false);
+  const handleCreate = async () => {
     if (!front.trim() || !back.trim()) return;
-    if (!departmentName || !yearName || !phaseName) return;
-    addCard({ front, back, department: departmentName, year: yearName, phase: phaseName });
-    setFront("");
-    setBack("");
-    setOpen(false);
+    if (!backendDepartment || !yearName || !phaseName) return;
+    try {
+      setCreating(true);
+      await flashcardAPI.create({
+        front,
+        back,
+        department: backendDepartment,
+        tags: [yearName, phaseName],
+      } as any);
+      await refreshFromServer();
+      // also add to local context for immediate UI consistency
+      addCard({ front, back, department: departmentName, year: yearName, phase: phaseName });
+      setFront("");
+      setBack("");
+      setOpen(false);
+    } finally {
+      setCreating(false);
+    }
   };
 
   if (!authChecked) return null;
@@ -128,22 +174,24 @@ const DeptFlashcardsPage = () => {
         {departmentName} - {yearName} - {phaseName}
       </h1>
 
-      {filteredCards.length === 0 ? (
+      {loading && <p className="text-sm text-muted-foreground">Loading…</p>}
+      {error && <p className="text-sm text-red-500">{error}</p>}
+      {!loading && serverCards.length === 0 ? (
         <p>No flashcards available yet.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {filteredCards.map((card) => {
+          {serverCards.map((card) => {
             const isFlipped = flippedCards.includes(card.id);
             return (
               <div
-                key={card.id}
+                key={card._id || card.id}
                 className="p-4 border rounded-xl bg-primary text-white transition-all duration-300 hover:shadow-lg cursor-pointer"
               >
                 <p>{isFlipped ? card.back : card.front}</p>
                 <Button
                   variant="outline"
                   className="mt-2 w-full"
-                  onClick={() => toggleFlip(card.id)}
+                  onClick={() => toggleFlip(card._id || card.id)}
                 >
                   Flip
                 </Button>
@@ -175,7 +223,7 @@ const DeptFlashcardsPage = () => {
             <Textarea placeholder="Back (Answer)" value={back} onChange={(e) => setBack(e.target.value)} />
             <div className="flex justify-end gap-2 pt-2">
               <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-              <Button onClick={handleCreate} className="bg-gradient-primary text-white">Create</Button>
+              <Button disabled={creating} onClick={handleCreate} className="bg-gradient-primary text-white">{creating ? 'Creating…' : 'Create'}</Button>
             </div>
           </div>
         </DialogContent>
