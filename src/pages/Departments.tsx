@@ -6,13 +6,16 @@ import { Badge } from "@/components/ui/badge";
 import { Star, BookOpen, RotateCcw, Users } from "lucide-react";
 import engineeringDepartments from "@/assets/engineering-departments.jpg";
 import { useFlashcards } from "@/context/FlashcardsContext"; // ✅ import context
+import { useNavigate } from "react-router-dom";
+
+
 
 const Departments = () => {
   const [activeDept, setActiveDept] = useState<string | null>(null);
   const [activeYear, setActiveYear] = useState<string | null>(null);
   const [activePhase, setActivePhase] = useState<string | null>(null);
   const [flippedIndex, setFlippedIndex] = useState<number | null>(null);
-
+  const navigate = useNavigate();
   const { cards } = useFlashcards(); // ✅ global cards
 
   const departments = [
@@ -180,12 +183,7 @@ const Departments = () => {
                 {/* Explore Flow */}
                 <Button
                   className="w-full mb-4"
-                  onClick={() => {
-                    setActiveDept(activeDept === dept.id ? null : dept.id);
-                    setActiveYear(null);
-                    setActivePhase(null);
-                    setFlippedIndex(null);
-                  }}
+                  onClick={() => navigate(`/departments/${dept.id}`)}
                 >
                   Explore Decks
                 </Button>
