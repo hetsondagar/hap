@@ -7,6 +7,7 @@ export interface IFlashcard extends Document {
   ownerId: mongoose.Types.ObjectId;
   difficulty: 'easy' | 'medium' | 'hard';
   tags: string[];
+  public?: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -59,7 +60,11 @@ const flashcardSchema = new Schema<IFlashcard>({
     type: String,
     trim: true,
     maxlength: [50, 'Tag cannot exceed 50 characters']
-  }]
+  }],
+  public: {
+    type: Boolean,
+    default: true
+  }
 }, {
   timestamps: true
 });
