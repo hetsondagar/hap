@@ -53,8 +53,8 @@
 // };
 
 // export default DeptFlashcardsPage;
-import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { useFlashcards } from "@/context/FlashcardsContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -62,9 +62,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Pencil } from "lucide-react";
 import { departmentMap, yearMap, phaseMap } from "@/utils/flashcardMapping";
+import { authAPI } from "@/lib/api";
 
 const DeptFlashcardsPage = () => {
   const { deptId, yearId, phaseId } = useParams();
+  const navigate = useNavigate();
   const { cards, addCard } = useFlashcards();
   const [flippedCards, setFlippedCards] = useState<number[]>([]); // store flipped card ids
 
@@ -85,6 +87,25 @@ const DeptFlashcardsPage = () => {
       card.phase === phaseName
   );
 
+  // auth guard
+  const [authChecked, setAuthChecked] = useState(false);
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) throw new Error('no token');
+        await authAPI.getProfile();
+        if (!mounted) return;
+        setAuthChecked(true);
+      } catch {
+        if (!mounted) return;
+        navigate('/login');
+      }
+    })();
+    return () => { mounted = false; };
+  }, [navigate]);
+
   // Create modal state
   const [open, setOpen] = useState(false);
   const [front, setFront] = useState("");
@@ -98,6 +119,8 @@ const DeptFlashcardsPage = () => {
     setBack("");
     setOpen(false);
   };
+
+  if (!authChecked) return null;
 
   return (
     <div className="min-h-screen p-8 bg-gradient-subtle">

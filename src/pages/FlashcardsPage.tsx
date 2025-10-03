@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "@/components/Header";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -21,6 +21,8 @@ import { useFlashcards } from "@/context/FlashcardsContext";
 import { departmentMap } from "@/utils/flashcardMapping"; // ✅ mapping
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Pencil } from "lucide-react";
+import { authAPI } from "@/lib/api";
+import { useNavigate } from "react-router-dom";
 
 // Use the full department names from mapping
 const departments = Object.values(departmentMap);
@@ -30,11 +32,30 @@ const phases = ["Mid-Semester", "End-Semester"];
 
 const FlashcardsPage = () => {
   const { cards, addCard, deleteCard } = useFlashcards();
+  const navigate = useNavigate();
+  const [authChecked, setAuthChecked] = useState(false);
   const [front, setFront] = useState("");
   const [back, setBack] = useState("");
   const [department, setDepartment] = useState("");
   const [year, setYear] = useState("");
   const [phase, setPhase] = useState("");
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) throw new Error('no token');
+        await authAPI.getProfile();
+        if (!mounted) return;
+        setAuthChecked(true);
+      } catch {
+        if (!mounted) return;
+        navigate('/login');
+      }
+    })();
+    return () => { mounted = false; };
+  }, [navigate]);
 
   const handleAddCard = () => {
     if (front.trim() && back.trim() && department && year && phase) {
@@ -52,6 +73,8 @@ const FlashcardsPage = () => {
       setPhase("");
     }
   };
+
+  if (!authChecked) return null;
 
   return (
     <div className="min-h-screen bg-gradient-subtle">
