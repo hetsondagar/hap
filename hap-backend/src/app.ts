@@ -25,15 +25,21 @@ const allowedOrigins = (process.env.FRONTEND_URLS || process.env.FRONTEND_URL ||
   .map((o) => o.trim())
   .filter(Boolean);
 
-app.use(cors({
-  origin: (origin, callback) => {
+const corsConfig = {
+  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
     if (!origin) return callback(null, true);
     if (allowedOrigins.includes(origin)) return callback(null, true);
     return callback(new Error(`CORS blocked for origin ${origin}`));
   },
   credentials: true,
-  optionsSuccessStatus: 200
-}));
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  optionsSuccessStatus: 204
+} as const;
+
+app.use(cors(corsConfig));
+// Explicitly handle preflight
+app.options('*', cors(corsConfig));
 
 // Rate limiting
 const limiter = rateLimit({
