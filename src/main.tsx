@@ -5,5 +5,5 @@ import { FlashcardsProvider } from "@/context/FlashcardsContext";
 
 createRoot(document.getElementById("root")!).render(
 <FlashcardsProvider>
-<App />
+  <App />
 </FlashcardsProvider>);
