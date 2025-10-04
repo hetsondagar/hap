@@ -16,16 +16,18 @@ services:
       - key: JWT_EXPIRES_IN
         value: 7d
       - key: FRONTEND_URL
-        value: https://your-vercel-app.vercel.app
+        value: https://hap-livid.vercel.app/
+      - key: MONGO_PASSWORD
+        value: pHIcuRsSyQLxEFsm
     # Database configuration (choose one)
     # For PostgreSQL (recommended)
-    # - key: DATABASE_URL
-    #   fromDatabase:
-    #     name: hap-flashcard-db
-    #     property: connectionString
+    - key: DATABASE_URL
+      fromDatabase:
+        name: hap-flashcard-db
+        property: connectionString
     # For MongoDB (alternative)
-    - key: MONGO_URI
-      value: mongodb+srv://<hetsondagar16_db_user>:<pHIcuRsSyQLxEFsm>@hap-flashcards-cluster.nt4agov.mongodb.net/?retryWrites=true&w=majority&appName=hap-flashcards-cluster
+    # - key: MONGO_URI
+    #   value: mongodb+srv://hetsondagar16_db_user:${MONGO_PASSWORD}@hap-flashcards-cluster.nt4agov.mongodb.net/hap-flashcard?retryWrites=true&w=majority&appName=hap-flashcards-cluster
 
 databases:
   - name: hap-flashcard-db
