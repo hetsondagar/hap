@@ -20,9 +20,11 @@ import {
 import { useFlashcards } from "@/context/FlashcardsContext";
 import { departmentMap } from "@/utils/flashcardMapping"; // ✅ mapping
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Pencil } from "lucide-react";
+import { Pencil, Plus, Sparkles } from "lucide-react";
 import { authAPI, flashcardAPI } from "@/lib/api";
 import { useNavigate } from "react-router-dom";
+import FlashcardGrid from "@/components/FlashcardGrid";
+import { Badge } from "@/components/ui/badge";
 
 // Use the full department names from mapping
 const departments = Object.values(departmentMap);
@@ -39,7 +41,9 @@ const FlashcardsPage = () => {
   const [department, setDepartment] = useState("");
   const [year, setYear] = useState("");
   const [phase, setPhase] = useState("");
+  const [difficulty, setDifficulty] = useState<"easy" | "medium" | "hard">("medium");
   const [creating, setCreating] = useState(false);
+  const [favorites, setFavorites] = useState<Set<string | number>>(new Set());
 
   useEffect(() => {
     let mounted = true;
@@ -71,17 +75,35 @@ const FlashcardsPage = () => {
             department: backendDept,
             tags: [year, phase],
           } as any);
-          addCard({ front, back, department, year, phase });
+          addCard({ front, back, department, year, phase, difficulty });
           setFront("");
           setBack("");
           setDepartment("");
           setYear("");
           setPhase("");
+          setDifficulty("medium");
         } finally {
           setCreating(false);
         }
       }
     })();
+  };
+
+  const handleToggleFavorite = (id: string | number) => {
+    setFavorites(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(id)) {
+        newSet.delete(id);
+      } else {
+        newSet.add(id);
+      }
+      return newSet;
+    });
+  };
+
+  const handleEdit = (id: string | number) => {
+    // TODO: Implement edit functionality
+    console.log('Edit card:', id);
   };
 
   if (!authChecked) return null;
@@ -99,181 +121,188 @@ const FlashcardsPage = () => {
           department, year, and exam phase for structured study.
         </p>
 
-        {/* Add Flashcard Form */}
-        <Card className="p-6 max-w-2xl mx-auto mb-12">
-          <h2 className="text-2xl font-semibold mb-4">Add New Flashcard</h2>
-          <div className="space-y-4">
-            <Input
-              placeholder="Front (Question)"
-              value={front}
-              onChange={(e) => setFront(e.target.value)}
-            />
-            <Textarea
-              placeholder="Back (Answer)"
-              value={back}
-              onChange={(e) => setBack(e.target.value)}
-            />
-            {/* Department */}
-            <Select onValueChange={setDepartment} value={department}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select Department" />
-              </SelectTrigger>
-              <SelectContent>
-                {departments.map((dept) => (
-                  <SelectItem key={dept} value={dept}>
-                    {dept}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+        {/* Enhanced Add Flashcard Form */}
+        <Card className="p-8 max-w-4xl mx-auto mb-12 bg-gradient-to-br from-white to-blue-50 border-2 border-blue-100">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-blue-100 rounded-lg">
+              <Sparkles className="h-6 w-6 text-blue-600" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-gray-800">Create Smart Flashcard</h2>
+              <p className="text-gray-600">Add difficulty level and organize your study materials</p>
+            </div>
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-2 block">Question</label>
+                <Input
+                  placeholder="What is the question?"
+                  value={front}
+                  onChange={(e) => setFront(e.target.value)}
+                  className="h-12"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-2 block">Answer</label>
+                <Textarea
+                  placeholder="What is the answer?"
+                  value={back}
+                  onChange={(e) => setBack(e.target.value)}
+                  className="min-h-[100px]"
+                />
+              </div>
+            </div>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-2 block">Department</label>
+                <Select onValueChange={setDepartment} value={department}>
+                  <SelectTrigger className="h-12">
+                    <SelectValue placeholder="Select Department" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {departments.map((dept) => (
+                      <SelectItem key={dept} value={dept}>
+                        {dept}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-            {/* Year */}
-            <Select onValueChange={setYear} value={year}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select Year" />
-              </SelectTrigger>
-              <SelectContent>
-                {years.map((y) => (
-                  <SelectItem key={y} value={y}>
-                    {y}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-sm font-medium text-gray-700 mb-2 block">Year</label>
+                  <Select onValueChange={setYear} value={year}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Year" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {years.map((y) => (
+                        <SelectItem key={y} value={y}>
+                          {y}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
 
-            {/* Exam Phase */}
-            <Select onValueChange={setPhase} value={phase}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select Exam Phase" />
-              </SelectTrigger>
-              <SelectContent>
-                {phases.map((p) => (
-                  <SelectItem key={p} value={p}>
-                    {p}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+                <div>
+                  <label className="text-sm font-medium text-gray-700 mb-2 block">Phase</label>
+                  <Select onValueChange={setPhase} value={phase}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Phase" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {phases.map((p) => (
+                        <SelectItem key={p} value={p}>
+                          {p}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
 
-              <Button onClick={handleAddCard} disabled={creating} className="bg-gradient-primary text-white">
-                {creating ? 'Saving…' : 'Add Flashcard'}
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-2 block">Difficulty</label>
+                <Select onValueChange={(value: "easy" | "medium" | "hard") => setDifficulty(value)} value={difficulty}>
+                  <SelectTrigger className="h-12">
+                    <SelectValue placeholder="Select Difficulty" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="easy">
+                      <div className="flex items-center gap-2">
+                        <span className="text-green-500">🟢</span>
+                        <span>Easy</span>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="medium">
+                      <div className="flex items-center gap-2">
+                        <span className="text-yellow-500">🟡</span>
+                        <span>Medium</span>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="hard">
+                      <div className="flex items-center gap-2">
+                        <span className="text-red-500">🔴</span>
+                        <span>Hard</span>
+                      </div>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <Button 
+                onClick={handleAddCard} 
+                disabled={creating || !front.trim() || !back.trim() || !department || !year || !phase} 
+                className="w-full h-12 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold"
+              >
+                {creating ? (
+                  <div className="flex items-center gap-2">
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                    Creating...
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <Plus className="h-4 w-4" />
+                    Create Flashcard
+                  </div>
+                )}
               </Button>
+            </div>
           </div>
         </Card>
 
-        {/* Flashcards by Department Tabs */}
-        <Tabs defaultValue={departments[0]} className="w-full">
-          <TabsList className="flex flex-wrap justify-center mb-8">
-            {departments.map((dept) => (
-              <TabsTrigger key={dept} value={dept}>
-                {dept}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-
-          {departments.map((dept) => (
-            <TabsContent key={dept} value={dept}>
-              <div className="grid md:grid-cols-2 gap-6">
-                {cards.filter((card) => card.department === dept).length === 0 ? (
-                  <p className="text-center text-muted-foreground w-full">
-                    No flashcards in {dept}.
-                  </p>
-                ) : (
-                  cards
-                    .filter((card) => card.department === dept)
-                    .map((card) => (
-                      <Card
-                        key={card.id}
-                        className="p-6 flex flex-col justify-between hover:shadow-lg transition"
-                      >
-                        <div>
-                          <h3 className="font-bold text-lg mb-2">{card.front}</h3>
-                          <p className="text-muted-foreground mb-4">{card.back}</p>
-                          <div className="text-sm text-muted-foreground">
-                            <strong>Year:</strong> {card.year} <br />
-                            <strong>Phase:</strong> {card.phase}
-                          </div>
-                        </div>
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          className="mt-4"
-                          onClick={() => deleteCard(card.id)}
-                        >
-                          Delete
-                        </Button>
-                      </Card>
-                    ))
-                )}
-              </div>
-            </TabsContent>
-          ))}
-        </Tabs>
+        {/* Enhanced Flashcard Grid */}
+        <div className="w-full">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-gray-800 mb-2">Your Study Collection</h2>
+            <p className="text-gray-600">Organize, search, and study your flashcards with advanced features</p>
+          </div>
+          
+          <FlashcardGrid
+            flashcards={cards.map(card => ({
+              id: card.id,
+              front: card.front,
+              back: card.back,
+              department: card.department,
+              year: card.year,
+              phase: card.phase,
+              difficulty: (card as any).difficulty || 'medium',
+              isFavorite: favorites.has(card.id)
+            }))}
+            onFlip={(id) => console.log('Flip card:', id)}
+            onDelete={deleteCard}
+            onEdit={handleEdit}
+            onToggleFavorite={handleToggleFavorite}
+          />
+        </div>
       </section>
 
-      {/* Floating Create Button and Modal */}
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger asChild>
+      {/* Enhanced Floating Create Button */}
+      <div className="fixed bottom-6 right-6 z-50">
+        <div className="relative group">
           <button
-            className="fixed bottom-6 right-6 w-12 h-12 rounded-full bg-primary text-white shadow-lg flex items-center justify-center hover:opacity-90"
+            className="w-14 h-14 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-110 flex items-center justify-center"
             aria-label="Create flashcard"
+            onClick={() => {
+              // Scroll to the form
+              document.querySelector('form')?.scrollIntoView({ behavior: 'smooth' });
+            }}
           >
-            <Pencil className="w-5 h-5" />
+            <Plus className="w-6 h-6" />
           </button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-[480px]">
-          <DialogHeader>
-            <DialogTitle>Create Flashcard</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-3">
-            <Input placeholder="Front (Question)" value={front} onChange={(e) => setFront(e.target.value)} />
-            <Textarea placeholder="Back (Answer)" value={back} onChange={(e) => setBack(e.target.value)} />
-            {/* Department */}
-            <Select onValueChange={setDepartment} value={department}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select Department" />
-              </SelectTrigger>
-              <SelectContent>
-                {departments.map((dept) => (
-                  <SelectItem key={dept} value={dept}>
-                    {dept}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {/* Year */}
-            <Select onValueChange={setYear} value={year}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select Year" />
-              </SelectTrigger>
-              <SelectContent>
-                {years.map((y) => (
-                  <SelectItem key={y} value={y}>
-                    {y}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {/* Exam Phase */}
-            <Select onValueChange={setPhase} value={phase}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select Exam Phase" />
-              </SelectTrigger>
-              <SelectContent>
-                {phases.map((p) => (
-                  <SelectItem key={p} value={p}>
-                    {p}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <div className="flex justify-end gap-2 pt-2">
-              <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-              <Button onClick={handleAddCard} className="bg-gradient-primary text-white">Create</Button>
-            </div>
+          
+          {/* Tooltip */}
+          <div className="absolute bottom-full right-0 mb-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+            Create New Flashcard
+            <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
           </div>
-        </DialogContent>
-      </Dialog>
+        </div>
+      </div>
     </div>
   );
 };

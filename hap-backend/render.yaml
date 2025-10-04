@@ -18,7 +18,7 @@ services:
       - key: FRONTEND_URL
         value: https://hap-livid.vercel.app/
       - key: MONGO_PASSWORD
-        value: SecurePassword123!
+        value: pHIcuRsSyQLxEFsm
     # Database configuration (choose one)
     # For PostgreSQL (recommended)
     # - key: DATABASE_URL

@@ -243,36 +243,68 @@ All colors MUST be HSL. Dark theme with aqua-blue to purple gradient.
   to { box-shadow: 0 0 40px hsl(var(--secondary) / 0.6); }
 }
 /* 3D flip helpers for flashcards */
-.card-perspective {
-  perspective: 1200px;
+.perspective-1000 {
+  perspective: 1000px;
 }
 
-.card-3d {
-  position: relative;
-  width: 100%;
-  height: 100%;
+.transform-style-preserve-3d {
   transform-style: preserve-3d;
-  transition: transform 0.6s cubic-bezier(.2,.8,.2,1);
-  -webkit-transform-style: preserve-3d;
-  -webkit-backface-visibility: hidden;
 }
 
-.card-3d.is-flipped {
-  transform: rotateY(180deg);
-}
-
-.card-face {
-  position: absolute;
-  inset: 0;
+.backface-hidden {
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 0.75rem; /* matches rounded-xl */
-  padding: 1rem;
 }
 
-.card-face.back {
+.rotate-y-180 {
   transform: rotateY(180deg);
+}
+
+.rotate-y-0 {
+  transform: rotateY(0deg);
+}
+
+/* Enhanced flashcard animations */
+@keyframes card-flip {
+  0% { transform: rotateY(0deg); }
+  50% { transform: rotateY(90deg) scale(0.95); }
+  100% { transform: rotateY(180deg); }
+}
+
+@keyframes card-flip-reverse {
+  0% { transform: rotateY(180deg); }
+  50% { transform: rotateY(90deg) scale(0.95); }
+  100% { transform: rotateY(0deg); }
+}
+
+.card-flip-animation {
+  animation: card-flip 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.card-flip-reverse-animation {
+  animation: card-flip-reverse 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Stagger animation for grid items */
+.animate-in {
+  animation: fade-in 0.5s ease-out forwards;
+}
+
+.fade-in-0 {
+  animation: fade-in 0.5s ease-out forwards;
+}
+
+.slide-in-from-bottom-4 {
+  animation: slide-in-from-bottom 0.5s ease-out forwards;
+}
+
+@keyframes slide-in-from-bottom {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
