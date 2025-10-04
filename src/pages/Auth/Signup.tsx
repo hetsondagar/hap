@@ -169,23 +169,23 @@ const Signup: React.FC = () => {
       <SignupValidationGuide />
       <form className="space-y-6" onSubmit={handleSubmit}>
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-3 flex items-center gap-2">
-            <AlertCircle className="h-4 w-4 text-red-500" />
-            <p className="text-sm text-red-600">{error}</p>
+          <div className="bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg p-3 flex items-center gap-2">
+            <AlertCircle className="h-4 w-4 text-red-500 dark:text-red-400" />
+            <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
           </div>
         )}
 
         {/* Username Field */}
         <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700">Username</label>
+          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Username</label>
           <div className="relative">
             <Input 
               type="text" 
               placeholder="Enter your username" 
               className={cn(
-                "bg-background",
-                touched.username && validationErrors.username && "border-red-500 focus:border-red-500",
-                touched.username && !validationErrors.username && "border-green-500 focus:border-green-500"
+                "bg-background dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400",
+                touched.username && validationErrors.username && "border-red-500 dark:border-red-400 focus:border-red-500 dark:focus:border-red-400",
+                touched.username && !validationErrors.username && "border-green-500 dark:border-green-400 focus:border-green-500 dark:focus:border-green-400"
               )}
               value={username} 
               onChange={(e) => handleFieldChange('username', e.target.value)}
@@ -194,21 +194,21 @@ const Signup: React.FC = () => {
             {touched.username && (
               <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
                 {validationErrors.username ? (
-                  <X className="h-4 w-4 text-red-500" />
+                  <X className="h-4 w-4 text-red-500 dark:text-red-400" />
                 ) : (
-                  <Check className="h-4 w-4 text-green-500" />
+                  <Check className="h-4 w-4 text-green-500 dark:text-green-400" />
                 )}
               </div>
             )}
           </div>
           {touched.username && validationErrors.username && (
-            <p className="text-sm text-red-500 flex items-center gap-1">
+            <p className="text-sm text-red-500 dark:text-red-400 flex items-center gap-1">
               <AlertCircle className="h-3 w-3" />
               {validationErrors.username}
             </p>
           )}
           {touched.username && !validationErrors.username && (
-            <p className="text-sm text-green-600 flex items-center gap-1">
+            <p className="text-sm text-green-600 dark:text-green-400 flex items-center gap-1">
               <Check className="h-3 w-3" />
               Username looks good!
             </p>
@@ -217,15 +217,15 @@ const Signup: React.FC = () => {
 
         {/* Email Field */}
         <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700">Email</label>
+          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
           <div className="relative">
             <Input 
               type="email" 
               placeholder="Enter your email" 
               className={cn(
-                "bg-background",
-                touched.email && validationErrors.email && "border-red-500 focus:border-red-500",
-                touched.email && !validationErrors.email && "border-green-500 focus:border-green-500"
+                "bg-background dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400",
+                touched.email && validationErrors.email && "border-red-500 dark:border-red-400 focus:border-red-500 dark:focus:border-red-400",
+                touched.email && !validationErrors.email && "border-green-500 dark:border-green-400 focus:border-green-500 dark:focus:border-green-400"
               )}
               value={email} 
               onChange={(e) => handleFieldChange('email', e.target.value)}
@@ -234,21 +234,21 @@ const Signup: React.FC = () => {
             {touched.email && (
               <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
                 {validationErrors.email ? (
-                  <X className="h-4 w-4 text-red-500" />
+                  <X className="h-4 w-4 text-red-500 dark:text-red-400" />
                 ) : (
-                  <Check className="h-4 w-4 text-green-500" />
+                  <Check className="h-4 w-4 text-green-500 dark:text-green-400" />
                 )}
               </div>
             )}
           </div>
           {touched.email && validationErrors.email && (
-            <p className="text-sm text-red-500 flex items-center gap-1">
+            <p className="text-sm text-red-500 dark:text-red-400 flex items-center gap-1">
               <AlertCircle className="h-3 w-3" />
               {validationErrors.email}
             </p>
           )}
           {touched.email && !validationErrors.email && (
-            <p className="text-sm text-green-600 flex items-center gap-1">
+            <p className="text-sm text-green-600 dark:text-green-400 flex items-center gap-1">
               <Check className="h-3 w-3" />
               Email looks good!
             </p>
@@ -257,15 +257,15 @@ const Signup: React.FC = () => {
 
         {/* Password Field */}
         <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700">Password</label>
+          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
           <div className="relative">
             <Input 
               type={showPassword ? "text" : "password"}
               placeholder="Create a strong password" 
               className={cn(
-                "bg-background pr-10",
-                touched.password && validationErrors.password && "border-red-500 focus:border-red-500",
-                touched.password && !validationErrors.password && "border-green-500 focus:border-green-500"
+                "bg-background dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 pr-10",
+                touched.password && validationErrors.password && "border-red-500 dark:border-red-400 focus:border-red-500 dark:focus:border-red-400",
+                touched.password && !validationErrors.password && "border-green-500 dark:border-green-400 focus:border-green-500 dark:focus:border-green-400"
               )}
               value={password} 
               onChange={(e) => handleFieldChange('password', e.target.value)}
@@ -273,7 +273,7 @@ const Signup: React.FC = () => {
             />
             <button
               type="button"
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
               onClick={() => setShowPassword(!showPassword)}
             >
               {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -285,36 +285,36 @@ const Signup: React.FC = () => {
             <div className="flex items-center gap-2 text-xs">
               <div className={cn(
                 "w-2 h-2 rounded-full",
-                password.length >= 6 ? "bg-green-500" : "bg-gray-300"
+                password.length >= 6 ? "bg-green-500 dark:bg-green-400" : "bg-gray-300 dark:bg-gray-600"
               )} />
-              <span className={password.length >= 6 ? "text-green-600" : "text-gray-500"}>
+              <span className={password.length >= 6 ? "text-green-600 dark:text-green-400" : "text-gray-500 dark:text-gray-400"}>
                 At least 6 characters
               </span>
             </div>
             <div className="flex items-center gap-2 text-xs">
               <div className={cn(
                 "w-2 h-2 rounded-full",
-                /(?=.*[a-z])/.test(password) ? "bg-green-500" : "bg-gray-300"
+                /(?=.*[a-z])/.test(password) ? "bg-green-500 dark:bg-green-400" : "bg-gray-300 dark:bg-gray-600"
               )} />
-              <span className={/(?=.*[a-z])/.test(password) ? "text-green-600" : "text-gray-500"}>
+              <span className={/(?=.*[a-z])/.test(password) ? "text-green-600 dark:text-green-400" : "text-gray-500 dark:text-gray-400"}>
                 One lowercase letter
               </span>
             </div>
             <div className="flex items-center gap-2 text-xs">
               <div className={cn(
                 "w-2 h-2 rounded-full",
-                /(?=.*[A-Z])/.test(password) ? "bg-green-500" : "bg-gray-300"
+                /(?=.*[A-Z])/.test(password) ? "bg-green-500 dark:bg-green-400" : "bg-gray-300 dark:bg-gray-600"
               )} />
-              <span className={/(?=.*[A-Z])/.test(password) ? "text-green-600" : "text-gray-500"}>
+              <span className={/(?=.*[A-Z])/.test(password) ? "text-green-600 dark:text-green-400" : "text-gray-500 dark:text-gray-400"}>
                 One uppercase letter
               </span>
             </div>
             <div className="flex items-center gap-2 text-xs">
               <div className={cn(
                 "w-2 h-2 rounded-full",
-                /(?=.*\d)/.test(password) ? "bg-green-500" : "bg-gray-300"
+                /(?=.*\d)/.test(password) ? "bg-green-500 dark:bg-green-400" : "bg-gray-300 dark:bg-gray-600"
               )} />
-              <span className={/(?=.*\d)/.test(password) ? "text-green-600" : "text-gray-500"}>
+              <span className={/(?=.*\d)/.test(password) ? "text-green-600 dark:text-green-400" : "text-gray-500 dark:text-gray-400"}>
                 One number
               </span>
             </div>
@@ -324,20 +324,20 @@ const Signup: React.FC = () => {
           {password && (
             <div className="space-y-1">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-gray-600">Password strength:</span>
+                <span className="text-gray-600 dark:text-gray-400">Password strength:</span>
                 <span className={cn(
                   "font-medium",
-                  passwordStrength <= 2 ? "text-red-600" : 
-                  passwordStrength <= 3 ? "text-yellow-600" : "text-green-600"
+                  passwordStrength <= 2 ? "text-red-600 dark:text-red-400" : 
+                  passwordStrength <= 3 ? "text-yellow-600 dark:text-yellow-400" : "text-green-600 dark:text-green-400"
                 )}>
                   {strengthLabels[passwordStrength - 1] || 'Very Weak'}
                 </span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                 <div 
                   className={cn(
                     "h-2 rounded-full transition-all duration-300",
-                    strengthColors[passwordStrength - 1] || "bg-gray-300"
+                    strengthColors[passwordStrength - 1] || "bg-gray-300 dark:bg-gray-600"
                   )}
                   style={{ width: `${(passwordStrength / 5) * 100}%` }}
                 />
@@ -346,13 +346,13 @@ const Signup: React.FC = () => {
           )}
 
           {touched.password && validationErrors.password && (
-            <p className="text-sm text-red-500 flex items-center gap-1">
+            <p className="text-sm text-red-500 dark:text-red-400 flex items-center gap-1">
               <AlertCircle className="h-3 w-3" />
               {validationErrors.password}
             </p>
           )}
           {touched.password && !validationErrors.password && (
-            <p className="text-sm text-green-600 flex items-center gap-1">
+            <p className="text-sm text-green-600 dark:text-green-400 flex items-center gap-1">
               <Check className="h-3 w-3" />
               Password meets all requirements!
             </p>
