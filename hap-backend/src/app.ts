@@ -10,6 +10,7 @@ import flashcardRoutes from './routes/flashcardRoutes';
 import quizRoutes from './routes/quizRoutes';
 import communityRoutes from './routes/communityRoutes';
 import analyticsRoutes from './routes/analyticsRoutes';
+import subjectRoutes from './routes/subjectRoutes';
 
 // Load environment variables
 dotenv.config();
@@ -71,6 +72,7 @@ app.use('/api/flashcards', flashcardRoutes);
 app.use('/api/quizzes', quizRoutes);
 app.use('/api/community', communityRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/subjects', subjectRoutes);
 
 // 404 handler
 app.use('*', (req: Request, res: Response) => {

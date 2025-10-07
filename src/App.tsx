@@ -18,10 +18,9 @@ import CommunityPage from "./pages/CommunityPage";
 import DeckDetail from "./pages/community/DeckDetail";
 import AnalyticsPage from "./pages/AnalyticsPage";
 
-import Departments from "./pages/Departments";
-import DepartmentPage from "./pages/departments/DepartmentPage";
-import YearsPage from "./pages/departments/YearsPage";
-import DeptFlashcardsPage from "./pages/departments/DeptFlashcardsPage"; // fixed import
+import SubjectsPage from "./pages/SubjectsPage";
+import SubjectFlashcardsPage from "./pages/SubjectFlashcardsPage";
+import CreateFlashcardPage from "./pages/CreateFlashcardPage";
 
 // Auth pages
 import Login from "@/pages/Auth/Login";
@@ -47,14 +46,10 @@ const App = () => (
             <Route path="/community/:id" element={<DeckDetail />} />
             <Route path="/analytics" element={<AnalyticsPage />} />
 
-            {/* Department flow */}
-            <Route path="/departments" element={<Departments />} />
-            <Route path="/departments/:deptId" element={<DepartmentPage />} />
-            <Route path="/departments/:deptId/:yearId" element={<YearsPage />} />
-            <Route
-              path="/departments/:deptId/:yearId/:phaseId"
-              element={<DeptFlashcardsPage />}
-            />
+            {/* Subjects flow */}
+            <Route path="/subjects" element={<SubjectsPage />} />
+            <Route path="/subjects/:subjectId/flashcards" element={<SubjectFlashcardsPage />} />
+            <Route path="/flashcards/create" element={<CreateFlashcardPage />} />
 
             {/* Auth pages */}
             <Route path="/login" element={<Login />} />

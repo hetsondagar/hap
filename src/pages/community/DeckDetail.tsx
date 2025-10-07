@@ -117,7 +117,7 @@ const DeckDetail: React.FC = () => {
   if (error) {
     return (
       <div className="p-6">
-        <p className="text-sm text-red-500 mb-3">{error}</p>
+        <p className="text-sm text-destructive mb-3">{error}</p>
         <Button variant="outline" onClick={() => navigate(-1)}>Back</Button>
       </div>
     );

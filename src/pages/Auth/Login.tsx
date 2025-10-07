@@ -22,11 +22,18 @@ const Login: React.FC = () => {
       const token = res?.token || res?.data?.token;
       if (!token) throw new Error(res?.message || "Login failed");
       localStorage.setItem("token", token);
-      // Persist user id for ownership checks in UI
-      const profile = await authAPI.getProfile();
-      const userId = profile?.user?._id || profile?.data?.user?.id || profile?.id || profile?._id;
-      if (userId) localStorage.setItem('userId', String(userId));
-      navigate("/analytics");
+      
+      // Store user info including department and year
+      const userData = res?.data?.user || res?.user;
+      if (userData) {
+        localStorage.setItem('userId', String(userData.id));
+        localStorage.setItem("userInfo", JSON.stringify({ 
+          department: userData.department, 
+          year: userData.year 
+        }));
+      }
+      
+      navigate("/subjects");
     } catch (e: any) {
       setError(e?.message || "Login failed");
     } finally {
@@ -45,15 +52,29 @@ const Login: React.FC = () => {
     >
       <form className="space-y-4" onSubmit={handleSubmit}>
         {error && (
-          <p className="text-sm text-red-500">{error}</p>
+          <p className="text-sm text-destructive">{error}</p>
         )}
-        <Input type="email" placeholder="Email" className="bg-background" value={email} onChange={(e) => setEmail(e.target.value)} />
-        <Input type="password" placeholder="Password" className="bg-background" value={password} onChange={(e) => setPassword(e.target.value)} />
-        <Button disabled={loading} type="submit" className="w-full bg-blue-600 hover:bg-blue-700">{loading ? "Logging in..." : "Login"}</Button>
+        <Input 
+          type="email" 
+          placeholder="Email" 
+          className="bg-background text-foreground placeholder:text-muted-foreground" 
+          value={email} 
+          onChange={(e) => setEmail(e.target.value)} 
+        />
+        <Input 
+          type="password" 
+          placeholder="Password" 
+          className="bg-background text-foreground placeholder:text-muted-foreground" 
+          value={password} 
+          onChange={(e) => setPassword(e.target.value)} 
+        />
+        <Button disabled={loading} type="submit" className="w-full bg-gradient-primary hover:opacity-90 text-white font-semibold">
+          {loading ? "Logging in..." : "Login"}
+        </Button>
       </form>
       <p className="mt-4 text-center text-sm text-muted-foreground">
         Don’t have an account?{" "}
-        <Link to="/signup" className="text-blue-500 hover:underline">
+        <Link to="/signup" className="text-primary hover:underline">
           Sign Up
         </Link>
       </p>

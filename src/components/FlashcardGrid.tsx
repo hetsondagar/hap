@@ -107,23 +107,23 @@ const FlashcardGrid: React.FC<FlashcardGridProps> = ({
   return (
     <div className={cn("space-y-6", className)}>
       {/* Search and Filter Bar */}
-      <div className="bg-white dark:bg-gray-900 rounded-lg border p-4 shadow-sm">
+      <div className="bg-card rounded-lg border border-border p-4 shadow-sm">
         <div className="flex flex-col lg:flex-row gap-4">
           {/* Search */}
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search flashcards..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 bg-background dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-foreground placeholder:text-gray-500 dark:placeholder:text-gray-400"
+              className="pl-10 bg-background text-foreground placeholder:text-muted-foreground"
             />
           </div>
 
           {/* Filters */}
           <div className="flex flex-wrap gap-2">
             <Select value={filterDepartment} onValueChange={setFilterDepartment}>
-              <SelectTrigger className="w-40 bg-background dark:bg-gray-800 border-gray-300 dark:border-gray-700">
+              <SelectTrigger className="w-40 bg-background">
                 <SelectValue placeholder="Department" />
               </SelectTrigger>
               <SelectContent>
@@ -135,7 +135,7 @@ const FlashcardGrid: React.FC<FlashcardGridProps> = ({
             </Select>
 
             <Select value={filterDifficulty} onValueChange={setFilterDifficulty}>
-              <SelectTrigger className="w-32 bg-background dark:bg-gray-800 border-gray-300 dark:border-gray-700">
+              <SelectTrigger className="w-32 bg-background">
                 <SelectValue placeholder="Difficulty" />
               </SelectTrigger>
               <SelectContent>
@@ -171,32 +171,32 @@ const FlashcardGrid: React.FC<FlashcardGridProps> = ({
         {/* Active Filters */}
         {activeFiltersCount > 0 && (
           <div className="flex items-center gap-2 mt-3 pt-3 border-t">
-            <span className="text-sm text-gray-500">Active filters:</span>
+            <span className="text-sm text-muted-foreground">Active filters:</span>
             {searchTerm && (
               <Badge variant="secondary" className="flex items-center gap-1">
                 Search: "{searchTerm}"
-                <button onClick={() => setSearchTerm('')} className="ml-1 hover:text-red-500">×</button>
+                <button onClick={() => setSearchTerm('')} className="ml-1 hover:text-destructive">×</button>
               </Badge>
             )}
             {filterDepartment !== 'all' && (
               <Badge variant="secondary" className="flex items-center gap-1">
                 Department: {filterDepartment}
-                <button onClick={() => setFilterDepartment('all')} className="ml-1 hover:text-red-500">×</button>
+                <button onClick={() => setFilterDepartment('all')} className="ml-1 hover:text-destructive">×</button>
               </Badge>
             )}
             {filterDifficulty !== 'all' && (
               <Badge variant="secondary" className="flex items-center gap-1">
                 Difficulty: {filterDifficulty}
-                <button onClick={() => setFilterDifficulty('all')} className="ml-1 hover:text-red-500">×</button>
+                <button onClick={() => setFilterDifficulty('all')} className="ml-1 hover:text-destructive">×</button>
               </Badge>
             )}
             {showFavoritesOnly && (
               <Badge variant="secondary" className="flex items-center gap-1">
                 Favorites only
-                <button onClick={() => setShowFavoritesOnly(false)} className="ml-1 hover:text-red-500">×</button>
+                <button onClick={() => setShowFavoritesOnly(false)} className="ml-1 hover:text-destructive">×</button>
               </Badge>
             )}
-            <Button variant="ghost" size="sm" onClick={clearFilters} className="text-gray-500">
+            <Button variant="ghost" size="sm" onClick={clearFilters} className="text-muted-foreground">
               Clear all
             </Button>
           </div>

@@ -258,7 +258,7 @@ export default function QuizPage() {
                   </Button>
                   <Button
                     onClick={() => handleAnswer(false)}
-                    className="flex-1 bg-red-500 text-white"
+                    className="flex-1 bg-destructive text-destructive-foreground"
                   >
                     I was Wrong
                   </Button>
@@ -282,7 +282,7 @@ export default function QuizPage() {
                         isSelected
                           ? isCorrect
                             ? "bg-green-500 text-white"
-                            : "bg-red-500 text-white"
+                            : "bg-destructive text-destructive-foreground"
                           : ""
                       }`}
                       onClick={() => {
@@ -316,7 +316,7 @@ export default function QuizPage() {
                     onClick={() =>
                       handleAnswer(tfStatement !== quizCards[currentQ].back)
                     }
-                    className="flex-1 bg-red-500 text-white"
+                    className="flex-1 bg-destructive text-destructive-foreground"
                   >
                     False
                   </Button>

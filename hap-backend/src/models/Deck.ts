@@ -16,6 +16,8 @@ export interface IDeck extends Document {
   comments: IComment[];
   creatorId: mongoose.Types.ObjectId;
   department: string;
+  year: string;
+  subjectId: mongoose.Types.ObjectId;
   tags: string[];
   difficulty: 'beginner' | 'intermediate' | 'advanced';
   createdAt: Date;
@@ -78,22 +80,28 @@ const deckSchema = new Schema<IDeck>({
     type: String,
     required: [true, 'Department is required'],
     enum: [
-      'Computer Science',
-      'Mathematics',
-      'Physics',
-      'Chemistry',
-      'Biology',
-      'Engineering',
-      'Medicine',
-      'Business',
-      'Literature',
-      'History',
-      'Geography',
-      'Art',
-      'Music',
-      'Sports',
-      'Other'
+      'cse',
+      'mechanical',
+      'electrical',
+      'chemical',
+      'civil',
+      'other'
     ]
+  },
+  year: {
+    type: String,
+    required: [true, 'Year is required'],
+    enum: [
+      '1st',
+      '2nd',
+      '3rd',
+      '4th'
+    ]
+  },
+  subjectId: {
+    type: Schema.Types.ObjectId,
+    ref: 'Subject',
+    required: [true, 'Subject is required']
   },
   tags: [{
     type: String,
@@ -111,7 +119,8 @@ const deckSchema = new Schema<IDeck>({
 
 // Indexes for efficient queries
 deckSchema.index({ creatorId: 1 });
-deckSchema.index({ public: 1, department: 1 });
+deckSchema.index({ public: 1, department: 1, year: 1 });
+deckSchema.index({ subjectId: 1 });
 deckSchema.index({ likes: 1 });
 deckSchema.index({ tags: 1 });
 deckSchema.index({ createdAt: -1 });

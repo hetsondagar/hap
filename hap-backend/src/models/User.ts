@@ -6,6 +6,8 @@ export interface IUser extends Document {
   email: string;
   passwordHash: string;
   bio?: string;
+  department: string;
+  year: string;
   followers: mongoose.Types.ObjectId[];
   following: mongoose.Types.ObjectId[];
   badges: string[];
@@ -40,6 +42,28 @@ const userSchema = new Schema<IUser>({
     type: String,
     maxlength: [500, 'Bio cannot exceed 500 characters'],
     default: ''
+  },
+  department: {
+    type: String,
+    required: [true, 'Department is required'],
+    enum: [
+      'cse',
+      'mechanical',
+      'electrical',
+      'chemical',
+      'civil',
+      'other'
+    ]
+  },
+  year: {
+    type: String,
+    required: [true, 'Year is required'],
+    enum: [
+      '1st',
+      '2nd',
+      '3rd',
+      '4th'
+    ]
   },
   followers: [{
     type: Schema.Types.ObjectId,

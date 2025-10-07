@@ -177,7 +177,7 @@ const AnalyticsPage: React.FC = () => {
             <CardTitle>Error</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-red-500">{error}</p>
+            <p className="text-sm text-destructive">{error}</p>
           </CardContent>
         </Card>
       )}

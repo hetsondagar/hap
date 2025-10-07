@@ -42,10 +42,10 @@ const EnhancedFlashcard: React.FC<EnhancedFlashcardProps> = ({
 
   const getDifficultyColor = (diff: string) => {
     switch (diff) {
-      case 'easy': return 'bg-green-100 text-green-800 border-green-200';
-      case 'medium': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'hard': return 'bg-red-100 text-red-800 border-red-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'easy': return 'bg-success/10 text-success border-success/20';
+      case 'medium': return 'bg-warning/10 text-warning border-warning/20';
+      case 'hard': return 'bg-destructive/10 text-destructive border-destructive/20';
+      default: return 'bg-muted text-muted-foreground border-border';
     }
   };
 
@@ -90,14 +90,14 @@ const EnhancedFlashcard: React.FC<EnhancedFlashcardProps> = ({
               "absolute inset-0 w-full h-full backface-hidden",
               "flex flex-col justify-between p-6",
               "bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-950/30 dark:to-indigo-950/20",
-              "border border-blue-200 dark:border-blue-900/40"
+              "border border-primary/20"
             )}
           >
             {/* Header */}
             <div className="flex items-start justify-between">
               <div className="flex flex-wrap gap-2">
                 {department && (
-                <Badge variant="secondary" className="text-xs dark:bg-gray-700 dark:text-gray-200">
+                <Badge variant="secondary" className="text-xs">
                     {department}
                   </Badge>
                 )}
@@ -122,7 +122,7 @@ const EnhancedFlashcard: React.FC<EnhancedFlashcardProps> = ({
                     <Star 
                       className={cn(
                         "h-3 w-3",
-                        isFavorite ? "fill-yellow-400 text-yellow-400" : "text-gray-400"
+                        isFavorite ? "fill-warning text-warning" : "text-muted-foreground"
                       )} 
                     />
                   </Button>
@@ -137,14 +137,14 @@ const EnhancedFlashcard: React.FC<EnhancedFlashcardProps> = ({
                       onEdit(id);
                     }}
                   >
-                    <Edit3 className="h-3 w-3 text-gray-400" />
+                    <Edit3 className="h-3 w-3 text-muted-foreground" />
                   </Button>
                 )}
                 {onDelete && (
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-6 w-6 p-0 hover:text-red-500"
+                    className="h-6 w-6 p-0 hover:text-destructive"
                     onClick={(e) => {
                       e.stopPropagation();
                       onDelete(id);
@@ -160,7 +160,7 @@ const EnhancedFlashcard: React.FC<EnhancedFlashcardProps> = ({
             <div className="flex-1 flex items-center justify-center">
               <div className="text-center">
                 <div className="text-4xl mb-4">❓</div>
-                <h3 className="text-lg font-semibold text-gray-800 leading-relaxed">
+                <h3 className="text-lg font-semibold text-foreground leading-relaxed">
                   {front}
                 </h3>
               </div>
@@ -168,10 +168,10 @@ const EnhancedFlashcard: React.FC<EnhancedFlashcardProps> = ({
 
             {/* Footer */}
             <div className="flex items-center justify-between">
-              <div className="text-xs text-gray-500">
+              <div className="text-xs text-muted-foreground">
                 {year && phase && `${year} • ${phase}`}
               </div>
-              <div className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400">
+              <div className="flex items-center gap-2 text-sm text-primary">
                 <Eye className="h-4 w-4" />
                 <span>Click to reveal</span>
               </div>
@@ -214,7 +214,7 @@ const EnhancedFlashcard: React.FC<EnhancedFlashcardProps> = ({
                     <Star 
                       className={cn(
                         "h-3 w-3",
-                        isFavorite ? "fill-yellow-400 text-yellow-400" : "text-gray-400"
+                        isFavorite ? "fill-warning text-warning" : "text-muted-foreground"
                       )} 
                     />
                   </Button>
@@ -229,14 +229,14 @@ const EnhancedFlashcard: React.FC<EnhancedFlashcardProps> = ({
                       onEdit(id);
                     }}
                   >
-                    <Edit3 className="h-3 w-3 text-gray-400" />
+                    <Edit3 className="h-3 w-3 text-muted-foreground" />
                   </Button>
                 )}
                 {onDelete && (
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-6 w-6 p-0 hover:text-red-500"
+                    className="h-6 w-6 p-0 hover:text-destructive"
                     onClick={(e) => {
                       e.stopPropagation();
                       onDelete(id);
@@ -252,7 +252,7 @@ const EnhancedFlashcard: React.FC<EnhancedFlashcardProps> = ({
             <div className="flex-1 flex items-center justify-center">
               <div className="text-center">
                 <div className="text-4xl mb-4">💡</div>
-                <p className="text-lg font-medium text-gray-800 leading-relaxed">
+                <p className="text-lg font-medium text-foreground leading-relaxed">
                   {back}
                 </p>
               </div>
@@ -260,7 +260,7 @@ const EnhancedFlashcard: React.FC<EnhancedFlashcardProps> = ({
 
             {/* Footer */}
             <div className="flex items-center justify-between">
-              <div className="text-xs text-gray-500">
+              <div className="text-xs text-muted-foreground">
                 {year && phase && `${year} • ${phase}`}
               </div>
               <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400">

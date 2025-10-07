@@ -8,13 +8,15 @@ import { communityAPI } from "@/lib/api";
 import CreateDeckDialog from "./community/CreateDeckDialog";
 import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
-import { Heart, MessageSquare, Loader2 } from "lucide-react";
+import { Heart, MessageSquare, Loader2, Users } from "lucide-react";
 
 type Deck = {
   _id: string;
   title?: string;
   description?: string;
   department?: string;
+  year?: string;
+  subjectId?: string;
   difficulty?: string;
   tags?: string[];
   likes?: any[] | number;
@@ -41,9 +43,21 @@ const CommunityPage: React.FC = () => {
   const [query, setQuery] = useState("");
   const [department, setDepartment] = useState<string | undefined>(undefined);
   const [sortBy, setSortBy] = useState<string | undefined>("trending");
+  const [userInfo, setUserInfo] = useState<{ department: string; year: string } | null>(null);
 
   const likeCount = (d: Deck) => (Array.isArray(d.likes) ? d.likes.length : Number(d.likes || 0));
   const commentCount = (d: Deck) => (Array.isArray(d.comments) ? d.comments.length : Number(d.comments || 0));
+
+  useEffect(() => {
+    // Get user info from localStorage
+    const storedUserInfo = localStorage.getItem("userInfo");
+    if (storedUserInfo) {
+      const user = JSON.parse(storedUserInfo);
+      setUserInfo({ department: user.department, year: user.year });
+      // Set department filter to user's department by default
+      setDepartment(user.department);
+    }
+  }, []);
 
   const loadDecks = async () => {
     try {
@@ -64,7 +78,11 @@ const CommunityPage: React.FC = () => {
           setDecks([]);
         }
       } else {
-        const res = await communityAPI.getDecks({ department, sortBy });
+        const res = await communityAPI.getDecks({ 
+          department: department || userInfo?.department, 
+          year: userInfo?.year,
+          sortBy 
+        });
         const items: Deck[] = res?.data?.decks || res?.decks || res?.data || res || [];
         setDecks(items);
       }
@@ -97,10 +115,20 @@ const CommunityPage: React.FC = () => {
 
   return (
     <div className="p-6 space-y-10">
-      <h1 className="text-3xl font-bold text-primary">Community Sharing</h1>
-      <p className="text-muted-foreground">
-        Share flashcards with peers and explore community-created decks.
-      </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-primary">Community Sharing</h1>
+          <p className="text-muted-foreground">
+            Share flashcards with peers and explore community-created decks.
+          </p>
+        </div>
+        {userInfo && (
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Users className="h-4 w-4" />
+            <span>Showing decks for {userInfo.department.toUpperCase()} - {userInfo.year} Year</span>
+          </div>
+        )}
+      </div>
 
       {/* Content Discovery */}
       <section className="space-y-4">
@@ -139,7 +167,7 @@ const CommunityPage: React.FC = () => {
                     </div>
                   )}
                   {error && (
-                    <div className="col-span-full text-sm text-red-500">{error}</div>
+                    <div className="col-span-full text-sm text-destructive">{error}</div>
                   )}
                   {!loading && !error && visibleDecks.map((deck) => (
                     <Card key={deck._id} className="hover:shadow-md transition cursor-pointer" onClick={() => navigate(`/community/${deck._id}`)}>
@@ -194,7 +222,7 @@ const CommunityPage: React.FC = () => {
                 </div>
               )}
               {error && (
-                <div className="col-span-full text-sm text-red-500">{error}</div>
+                <div className="col-span-full text-sm text-destructive">{error}</div>
               )}
               {!loading && !error && visibleDecks.map((deck) => (
                 <Card key={deck._id} className="hover:shadow-md transition">
@@ -243,7 +271,7 @@ const CommunityPage: React.FC = () => {
                 </div>
               )}
               {error && (
-                <div className="col-span-full text-sm text-red-500">{error}</div>
+                <div className="col-span-full text-sm text-destructive">{error}</div>
               )}
               {!loading && !error && visibleDecks.map((deck) => (
                 <Card key={deck._id} className="hover:shadow-md transition">
@@ -289,7 +317,7 @@ const CommunityPage: React.FC = () => {
                 </div>
               )}
               {error && (
-                <div className="col-span-full text-sm text-red-500">{error}</div>
+                <div className="col-span-full text-sm text-destructive">{error}</div>
               )}
               {!loading && !error && visibleDecks.map((deck) => (
                 <Card key={deck._id} className="hover:shadow-md transition cursor-pointer" onClick={() => navigate(`/community/${deck._id}`)}>
@@ -317,7 +345,7 @@ const CommunityPage: React.FC = () => {
                 </div>
               )}
               {error && (
-                <div className="col-span-full text-sm text-red-500">{error}</div>
+                <div className="col-span-full text-sm text-destructive">{error}</div>
               )}
               {!loading && !error && visibleDecks.map((deck) => (
                 <Card key={deck._id} className="hover:shadow-md transition">

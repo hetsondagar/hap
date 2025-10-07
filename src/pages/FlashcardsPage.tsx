@@ -171,10 +171,10 @@ const FlashcardsPage = () => {
         </p>
 
         {/* Enhanced Add Flashcard Form */}
-        <Card className="p-8 max-w-4xl mx-auto mb-12 bg-gradient-to-br from-white to-blue-50 dark:from-gray-900 dark:to-blue-950/20 border-2 border-blue-100 dark:border-border">
+        <Card className="p-8 max-w-4xl mx-auto mb-12 hero-card">
           <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <Sparkles className="h-6 w-6 text-blue-600" />
+            <div className="p-2 bg-primary/20 rounded-lg">
+              <Sparkles className="h-6 w-6 text-primary" />
             </div>
             <div>
               <h2 className="text-2xl font-bold text-foreground">Create Smart Flashcard</h2>
@@ -185,7 +185,7 @@ const FlashcardsPage = () => {
           <div className="grid md:grid-cols-2 gap-6">
           <div className="space-y-4">
               <div>
-                <label className="text-sm font-medium text-gray-700 mb-2 block">Question</label>
+                <label className="text-sm font-medium text-foreground mb-2 block">Question</label>
             <Input
                   placeholder="What is the question?"
               value={front}
@@ -194,7 +194,7 @@ const FlashcardsPage = () => {
             />
               </div>
               <div>
-                <label className="text-sm font-medium text-gray-700 mb-2 block">Answer</label>
+                <label className="text-sm font-medium text-foreground mb-2 block">Answer</label>
             <Textarea
                   placeholder="What is the answer?"
               value={back}
@@ -206,7 +206,7 @@ const FlashcardsPage = () => {
             
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-medium text-gray-700 mb-2 block">Department</label>
+                <label className="text-sm font-medium text-foreground mb-2 block">Department</label>
             <Select onValueChange={setDepartment} value={department}>
                   <SelectTrigger className="h-12">
                 <SelectValue placeholder="Select Department" />
@@ -223,7 +223,7 @@ const FlashcardsPage = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-sm font-medium text-gray-700 mb-2 block">Year</label>
+                  <label className="text-sm font-medium text-foreground mb-2 block">Year</label>
             <Select onValueChange={setYear} value={year}>
               <SelectTrigger>
                       <SelectValue placeholder="Year" />
@@ -239,7 +239,7 @@ const FlashcardsPage = () => {
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-gray-700 mb-2 block">Phase</label>
+                  <label className="text-sm font-medium text-foreground mb-2 block">Phase</label>
             <Select onValueChange={setPhase} value={phase}>
               <SelectTrigger>
                       <SelectValue placeholder="Phase" />
@@ -256,7 +256,7 @@ const FlashcardsPage = () => {
               </div>
 
               <div>
-                <label className="text-sm font-medium text-gray-700 mb-2 block">Difficulty</label>
+                <label className="text-sm font-medium text-foreground mb-2 block">Difficulty</label>
                 <Select onValueChange={(value: "easy" | "medium" | "hard") => setDifficulty(value)} value={difficulty}>
                   <SelectTrigger className="h-12">
                     <SelectValue placeholder="Select Difficulty" />
@@ -276,7 +276,7 @@ const FlashcardsPage = () => {
                     </SelectItem>
                     <SelectItem value="hard">
                       <div className="flex items-center gap-2">
-                        <span className="text-red-500">🔴</span>
+                        <span className="text-destructive">🔴</span>
                         <span>Hard</span>
                       </div>
                     </SelectItem>
@@ -308,8 +308,8 @@ const FlashcardsPage = () => {
         {/* Enhanced Flashcard Grid */}
         <div className="w-full">
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-800 mb-2">Your Study Collection</h2>
-            <p className="text-gray-600">Organize, search, and study your flashcards with advanced features</p>
+            <h2 className="text-3xl font-bold text-foreground mb-2">Your Study Collection</h2>
+            <p className="text-muted-foreground">Organize, search, and study your flashcards with advanced features</p>
           </div>
           
           <FlashcardGrid

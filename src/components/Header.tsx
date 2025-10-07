@@ -49,7 +49,7 @@ const Header = () => {
   const navItems = [
     { name: 'Home', path: '/', icon: Home },
     { name: 'Features', path: '/features', icon: BookOpen },
-    { name: 'Departments', path: '/departments', icon: Users },
+    { name: 'Subjects', path: '/subjects', icon: Users },
     { name: 'Gamification', path: '/gamification', icon: Trophy },
   ];
 
@@ -89,9 +89,9 @@ const Header = () => {
               <span className="text-sm text-muted-foreground mr-2 hidden lg:inline">
                 {username ? `Hi, ${username}` : 'Signed in'}
               </span>
-              <Link to="/analytics">
+              <Link to="/subjects">
                 <Button variant="outline" className="border-primary/20 hover:border-primary">
-                  Dashboard
+                  My Subjects
                 </Button>
               </Link>
               <Button onClick={handleLogout} className="bg-gradient-primary hover:opacity-90 text-white font-medium shadow-glow">
@@ -148,12 +148,12 @@ const Header = () => {
             <div className="pt-4 space-y-3">
               {isAuthenticated ? (
                 <>
-                  <Link to="/analytics" onClick={() => setIsMenuOpen(false)}>
+                  <Link to="/subjects" onClick={() => setIsMenuOpen(false)}>
                     <Button 
                       variant="outline" 
                       className="w-full border-primary/20 hover:border-primary"
                     >
-                      Dashboard
+                      My Subjects
                     </Button>
                   </Link>
                   <Button 

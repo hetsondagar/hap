@@ -4,6 +4,8 @@ export interface IFlashcard extends Document {
   front: string;
   back: string;
   department: string;
+  year: string;
+  subjectId: mongoose.Types.ObjectId;
   ownerId: mongoose.Types.ObjectId;
   difficulty: 'easy' | 'medium' | 'hard';
   tags: string[];
@@ -29,22 +31,28 @@ const flashcardSchema = new Schema<IFlashcard>({
     type: String,
     required: [true, 'Department is required'],
     enum: [
-      'Computer Science',
-      'Mathematics',
-      'Physics',
-      'Chemistry',
-      'Biology',
-      'Engineering',
-      'Medicine',
-      'Business',
-      'Literature',
-      'History',
-      'Geography',
-      'Art',
-      'Music',
-      'Sports',
-      'Other'
+      'cse',
+      'mechanical',
+      'electrical',
+      'chemical',
+      'civil',
+      'other'
     ]
+  },
+  year: {
+    type: String,
+    required: [true, 'Year is required'],
+    enum: [
+      '1st',
+      '2nd',
+      '3rd',
+      '4th'
+    ]
+  },
+  subjectId: {
+    type: Schema.Types.ObjectId,
+    ref: 'Subject',
+    required: [true, 'Subject is required']
   },
   ownerId: {
     type: Schema.Types.ObjectId,
@@ -70,8 +78,9 @@ const flashcardSchema = new Schema<IFlashcard>({
 });
 
 // Index for efficient queries
-flashcardSchema.index({ ownerId: 1, department: 1 });
-flashcardSchema.index({ department: 1 });
+flashcardSchema.index({ ownerId: 1, department: 1, year: 1 });
+flashcardSchema.index({ department: 1, year: 1 });
+flashcardSchema.index({ subjectId: 1 });
 flashcardSchema.index({ tags: 1 });
 
 export default mongoose.model<IFlashcard>('Flashcard', flashcardSchema);

@@ -19,7 +19,13 @@ export const validateSignup = [
     .isLength({ min: 6 })
     .withMessage('Password must be at least 6 characters long')
     .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
-    .withMessage('Password must contain at least one lowercase letter, one uppercase letter, and one number')
+    .withMessage('Password must contain at least one lowercase letter, one uppercase letter, and one number'),
+  body('department')
+    .isIn(['cse', 'mechanical', 'electrical', 'chemical', 'civil', 'other'])
+    .withMessage('Please select a valid department'),
+  body('year')
+    .isIn(['1st', '2nd', '3rd', '4th'])
+    .withMessage('Please select a valid year')
 ];
 
 export const validateLogin = [
@@ -46,7 +52,7 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const { username, email, password } = req.body;
+    const { username, email, password, department, year } = req.body;
 
     // Check if user already exists
     const existingUser = await User.findOne({
@@ -67,7 +73,9 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
     const user = new User({
       username,
       email,
-      passwordHash: password // Will be hashed by pre-save middleware
+      passwordHash: password, // Will be hashed by pre-save middleware
+      department,
+      year
     });
 
     await user.save();
@@ -90,6 +98,8 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
           username: user.username,
           email: user.email,
           bio: user.bio,
+          department: user.department,
+          year: user.year,
           badges: user.badges,
           followers: user.followers.length,
           following: user.following.length
@@ -154,6 +164,8 @@ export const login = async (req: Request, res: Response): Promise<void> => {
           username: user.username,
           email: user.email,
           bio: user.bio,
+          department: user.department,
+          year: user.year,
           badges: user.badges,
           followers: user.followers.length,
           following: user.following.length
