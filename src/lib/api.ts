@@ -186,8 +186,11 @@ export const flashcardAPI = {
   search: async (params: {
     q?: string;
     department?: string;
+    year?: string;
+    subjectId?: string;
     difficulty?: string;
     tags?: string[];
+    public?: boolean;
     page?: number;
     limit?: number;
   }) => {

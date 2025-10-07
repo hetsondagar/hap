@@ -5,7 +5,9 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { getSubjectsByDeptYear } from "@/data/subjects";
-import { ArrowLeft, Plus, BookOpen, Star, Users } from "lucide-react";
+import { ArrowLeft, Plus, BookOpen, Star, Users, Loader2 } from "lucide-react";
+import { flashcardAPI } from "@/lib/api";
+import { toast } from "@/components/ui/sonner";
 
 const SubjectFlashcardsPage = () => {
   const { subjectId } = useParams();
@@ -13,6 +15,7 @@ const SubjectFlashcardsPage = () => {
   const [userInfo, setUserInfo] = useState<{ department: string; year: string } | null>(null);
   const [subject, setSubject] = useState<any>(null);
   const [flashcards, setFlashcards] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Get user info from localStorage or API
@@ -35,24 +38,8 @@ const SubjectFlashcardsPage = () => {
         const foundSubject = subjects.find(s => s.id === subjectId);
         setSubject(foundSubject);
         
-        // In a real app, you'd fetch flashcards for this subject from API
-        // For now, we'll use mock data
-        setFlashcards([
-          {
-            id: 1,
-            front: "What is the definition of...",
-            back: "The definition is...",
-            difficulty: "medium",
-            tags: ["definition", "basic"]
-          },
-          {
-            id: 2,
-            front: "Explain the concept of...",
-            back: "The concept involves...",
-            difficulty: "hard",
-            tags: ["concept", "advanced"]
-          }
-        ]);
+        // Fetch flashcards for this subject from API
+        loadFlashcards(user.department, normalizedYear, subjectId);
       } else {
         navigate("/login");
       }
@@ -60,6 +47,29 @@ const SubjectFlashcardsPage = () => {
       navigate("/login");
     }
   }, [subjectId, navigate]);
+
+  const loadFlashcards = async (department: string, year: string, subjectId?: string) => {
+    try {
+      setLoading(true);
+      // Fetch all public flashcards for this department, year, and subject
+      const response = await flashcardAPI.search({
+        department,
+        year,
+        subjectId,
+        public: true,
+        limit: 100
+      } as any);
+      
+      console.log('Flashcards loaded:', response);
+      setFlashcards(response.flashcards || response.data || response || []);
+    } catch (error: any) {
+      console.error("Error loading flashcards:", error);
+      toast.error("Failed to load flashcards");
+      setFlashcards([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleCreateFlashcard = () => {
     navigate(`/flashcards/create?subject=${subjectId}`);
@@ -120,27 +130,37 @@ const SubjectFlashcardsPage = () => {
 
         {/* Flashcards List */}
         <div className="space-y-4">
-          <h2 className="text-xl font-semibold mb-4">Your Flashcards</h2>
+          <h2 className="text-xl font-semibold mb-4">All Flashcards</h2>
           
-          {flashcards.length > 0 ? (
-            flashcards.map((flashcard) => (
-              <Card key={flashcard.id} className="p-6 hero-card">
+          {loading ? (
+            <Card className="p-12 text-center hero-card">
+              <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
+              <p className="text-muted-foreground">Loading flashcards...</p>
+            </Card>
+          ) : flashcards.length > 0 ? (
+            flashcards.map((flashcard: any) => (
+              <Card key={flashcard._id || flashcard.id} className="p-6 hero-card">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
                     <h3 className="font-semibold text-lg mb-2">{flashcard.front}</h3>
                     <p className="text-muted-foreground mb-3">{flashcard.back}</p>
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 flex-wrap">
                       <Badge 
                         variant={flashcard.difficulty === 'easy' ? 'default' : 
                                 flashcard.difficulty === 'medium' ? 'secondary' : 'destructive'}
                       >
-                        {flashcard.difficulty}
+                        {flashcard.difficulty || 'medium'}
                       </Badge>
-                      {flashcard.tags.map((tag: string) => (
-                        <Badge key={tag} variant="outline" className="text-xs">
+                      {flashcard.tags && flashcard.tags.length > 0 && flashcard.tags.map((tag: string, index: number) => (
+                        <Badge key={index} variant="outline" className="text-xs">
                           {tag}
                         </Badge>
                       ))}
+                      {flashcard.public && (
+                        <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
+                          Public
+                        </Badge>
+                      )}
                     </div>
                   </div>
                   <Star className="h-5 w-5 text-muted-foreground" />
@@ -153,6 +173,7 @@ const SubjectFlashcardsPage = () => {
               <h3 className="text-lg font-semibold mb-2">No flashcards yet</h3>
               <p className="text-muted-foreground mb-4">
                 Start creating flashcards for {subject.name} to begin studying.
+                Your flashcards will be visible to other students too!
               </p>
               <Button onClick={handleCreateFlashcard} className="flex items-center gap-2">
                 <Plus className="h-4 w-4" />

@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Plus, Save } from "lucide-react";
 import { getSubjectsByDeptYear } from "@/data/subjects";
 import { toast } from "@/components/ui/sonner";
+import { flashcardAPI } from "@/lib/api";
 
 const CreateFlashcardPage = () => {
   const navigate = useNavigate();
@@ -36,8 +37,15 @@ const CreateFlashcardPage = () => {
     const storedUserInfo = localStorage.getItem("userInfo");
     if (storedUserInfo) {
       const user = JSON.parse(storedUserInfo);
-      setUserInfo({ department: user.department, year: user.year });
-      setSubjects(getSubjectsByDeptYear(user.department, user.year));
+      
+      // Normalize year format
+      let normalizedYear = user.year;
+      if (!normalizedYear.includes('-year')) {
+        normalizedYear = `${user.year}-year`;
+      }
+      
+      setUserInfo({ department: user.department, year: normalizedYear });
+      setSubjects(getSubjectsByDeptYear(user.department, normalizedYear));
       
       // Pre-select subject if provided in URL
       const subjectParam = searchParams.get("subject");
@@ -52,32 +60,47 @@ const CreateFlashcardPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!front.trim() || !back.trim() || !selectedSubject) {
+    if (!front.trim() || !back.trim() || !selectedSubject || !userInfo) {
       toast.error("Please fill in all required fields");
       return;
     }
 
     setCreating(true);
     try {
-      // In a real app, you'd call the API to create the flashcard
-      // For now, we'll just show a success message
+      // Create flashcard via API
+      const tagArray = tags.trim() ? tags.split(',').map(t => t.trim()).filter(t => t) : [];
+      
+      await flashcardAPI.create({
+        front: front.trim(),
+        back: back.trim(),
+        department: userInfo.department,
+        year: userInfo.year,
+        subjectId: selectedSubject,
+        difficulty,
+        tags: tagArray,
+        public: true // Make flashcards public so others can view them
+      } as any);
+      
       toast.success("Flashcard created successfully!");
       
-      // Reset form
+      // Keep subject selected if coming from subject page
+      const subjectParam = searchParams.get("subject");
+      
+      // Reset form (but keep subject if it was pre-selected)
       setFront("");
       setBack("");
-      setSelectedSubject("");
+      if (!subjectParam) {
+        setSelectedSubject("");
+      }
       setDifficulty("medium");
       setTags("");
       
-      // Navigate back to subjects or the specific subject page
-      if (selectedSubject) {
-        navigate(`/subjects/${selectedSubject}/flashcards`);
-      } else {
-        navigate("/subjects");
+      // Navigate back to the specific subject page if we came from there
+      if (subjectParam) {
+        navigate(`/subjects/${subjectParam}/flashcards`);
       }
-    } catch (error) {
-      toast.error("Failed to create flashcard");
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to create flashcard");
       console.error("Error creating flashcard:", error);
     } finally {
       setCreating(false);
@@ -117,21 +140,32 @@ const CreateFlashcardPage = () => {
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Subject Selection */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-foreground">
+              <label className="text-sm font-medium text-foreground flex items-center gap-2">
                 Subject *
+                {searchParams.get("subject") && (
+                  <Badge variant="secondary" className="text-xs">Auto-filled</Badge>
+                )}
               </label>
-              <Select value={selectedSubject} onValueChange={setSelectedSubject}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select a subject" />
-                </SelectTrigger>
-                <SelectContent>
-                  {subjects.map((subject) => (
-                    <SelectItem key={subject.id} value={subject.id}>
-                      {subject.name} ({subject.code})
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              {searchParams.get("subject") ? (
+                <Input
+                  value={subjects.find(s => s.id === selectedSubject)?.name || selectedSubject}
+                  disabled
+                  className="bg-muted"
+                />
+              ) : (
+                <Select value={selectedSubject} onValueChange={setSelectedSubject}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select a subject" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {subjects.map((subject) => (
+                      <SelectItem key={subject.id} value={subject.id}>
+                        {subject.name} ({subject.code})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
             </div>
 
             {/* Front Side */}

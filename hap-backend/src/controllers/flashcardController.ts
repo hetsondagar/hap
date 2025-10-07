@@ -53,15 +53,18 @@ export const createFlashcard = async (req: Request, res: Response): Promise<void
       return;
     }
 
-    const { front, back, department, difficulty = 'medium', tags = [] } = req.body;
+    const { front, back, department, year, subjectId, difficulty = 'medium', tags = [], public: isPublic = false } = req.body;
     const ownerId = req.user?.userId;
 
     const flashcard = new Flashcard({
       front,
       back,
       department,
+      year,
+      subjectId,
       difficulty,
       tags,
+      public: isPublic,
       ownerId
     });
 
@@ -328,7 +331,7 @@ export const deleteFlashcard = async (req: Request, res: Response): Promise<void
 // Search flashcards
 export const searchFlashcards = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { q, department, difficulty, tags, page = 1, limit = 20 } = req.query;
+    const { q, department, year, subjectId, difficulty, tags, public: publicOnly, page = 1, limit = 20 } = req.query;
     const userId = req.user?.userId;
 
     const filter: any = {};
@@ -346,6 +349,16 @@ export const searchFlashcards = async (req: Request, res: Response): Promise<voi
       filter.department = department;
     }
 
+    // Year filter
+    if (year) {
+      filter.year = year;
+    }
+
+    // Subject filter
+    if (subjectId) {
+      filter.subjectId = subjectId;
+    }
+
     // Difficulty filter
     if (difficulty) {
       filter.difficulty = difficulty;
@@ -358,7 +371,9 @@ export const searchFlashcards = async (req: Request, res: Response): Promise<voi
     }
 
     // Access control
-    if (userId) {
+    if (publicOnly === 'true' || publicOnly === true) {
+      filter.public = true;
+    } else if (userId) {
       filter.$or = [
         { ownerId: userId },
         { public: true }
