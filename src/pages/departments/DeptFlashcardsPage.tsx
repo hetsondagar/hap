@@ -199,7 +199,7 @@ const DeptFlashcardsPage = () => {
             <div>
               <h1 className="text-3xl font-bold text-gray-800">
                 {departmentName} Study Materials
-              </h1>
+      </h1>
               <div className="flex items-center gap-2 mt-2">
                 <Badge variant="secondary" className="bg-blue-100 text-blue-800">
                   {yearName}
@@ -224,9 +224,9 @@ const DeptFlashcardsPage = () => {
         {error && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
             <p className="text-red-600">{error}</p>
-          </div>
-        )}
-        
+        </div>
+      )}
+
         {!loading && serverCards.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">📚</div>

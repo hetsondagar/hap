@@ -22,7 +22,7 @@ import { departmentMap } from "@/utils/flashcardMapping"; // ✅ mapping
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Pencil, Plus, Sparkles } from "lucide-react";
 import { authAPI, flashcardAPI } from "@/lib/api";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import FlashcardGrid from "@/components/FlashcardGrid";
 import { Badge } from "@/components/ui/badge";
 
@@ -44,6 +44,7 @@ const FlashcardsPage = () => {
   const [difficulty, setDifficulty] = useState<"easy" | "medium" | "hard">("medium");
   const [creating, setCreating] = useState(false);
   const [favorites, setFavorites] = useState<Set<string | number>>(new Set());
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
     let mounted = true;
@@ -62,13 +63,39 @@ const FlashcardsPage = () => {
     return () => { mounted = false; };
   }, [navigate]);
 
+  // Prefill selections if coming from Features/Department flow
+  useEffect(() => {
+    const deptId = searchParams.get('deptId');
+    const yearId = searchParams.get('yearId');
+    const phaseId = searchParams.get('phaseId');
+
+    if (deptId) {
+      // Map deptId like 'cse' -> full department name from mapping values
+      const fullDept = Object.values(departmentMap).find((v) => v.toLowerCase().includes('computer'));
+      // If explicit ids provided, prefer mapping tables
+      const deptFromId = ((): string | undefined => {
+        const entry = Object.entries(departmentMap).find(([k]) => k === deptId);
+        return entry?.[1];
+      })();
+      setDepartment(deptFromId || fullDept || "");
+    }
+    if (yearId) {
+      const map: Record<string, string> = { '1st-year': '1st Year', '2nd-year': '2nd Year', '3rd-year': '3rd Year', '4th-year': '4th Year' };
+      setYear(map[yearId] || "");
+    }
+    if (phaseId) {
+      const map: Record<string, string> = { 'mid-sem': 'Mid-Semester', 'end-sem': 'End-Semester' };
+      setPhase(map[phaseId] || "");
+    }
+  }, [searchParams]);
+
   const handleAddCard = () => {
     (async () => {
       if (front.trim() && back.trim() && department && year && phase) {
         try {
           setCreating(true);
-          // Map to backend department options loosely
-          const backendDept = department.includes('Computer') ? 'Computer Science' : 'Engineering';
+          // Map UI department name to backend enum
+          const backendDept = department.toLowerCase().includes('computer') ? 'Computer Science' : 'Engineering';
           await flashcardAPI.create({
             front,
             back,

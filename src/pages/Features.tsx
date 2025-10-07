@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -17,6 +17,18 @@ import {
 } from "lucide-react";
 
 const Features = () => {
+  const [searchParams] = useSearchParams();
+  const deptId = searchParams.get("deptId");
+  const yearId = searchParams.get("yearId");
+  const phaseId = searchParams.get("phaseId");
+
+  const flashcardsRoute = (() => {
+    if (deptId && yearId && phaseId) {
+      return `/flashcards?deptId=${encodeURIComponent(deptId)}&yearId=${encodeURIComponent(yearId)}&phaseId=${encodeURIComponent(phaseId)}`;
+    }
+    return "/flashcards";
+  })();
+
   const coreFeatures = [
     {
       icon: Brain,
@@ -29,7 +41,7 @@ const Features = () => {
         "Audio notes",
         "LaTeX equations",
       ],
-      route: "/flashcards",
+      route: flashcardsRoute,
     },
     {
       icon: Users,
