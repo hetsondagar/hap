@@ -72,7 +72,12 @@ const DeckDetail: React.FC = () => {
       await communityAPI.commentDeck(id, { text: comment.trim() });
       setComment("");
       await load();
-    } catch (e) {}
+    } catch (e: any) {
+      const msg = e?.message || '';
+      if (msg.includes('401') || msg.toLowerCase().includes('unauthorized')) {
+        navigate('/login');
+      }
+    }
   };
 
   const handleDelete = async () => {

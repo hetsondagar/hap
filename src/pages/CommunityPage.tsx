@@ -85,7 +85,11 @@ const CommunityPage: React.FC = () => {
       await communityAPI.likeDeck(id);
       await loadDecks();
     } catch (e) {
-      // no-op; could show toast
+      // If not authenticated, send to login
+      const msg = (e as any)?.message || '';
+      if (msg.includes('401') || msg.toLowerCase().includes('unauthorized')) {
+        navigate('/login');
+      }
     }
   };
 

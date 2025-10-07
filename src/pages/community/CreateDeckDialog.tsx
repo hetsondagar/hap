@@ -6,16 +6,19 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { flashcardAPI, communityAPI } from "@/lib/api";
+import { useNavigate } from "react-router-dom";
 
 type FC = { _id: string; front: string; back: string; department?: string; difficulty?: string };
 
 const CreateDeckDialog: React.FC<{ onCreated?: (id: string) => void } > = ({ onCreated }) => {
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [department, setDepartment] = useState<string>("Computer Science");
   const [difficulty, setDifficulty] = useState<string>("intermediate");
   const [selected, setSelected] = useState<string[]>([]);
+  const [isPublic, setIsPublic] = useState<boolean>(true);
   const [mine, setMine] = useState<FC[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -39,10 +42,15 @@ const CreateDeckDialog: React.FC<{ onCreated?: (id: string) => void } > = ({ onC
   };
 
   const create = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/login');
+      return;
+    }
     if (!title.trim() || selected.length === 0) return;
     try {
       setLoading(true);
-      const res = await communityAPI.createDeck({ title, description, flashcards: selected, department, difficulty });
+      const res = await communityAPI.createDeck({ title, description, flashcards: selected, department, difficulty, public: isPublic });
       const id = res?.data?.deck?._id || res?.deck?._id;
       setOpen(false);
       setTitle("");
@@ -57,7 +65,15 @@ const CreateDeckDialog: React.FC<{ onCreated?: (id: string) => void } > = ({ onC
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>Create Deck</Button>
+        <Button onClick={(e) => {
+          const token = localStorage.getItem('token');
+          if (!token) {
+            e.preventDefault();
+            navigate('/login');
+            return;
+          }
+          setOpen(true);
+        }}>Create Deck</Button>
       </DialogTrigger>
       <DialogContent className="max-w-3xl">
         <DialogHeader>
@@ -92,6 +108,10 @@ const CreateDeckDialog: React.FC<{ onCreated?: (id: string) => void } > = ({ onC
                   <SelectItem value="advanced">Advanced</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+            <div className="flex items-center gap-2 py-1">
+              <input id="deck-public" type="checkbox" className="accent-primary" checked={isPublic} onChange={(e) => setIsPublic(e.target.checked)} />
+              <label htmlFor="deck-public" className="text-sm">Public deck</label>
             </div>
             <Button onClick={create} disabled={loading || !title.trim() || selected.length === 0}>
               {loading ? 'Creating…' : 'Create Deck'}
