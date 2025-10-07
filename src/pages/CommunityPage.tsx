@@ -25,15 +25,6 @@ type Deck = {
   createdAt?: string;
 };
 
-const departments = [
-  "Computer Science",
-  "Mechanical",
-  "Civil",
-  "Electrical",
-  "Biotech",
-  "Mathematics",
-];
-
 const CommunityPage: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -41,7 +32,6 @@ const CommunityPage: React.FC = () => {
   const [decks, setDecks] = useState<Deck[]>([]);
   const [activeTab, setActiveTab] = useState("browse");
   const [query, setQuery] = useState("");
-  const [department, setDepartment] = useState<string | undefined>(undefined);
   const [sortBy, setSortBy] = useState<string | undefined>("trending");
   const [userInfo, setUserInfo] = useState<{ department: string; year: string } | null>(null);
 
@@ -49,22 +39,28 @@ const CommunityPage: React.FC = () => {
   const commentCount = (d: Deck) => (Array.isArray(d.comments) ? d.comments.length : Number(d.comments || 0));
 
   useEffect(() => {
-    // Get user info from localStorage
+    // Get user info from localStorage - will be used to filter decks automatically
     const storedUserInfo = localStorage.getItem("userInfo");
     if (storedUserInfo) {
       const user = JSON.parse(storedUserInfo);
       setUserInfo({ department: user.department, year: user.year });
-      // Set department filter to user's department by default
-      setDepartment(user.department);
     }
   }, []);
 
   const loadDecks = async () => {
+    if (!userInfo) return; // Wait for user info to load
+    
     try {
       setLoading(true);
       setError(null);
       if (activeTab === "search" && query.trim()) {
-        const res = await communityAPI.searchDecks({ q: query.trim(), department, sortBy });
+        // Search within user's department and year only
+        const res = await communityAPI.searchDecks({ 
+          q: query.trim(), 
+          department: userInfo.department, 
+          year: userInfo.year,
+          sortBy 
+        });
         const items: Deck[] = res?.data?.decks || res?.decks || res?.data || res || [];
         setDecks(items);
       } else if (activeTab === "mine") {
@@ -78,9 +74,10 @@ const CommunityPage: React.FC = () => {
           setDecks([]);
         }
       } else {
+        // Always filter by user's department and year
         const res = await communityAPI.getDecks({ 
-          department: department || userInfo?.department, 
-          year: userInfo?.year,
+          department: userInfo.department, 
+          year: userInfo.year,
           sortBy 
         });
         const items: Deck[] = res?.data?.decks || res?.decks || res?.data || res || [];
@@ -96,7 +93,7 @@ const CommunityPage: React.FC = () => {
   useEffect(() => {
     loadDecks();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeTab, department, sortBy]);
+  }, [activeTab, sortBy, userInfo]);
 
   const handleLike = async (id: string) => {
     try {
@@ -119,13 +116,15 @@ const CommunityPage: React.FC = () => {
         <div>
           <h1 className="text-3xl font-bold text-primary">Community Sharing</h1>
           <p className="text-muted-foreground">
-            Share flashcards with peers and explore community-created decks.
+            Explore and share flashcards with peers from your department and year.
           </p>
         </div>
         {userInfo && (
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Users className="h-4 w-4" />
-            <span>Showing decks for {userInfo.department.toUpperCase()} - {userInfo.year} Year</span>
+          <div className="flex items-center gap-2 text-sm">
+            <Users className="h-4 w-4 text-primary" />
+            <Badge variant="secondary" className="text-sm px-3 py-1">
+              {userInfo.department.toUpperCase()} - {userInfo.year.replace('-', ' ').toUpperCase()}
+            </Badge>
           </div>
         )}
       </div>
@@ -145,21 +144,14 @@ const CommunityPage: React.FC = () => {
           <TabsContent value="browse">
             <Card>
               <CardHeader>
-                <CardTitle>Browse by Category</CardTitle>
+                <CardTitle>Browse Decks</CardTitle>
+                {userInfo && (
+                  <p className="text-sm text-muted-foreground">
+                    Showing decks for your department and year
+                  </p>
+                )}
               </CardHeader>
               <CardContent>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {departments.map((dept) => (
-                    <Button
-                      key={dept}
-                      variant={department === dept ? "default" : "outline"}
-                      onClick={() => setDepartment(dept === department ? undefined : dept)}
-                    >
-                      {dept}
-                    </Button>
-                  ))}
-                  <Button variant="ghost" onClick={() => setDepartment(undefined)}>Clear</Button>
-                </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {loading && (
                     <div className="col-span-full flex items-center justify-center py-8 text-muted-foreground">
@@ -206,9 +198,12 @@ const CommunityPage: React.FC = () => {
           </TabsContent>
 
           <TabsContent value="search">
+            <p className="text-sm text-muted-foreground mb-3">
+              🔍 Search decks from your department and year
+            </p>
             <div className="flex flex-col sm:flex-row gap-3">
               <Input
-                placeholder="Search decks by subject, tags, difficulty..."
+                placeholder="Search by title, subject, tags, difficulty..."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter') loadDecks(); }}
@@ -258,7 +253,7 @@ const CommunityPage: React.FC = () => {
 
           <TabsContent value="trending">
             <div className="flex items-center justify-between mb-3">
-              <p className="text-sm text-muted-foreground">🔥 Decks with high engagement this week.</p>
+              <p className="text-sm text-muted-foreground">🔥 Most popular decks from your department this week.</p>
               <div className="flex gap-2">
                 <Button variant={sortBy === 'trending' ? 'default' : 'outline'} onClick={() => setSortBy('trending')}>Trending</Button>
                 <Button variant={sortBy === 'new' ? 'default' : 'outline'} onClick={() => setSortBy('new')}>Newest</Button>
@@ -337,7 +332,7 @@ const CommunityPage: React.FC = () => {
           </TabsContent>
 
           <TabsContent value="new">
-            <p className="text-sm text-muted-foreground mb-3">🆕 Latest contributions from the community.</p>
+            <p className="text-sm text-muted-foreground mb-3">🆕 Latest decks from your department and year.</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {loading && (
                 <div className="col-span-full flex items-center justify-center py-8 text-muted-foreground">
@@ -404,62 +399,6 @@ const CommunityPage: React.FC = () => {
         </Card>
       </section>
 
-      {/* Engagement & Insights */}
-      <section className="space-y-4">
-        <h2 className="text-2xl font-semibold">Engagement & Insights</h2>
-        <div className="grid md:grid-cols-3 gap-4">
-          <Card>
-            <CardHeader><CardTitle>Deck Stats</CardTitle></CardHeader>
-            <CardContent>Views, shares, likes, quiz attempts.</CardContent>
-          </Card>
-          <Card>
-            <CardHeader><CardTitle>Author Insights</CardTitle></CardHeader>
-            <CardContent>See how your decks are performing.</CardContent>
-          </Card>
-          <Card>
-            <CardHeader><CardTitle>Community Analytics</CardTitle></CardHeader>
-            <CardContent>Active members, trending subjects.</CardContent>
-          </Card>
-        </div>
-      </section>
-
-      {/* Access & Sharing */}
-      <section className="space-y-4">
-        <h2 className="text-2xl font-semibold">Access & Sharing</h2>
-        <div className="grid md:grid-cols-3 gap-4">
-          <Card>
-            <CardHeader><CardTitle>Public vs Private Decks</CardTitle></CardHeader>
-            <CardContent>Choose visibility settings for your deck.</CardContent>
-          </Card>
-          <Card>
-            <CardHeader><CardTitle>Invite-only Groups</CardTitle></CardHeader>
-            <CardContent>Create private study circles.</CardContent>
-          </Card>
-          <Card>
-            <CardHeader><CardTitle>Shareable Links</CardTitle></CardHeader>
-            <CardContent>Generate share links like Google Docs.</CardContent>
-          </Card>
-        </div>
-      </section>
-
-      {/* Interaction & Communication */}
-      <section className="space-y-4">
-        <h2 className="text-2xl font-semibold">Interaction & Communication</h2>
-        <div className="grid md:grid-cols-3 gap-4">
-          <Card>
-            <CardHeader><CardTitle>Q&A Forum</CardTitle></CardHeader>
-            <CardContent>Post subject-specific doubts tied to flashcards.</CardContent>
-          </Card>
-          <Card>
-            <CardHeader><CardTitle>Direct Messaging</CardTitle></CardHeader>
-            <CardContent>Optional chat system (Socket.io).</CardContent>
-          </Card>
-          <Card>
-            <CardHeader><CardTitle>Study Groups</CardTitle></CardHeader>
-            <CardContent>Join communities by semester/subject.</CardContent>
-          </Card>
-        </div>
-      </section>
     </div>
   );
 };

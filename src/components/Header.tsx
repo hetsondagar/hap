@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Trophy, BookOpen, Users, Home } from 'lucide-react';
+import { Menu, X, Trophy, BookOpen, Users, Home, BarChart3, LayoutDashboard } from 'lucide-react';
 import HapLogo from '@/assets/hap-logo-3.png';
 import { authAPI } from '@/lib/api';
 
@@ -89,9 +89,16 @@ const Header = () => {
               <span className="text-sm text-muted-foreground mr-2 hidden lg:inline">
                 {username ? `Hi, ${username}` : 'Signed in'}
               </span>
-              <Link to="/subjects">
-                <Button variant="outline" className="border-primary/20 hover:border-primary">
-                  My Subjects
+              <Link to="/analytics">
+                <Button variant="outline" className="border-primary/20 hover:border-primary flex items-center gap-2">
+                  <BarChart3 className="w-4 h-4" />
+                  Analytics
+                </Button>
+              </Link>
+              <Link to="/">
+                <Button variant="outline" className="border-primary/20 hover:border-primary flex items-center gap-2">
+                  <LayoutDashboard className="w-4 h-4" />
+                  Dashboard
                 </Button>
               </Link>
               <Button onClick={handleLogout} className="bg-gradient-primary hover:opacity-90 text-white font-medium shadow-glow">
@@ -148,12 +155,22 @@ const Header = () => {
             <div className="pt-4 space-y-3">
               {isAuthenticated ? (
                 <>
-                  <Link to="/subjects" onClick={() => setIsMenuOpen(false)}>
+                  <Link to="/analytics" onClick={() => setIsMenuOpen(false)}>
                     <Button 
                       variant="outline" 
-                      className="w-full border-primary/20 hover:border-primary"
+                      className="w-full border-primary/20 hover:border-primary flex items-center justify-center gap-2"
                     >
-                      My Subjects
+                      <BarChart3 className="w-4 h-4" />
+                      Analytics
+                    </Button>
+                  </Link>
+                  <Link to="/" onClick={() => setIsMenuOpen(false)}>
+                    <Button 
+                      variant="outline" 
+                      className="w-full border-primary/20 hover:border-primary flex items-center justify-center gap-2"
+                    >
+                      <LayoutDashboard className="w-4 h-4" />
+                      Dashboard
                     </Button>
                   </Link>
                   <Button 

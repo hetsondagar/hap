@@ -46,6 +46,7 @@ const FlashcardsPage = () => {
   const [creating, setCreating] = useState(false);
   const [favorites, setFavorites] = useState<Set<string | number>>(new Set());
   const [searchParams] = useSearchParams();
+  const [userInfo, setUserInfo] = useState<{ department: string; year: string } | null>(null);
 
   // Helpers to convert human labels to URL ids
   const nameToDeptId = (name: string): string | null => {
@@ -68,6 +69,32 @@ const FlashcardsPage = () => {
         const token = localStorage.getItem('token');
         if (!token) throw new Error('no token');
         await authAPI.getProfile();
+        
+        // Get user info from localStorage to auto-fill department and year
+        const storedUserInfo = localStorage.getItem("userInfo");
+        if (storedUserInfo) {
+          const user = JSON.parse(storedUserInfo);
+          setUserInfo({ department: user.department, year: user.year });
+          
+          // Map stored department/year to display format
+          const deptMap: Record<string, string> = {
+            'cse': 'Computer Science',
+            'civil': 'Civil Engineering',
+            'mech': 'Mechanical Engineering',
+            'elec': 'Electrical Engineering',
+            'other': 'Other Engineering'
+          };
+          const yearMap: Record<string, string> = {
+            '1st-year': '1st Year',
+            '2nd-year': '2nd Year',
+            '3rd-year': '3rd Year',
+            '4th-year': '4th Year'
+          };
+          
+          setDepartment(deptMap[user.department] || user.department);
+          setYear(yearMap[user.year] || user.year);
+        }
+        
         if (!mounted) return;
         setAuthChecked(true);
       } catch {
@@ -102,7 +129,8 @@ const FlashcardsPage = () => {
 
   const handleAddCard = () => {
     (async () => {
-      if (front.trim() && back.trim() && department && year && phase) {
+      // Department and year are now auto-filled from signup, only need to check phase
+      if (front.trim() && back.trim() && phase) {
         try {
           setCreating(true);
           // Map UI department name to backend enum
@@ -127,8 +155,7 @@ const FlashcardsPage = () => {
           });
           setFront("");
           setBack("");
-          setDepartment("");
-          setYear("");
+          // Don't reset department and year - they're auto-filled
           setPhase("");
           setDifficulty("medium");
         } finally {
@@ -206,43 +233,33 @@ const FlashcardsPage = () => {
             
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-medium text-foreground mb-2 block">Department</label>
-            <Select onValueChange={setDepartment} value={department}>
-                  <SelectTrigger className="h-12">
-                <SelectValue placeholder="Select Department" />
-              </SelectTrigger>
-              <SelectContent>
-                {departments.map((dept) => (
-                  <SelectItem key={dept} value={dept}>
-                    {dept}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+                <label className="text-sm font-medium text-foreground mb-2 block">
+                  Department {userInfo && <Badge variant="secondary" className="ml-2">Auto-filled</Badge>}
+                </label>
+                <Input
+                  value={department}
+                  disabled
+                  className="h-12 bg-muted/50 cursor-not-allowed"
+                />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-sm font-medium text-foreground mb-2 block">Year</label>
-            <Select onValueChange={setYear} value={year}>
-              <SelectTrigger>
-                      <SelectValue placeholder="Year" />
-              </SelectTrigger>
-              <SelectContent>
-                {years.map((y) => (
-                  <SelectItem key={y} value={y}>
-                    {y}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+                  <label className="text-sm font-medium text-foreground mb-2 block">
+                    Year {userInfo && <Badge variant="secondary" className="ml-2">Auto-filled</Badge>}
+                  </label>
+                  <Input
+                    value={year}
+                    disabled
+                    className="bg-muted/50 cursor-not-allowed"
+                  />
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-foreground mb-2 block">Phase</label>
+                  <label className="text-sm font-medium text-foreground mb-2 block">Exam Phase</label>
             <Select onValueChange={setPhase} value={phase}>
               <SelectTrigger>
-                      <SelectValue placeholder="Phase" />
+                      <SelectValue placeholder="Select Phase" />
               </SelectTrigger>
               <SelectContent>
                 {phases.map((p) => (
@@ -286,7 +303,7 @@ const FlashcardsPage = () => {
 
               <Button 
                 onClick={handleAddCard} 
-                disabled={creating || !front.trim() || !back.trim() || !department || !year || !phase} 
+                disabled={creating || !front.trim() || !back.trim() || !phase} 
                 className="w-full h-12 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold"
               >
                 {creating ? (

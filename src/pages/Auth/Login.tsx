@@ -33,7 +33,7 @@ const Login: React.FC = () => {
         }));
       }
       
-      navigate("/subjects");
+      navigate("/");
     } catch (e: any) {
       setError(e?.message || "Login failed");
     } finally {

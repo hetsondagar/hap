@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { getSubjectsByDeptYear } from "@/data/subjects";
-import { BookOpen, Plus, Users, Star } from "lucide-react";
+import { BookOpen, Plus, Users, Star, Home } from "lucide-react";
 
 const SubjectsPage = () => {
   const navigate = useNavigate();
@@ -44,6 +44,10 @@ const SubjectsPage = () => {
     navigate("/community");
   };
 
+  const handleDashboard = () => {
+    navigate("/");
+  };
+
   if (!userInfo) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -67,6 +71,13 @@ const SubjectsPage = () => {
 
         {/* Action Buttons */}
         <div className="flex gap-4 mb-8">
+          <Button 
+            onClick={handleDashboard}
+            className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+          >
+            <Home className="h-4 w-4" />
+            Dashboard
+          </Button>
           <Button onClick={handleCreateFlashcard} className="flex items-center gap-2">
             <Plus className="h-4 w-4" />
             Create Flashcard

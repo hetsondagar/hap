@@ -160,7 +160,7 @@ const Signup: React.FC = () => {
       if (!token) throw new Error(res?.message || "Signup failed");
       localStorage.setItem("token", token);
       localStorage.setItem("userInfo", JSON.stringify({ department, year }));
-      navigate("/subjects");
+      navigate("/");
     } catch (e: any) {
       console.error('Signup error:', e);
       if (e?.response?.data?.errors) {
