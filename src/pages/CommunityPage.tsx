@@ -498,30 +498,6 @@ const CommunityPage: React.FC = () => {
           </TabsContent>
         </Tabs>
       </section>
-
-      {/* Social Features */}
-      <section className="space-y-4">
-        <h2 className="text-2xl font-semibold">Social Features</h2>
-        <Card>
-          <CardHeader>
-            <CardTitle>User Profiles & Interactions</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <p>View bio, created decks, followers, and stats.</p>
-            <div className="flex gap-2">
-              <Button>Follow</Button>
-              <Button variant="outline">Unfollow</Button>
-              <Button variant="secondary">Like / Rate Deck</Button>
-            </div>
-            <Textarea placeholder="Add a comment or ask a doubt..." />
-            <Button>Post Comment</Button>
-            <div className="pt-2">
-              <CreateDeckDialog onCreated={(id) => navigate(`/community/${id}`)} />
-            </div>
-          </CardContent>
-        </Card>
-      </section>
-      </section>
       )}
 
       {/* DISCUSSION SECTION */}
