@@ -17,7 +17,7 @@ export interface IDeck extends Document {
   creatorId: mongoose.Types.ObjectId;
   department?: string;
   year?: string;
-  subjectId?: mongoose.Types.ObjectId;
+  subjectId?: string;
   tags: string[];
   difficulty: 'beginner' | 'intermediate' | 'advanced';
   createdAt: Date;
@@ -97,8 +97,8 @@ const deckSchema = new Schema<IDeck>({
     ]
   },
   subjectId: {
-    type: Schema.Types.ObjectId,
-    ref: 'Subject'
+    type: String,
+    trim: true
   },
   tags: [{
     type: String,

@@ -142,7 +142,17 @@ const CommunityPage: React.FC = () => {
 
   const handleCreatePost = async () => {
     if (!newPostTitle.trim() || !newPostContent.trim()) {
-      toast.error("Please fill in all fields");
+      toast.error("Please fill in both title and content for your question");
+      return;
+    }
+    
+    if (newPostTitle.length > 200) {
+      toast.error("Title cannot exceed 200 characters");
+      return;
+    }
+    
+    if (newPostContent.length > 2000) {
+      toast.error("Content cannot exceed 2000 characters");
       return;
     }
     
@@ -153,13 +163,24 @@ const CommunityPage: React.FC = () => {
         department: userInfo?.department,
         year: userInfo?.year
       });
-      toast.success("Post created successfully!");
+      toast.success("Question posted successfully!");
       setNewPostTitle("");
       setNewPostContent("");
       setIsCreatePostOpen(false);
       loadPosts();
     } catch (e: any) {
-      toast.error(e?.message || "Failed to create post");
+      // Handle validation errors from backend
+      const errorMessage = e?.response?.data?.message || e?.message || "Failed to create post";
+      const errors = e?.response?.data?.errors;
+      
+      if (errors && Array.isArray(errors)) {
+        // Show first validation error
+        toast.error(errors[0]?.msg || errorMessage);
+      } else {
+        toast.error(errorMessage);
+      }
+      
+      console.error("Create post error:", e);
     }
   };
 
@@ -378,6 +399,7 @@ const CommunityPage: React.FC = () => {
             <div className="flex items-center justify-between mb-3">
               <p className="text-sm text-muted-foreground">🔥 Most popular decks from your department this week.</p>
               <div className="flex gap-2">
+                <CreateDeckDialog onCreated={(id) => navigate(`/community/${id}`)} />
                 <Button variant={sortBy === 'trending' ? 'default' : 'outline'} onClick={() => setSortBy('trending')}>Trending</Button>
                 <Button variant={sortBy === 'new' ? 'default' : 'outline'} onClick={() => setSortBy('new')}>Newest</Button>
               </div>
@@ -455,7 +477,10 @@ const CommunityPage: React.FC = () => {
           </TabsContent>
 
           <TabsContent value="new">
-            <p className="text-sm text-muted-foreground mb-3">🆕 Latest decks from your department and year.</p>
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-sm text-muted-foreground">🆕 Latest decks from your department and year.</p>
+              <CreateDeckDialog onCreated={(id) => navigate(`/community/${id}`)} />
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {loading && (
                 <div className="col-span-full flex items-center justify-center py-8 text-muted-foreground">

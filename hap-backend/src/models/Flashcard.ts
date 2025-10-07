@@ -5,7 +5,7 @@ export interface IFlashcard extends Document {
   back: string;
   department?: string;
   year?: string;
-  subjectId?: mongoose.Types.ObjectId;
+  subjectId?: string;
   ownerId: mongoose.Types.ObjectId;
   difficulty: 'easy' | 'medium' | 'hard';
   tags: string[];
@@ -48,8 +48,8 @@ const flashcardSchema = new Schema<IFlashcard>({
     ]
   },
   subjectId: {
-    type: Schema.Types.ObjectId,
-    ref: 'Subject'
+    type: String,
+    trim: true
   },
   ownerId: {
     type: Schema.Types.ObjectId,
