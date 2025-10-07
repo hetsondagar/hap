@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { getSubjectsByDeptYear, getAllSubjects, createSubject } from '../controllers/subjectController';
-import { authenticateToken } from '../middleware/auth';
+import { authenticateToken } from '../middleware/authMiddleware';
 
 const router = Router();
 
