@@ -371,7 +371,7 @@ export const searchFlashcards = async (req: Request, res: Response): Promise<voi
     }
 
     // Access control
-    if (publicOnly === 'true' || publicOnly === true) {
+    if (publicOnly === 'true' || String(publicOnly) === 'true') {
       filter.public = true;
     } else if (userId) {
       filter.$or = [

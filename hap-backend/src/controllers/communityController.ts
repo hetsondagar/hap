@@ -18,17 +18,17 @@ export const validateCreateDeck = [
     .isLength({ max: 1000 })
     .withMessage('Description cannot exceed 1000 characters'),
   body('flashcards')
-    .isArray({ min: 1 })
-    .withMessage('Deck must contain at least one flashcard'),
+    .optional()
+    .isArray()
+    .withMessage('Flashcards must be an array'),
   body('department')
-    .notEmpty()
-    .withMessage('Department is required')
-    .isIn([
-      'Computer Science', 'Mathematics', 'Physics', 'Chemistry', 'Biology',
-      'Engineering', 'Medicine', 'Business', 'Literature', 'History',
-      'Geography', 'Art', 'Music', 'Sports', 'Other'
-    ])
+    .optional()
+    .isIn(['cse', 'mechanical', 'electrical', 'chemical', 'civil', 'other'])
     .withMessage('Invalid department'),
+  body('year')
+    .optional()
+    .isIn(['1st-year', '2nd-year', '3rd-year', '4th-year'])
+    .withMessage('Invalid year'),
   body('difficulty')
     .optional()
     .isIn(['beginner', 'intermediate', 'advanced'])
@@ -36,8 +36,7 @@ export const validateCreateDeck = [
   body('tags')
     .optional()
     .isArray()
-    .withMessage('Tags must be an array')
-  ,
+    .withMessage('Tags must be an array'),
   body('public')
     .optional()
     .isBoolean()
@@ -89,7 +88,8 @@ export const browseDecks = async (req: Request, res: Response): Promise<void> =>
     const { 
       page = 1, 
       limit = 20, 
-      department, 
+      department,
+      year, 
       difficulty, 
       tags, 
       sortBy = 'createdAt',
@@ -98,8 +98,14 @@ export const browseDecks = async (req: Request, res: Response): Promise<void> =>
 
     const filter: any = { public: true };
 
+    // Filter by department
     if (department) {
       filter.department = department;
+    }
+
+    // Filter by year
+    if (year) {
+      filter.year = year;
     }
 
     if (difficulty) {
@@ -157,21 +163,23 @@ export const createDeck = async (req: Request, res: Response): Promise<void> => 
       return;
     }
 
-    const { title, description, flashcards, department, difficulty = 'intermediate', tags = [], public: isPublic } = req.body;
+    const { title, description, flashcards = [], department, year, difficulty = 'intermediate', tags = [], public: isPublic } = req.body;
     const creatorId = req.user?.userId;
 
-    // Verify all flashcards exist and belong to user
-    const flashcardDocs = await Flashcard.find({
-      _id: { $in: flashcards },
-      ownerId: creatorId
-    });
-
-    if (flashcardDocs.length !== flashcards.length) {
-      res.status(400).json({
-        success: false,
-        message: 'Some flashcards not found or not owned by you'
+    // Verify all flashcards exist and belong to user (if flashcards provided)
+    if (flashcards && flashcards.length > 0) {
+      const flashcardDocs = await Flashcard.find({
+        _id: { $in: flashcards },
+        ownerId: creatorId
       });
-      return;
+
+      if (flashcardDocs.length !== flashcards.length) {
+        res.status(400).json({
+          success: false,
+          message: 'Some flashcards not found or not owned by you'
+        });
+        return;
+      }
     }
 
     const deck = new Deck({
@@ -179,6 +187,7 @@ export const createDeck = async (req: Request, res: Response): Promise<void> => 
       description,
       flashcards,
       department,
+      year,
       difficulty,
       tags,
       public: typeof isPublic === 'boolean' ? isPublic : true,
