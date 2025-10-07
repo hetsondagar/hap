@@ -63,6 +63,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Pencil, Plus, Sparkles } from "lucide-react";
 import { departmentMap, yearMap, phaseMap } from "@/utils/flashcardMapping";
 import { authAPI, flashcardAPI } from "@/lib/api";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import FlashcardGrid from "@/components/FlashcardGrid";
 import { Badge } from "@/components/ui/badge";
 
@@ -95,7 +96,17 @@ const DeptFlashcardsPage = () => {
     console.log('Edit card:', id);
   };
 
-  const departmentName = deptId ? departmentMap[deptId] : "";
+  // Resolve department: accept both key (e.g., "cse") and name (e.g., "Computer Science")
+  const departmentName = (() => {
+    if (!deptId) return "";
+    const keyMatch = departmentMap[deptId];
+    if (keyMatch) return keyMatch;
+    const decoded = decodeURIComponent(deptId);
+    const byValue = Object.values(departmentMap).find(
+      (v) => v.toLowerCase() === decoded.toLowerCase()
+    );
+    return byValue || decoded;
+  })();
   const yearName = yearId ? yearMap[yearId] : "";
   const phaseName = phaseId ? phaseMap[phaseId] : "";
 
@@ -161,6 +172,7 @@ const DeptFlashcardsPage = () => {
   const [open, setOpen] = useState(false);
   const [front, setFront] = useState("");
   const [back, setBack] = useState("");
+  const [difficulty, setDifficulty] = useState<"easy" | "medium" | "hard">("medium");
 
   const [creating, setCreating] = useState(false);
   const handleCreate = async () => {
@@ -172,13 +184,15 @@ const DeptFlashcardsPage = () => {
         front,
         back,
         department: backendDepartment,
+        difficulty,
         tags: [yearName, phaseName],
       } as any);
       await refreshFromServer();
       // also add to local context for immediate UI consistency
-      addCard({ front, back, department: departmentName, year: yearName, phase: phaseName });
+      addCard({ front, back, department: departmentName, year: yearName, phase: phaseName, difficulty });
       setFront("");
       setBack("");
+      setDifficulty("medium");
       setOpen(false);
     } finally {
       setCreating(false);
@@ -190,21 +204,21 @@ const DeptFlashcardsPage = () => {
   return (
     <div className="min-h-screen bg-gradient-subtle">
       {/* Enhanced Header */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-white dark:bg-transparent border-b border-gray-200 dark:border-border">
         <div className="container mx-auto px-6 py-8">
           <div className="flex items-center gap-4 mb-4">
-            <div className="p-3 bg-blue-100 rounded-lg">
-              <Sparkles className="h-6 w-6 text-blue-600" />
+            <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+              <Sparkles className="h-6 w-6 text-blue-600 dark:text-blue-400" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-800">
+              <h1 className="text-3xl font-bold text-foreground">
                 {departmentName} Study Materials
       </h1>
               <div className="flex items-center gap-2 mt-2">
-                <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+                <Badge variant="secondary" className="bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200">
                   {yearName}
                 </Badge>
-                <Badge variant="outline" className="border-gray-300">
+                <Badge variant="outline" className="border-gray-300 dark:border-border text-foreground">
                   {phaseName}
                 </Badge>
               </div>
@@ -216,22 +230,22 @@ const DeptFlashcardsPage = () => {
       <div className="container mx-auto px-6 py-8">
         {loading && (
           <div className="flex items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-2 border-blue-600 border-t-transparent"></div>
-            <span className="ml-3 text-gray-600">Loading flashcards...</span>
+            <div className="animate-spin rounded-full h-8 w-8 border-2 border-blue-600 dark:border-blue-400 border-t-transparent"></div>
+            <span className="ml-3 text-muted-foreground">Loading flashcards...</span>
           </div>
         )}
         
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-            <p className="text-red-600">{error}</p>
+          <div className="bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6">
+            <p className="text-red-600 dark:text-red-400">{error}</p>
         </div>
       )}
 
         {!loading && serverCards.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">📚</div>
-            <h3 className="text-xl font-semibold text-gray-600 mb-2">No flashcards yet</h3>
-            <p className="text-gray-500 mb-6">Start creating flashcards for this subject</p>
+            <h3 className="text-xl font-semibold text-muted-foreground mb-2">No flashcards yet</h3>
+            <p className="text-muted-foreground mb-6">Start creating flashcards for this subject</p>
             <Button 
               onClick={() => setOpen(true)}
               className="bg-gradient-to-r from-blue-600 to-purple-600 text-white"
@@ -313,6 +327,34 @@ const DeptFlashcardsPage = () => {
                 onChange={(e) => setBack(e.target.value)}
                 className="min-h-[100px]"
               />
+            </div>
+            <div>
+              <label className="text-sm font-medium text-gray-700 mb-2 block">Difficulty</label>
+              <Select onValueChange={(v: any) => setDifficulty(v)} value={difficulty}>
+                <SelectTrigger className="h-12">
+                  <SelectValue placeholder="Select Difficulty" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="easy">
+                    <div className="flex items-center gap-2">
+                      <span className="text-green-500">🟢</span>
+                      <span>Easy</span>
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="medium">
+                    <div className="flex items-center gap-2">
+                      <span className="text-yellow-500">🟡</span>
+                      <span>Medium</span>
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="hard">
+                    <div className="flex items-center gap-2">
+                      <span className="text-red-500">🔴</span>
+                      <span>Hard</span>
+                    </div>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div className="flex justify-end gap-3 pt-4">
               <Button variant="outline" onClick={() => setOpen(false)}>

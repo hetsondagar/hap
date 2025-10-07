@@ -29,14 +29,14 @@ const DepartmentPage = () => {
   };
 
   return (
-    <div className="min-h-screen p-8">
-      <h1 className="text-3xl font-bold mb-2">{deptId?.toUpperCase()} Department</h1>
+    <div className="min-h-screen p-8 bg-gradient-subtle">
+      <h1 className="text-3xl font-bold mb-2 text-foreground">{decodeURIComponent(deptId || '').toUpperCase()} Department</h1>
       <p className="text-sm text-muted-foreground mb-6">
         Select your year and exam phase to view relevant decks.
       </p>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card className="p-4">
+        <Card className="p-4 hero-card">
           <h3 className="text-xl font-semibold mb-3">Choose Year</h3>
           <div className="grid grid-cols-2 gap-3">
             {years.map((year) => (
@@ -45,7 +45,7 @@ const DepartmentPage = () => {
                 className={`px-3 py-2 rounded-md border text-left transition ${
                   selectedYear === year.id
                     ? "bg-primary text-white border-primary"
-                    : "border-border hover:bg-primary/10"
+                    : "border-border hover:bg-primary/10 text-foreground"
                 }`}
                 onClick={() => setSelectedYear(year.id)}
               >
@@ -55,7 +55,7 @@ const DepartmentPage = () => {
           </div>
         </Card>
 
-        <Card className="p-4">
+        <Card className="p-4 hero-card">
           <h3 className="text-xl font-semibold mb-3">Choose Exam Phase</h3>
           <div className="grid grid-cols-2 gap-3">
             {phases.map((phase) => (
@@ -64,7 +64,7 @@ const DepartmentPage = () => {
                 className={`px-3 py-2 rounded-md border text-left transition ${
                   selectedPhase === phase.id
                     ? "bg-primary text-white border-primary"
-                    : "border-border hover:bg-primary/10"
+                    : "border-border hover:bg-primary/10 text-foreground"
                 }`}
                 onClick={() => setSelectedPhase(phase.id)}
               >

@@ -49,8 +49,8 @@ const FlashcardsPage = () => {
 
   // Helpers to convert human labels to URL ids
   const nameToDeptId = (name: string): string | null => {
-    const entry = Object.entries(departmentMap).find(([, v]) => v === name);
-    return entry ? entry[0] : null;
+    const entry = Object.entries(departmentMap).find(([, v]) => v.toLowerCase() === name.toLowerCase());
+    return entry ? entry[0] : encodeURIComponent(name);
   };
   const yearNameToId = (name: string): string | null => {
     const map: Record<string, string> = { '1st Year': '1st-year', '2nd Year': '2nd-year', '3rd Year': '3rd-year', '4th Year': '4th-year' };
@@ -85,14 +85,10 @@ const FlashcardsPage = () => {
     const phaseId = searchParams.get('phaseId');
 
     if (deptId) {
-      // Map deptId like 'cse' -> full department name from mapping values
-      const fullDept = Object.values(departmentMap).find((v) => v.toLowerCase().includes('computer'));
-      // If explicit ids provided, prefer mapping tables
-      const deptFromId = ((): string | undefined => {
-        const entry = Object.entries(departmentMap).find(([k]) => k === deptId);
-        return entry?.[1];
-      })();
-      setDepartment(deptFromId || fullDept || "");
+      const byKey = Object.entries(departmentMap).find(([k]) => k === deptId)?.[1];
+      const decoded = decodeURIComponent(deptId);
+      const byValue = Object.values(departmentMap).find((v) => v.toLowerCase() === decoded.toLowerCase());
+      setDepartment(byKey || byValue || decoded);
     }
     if (yearId) {
       const map: Record<string, string> = { '1st-year': '1st Year', '2nd-year': '2nd Year', '3rd-year': '3rd Year', '4th-year': '4th Year' };
@@ -175,34 +171,34 @@ const FlashcardsPage = () => {
         </p>
 
         {/* Enhanced Add Flashcard Form */}
-        <Card className="p-8 max-w-4xl mx-auto mb-12 bg-gradient-to-br from-white to-blue-50 border-2 border-blue-100">
+        <Card className="p-8 max-w-4xl mx-auto mb-12 bg-gradient-to-br from-white to-blue-50 dark:from-gray-900 dark:to-blue-950/20 border-2 border-blue-100 dark:border-border">
           <div className="flex items-center gap-3 mb-6">
             <div className="p-2 bg-blue-100 rounded-lg">
               <Sparkles className="h-6 w-6 text-blue-600" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-gray-800">Create Smart Flashcard</h2>
-              <p className="text-gray-600">Add difficulty level and organize your study materials</p>
+              <h2 className="text-2xl font-bold text-foreground">Create Smart Flashcard</h2>
+              <p className="text-muted-foreground">Add difficulty level and organize your study materials</p>
             </div>
           </div>
           
           <div className="grid md:grid-cols-2 gap-6">
-            <div className="space-y-4">
+          <div className="space-y-4">
               <div>
                 <label className="text-sm font-medium text-gray-700 mb-2 block">Question</label>
-                <Input
+            <Input
                   placeholder="What is the question?"
-                  value={front}
-                  onChange={(e) => setFront(e.target.value)}
+              value={front}
+              onChange={(e) => setFront(e.target.value)}
                   className="h-12"
-                />
+            />
               </div>
               <div>
                 <label className="text-sm font-medium text-gray-700 mb-2 block">Answer</label>
-                <Textarea
+            <Textarea
                   placeholder="What is the answer?"
-                  value={back}
-                  onChange={(e) => setBack(e.target.value)}
+              value={back}
+              onChange={(e) => setBack(e.target.value)}
                   className="min-h-[100px]"
                 />
               </div>
@@ -211,51 +207,51 @@ const FlashcardsPage = () => {
             <div className="space-y-4">
               <div>
                 <label className="text-sm font-medium text-gray-700 mb-2 block">Department</label>
-                <Select onValueChange={setDepartment} value={department}>
+            <Select onValueChange={setDepartment} value={department}>
                   <SelectTrigger className="h-12">
-                    <SelectValue placeholder="Select Department" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {departments.map((dept) => (
-                      <SelectItem key={dept} value={dept}>
-                        {dept}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <SelectValue placeholder="Select Department" />
+              </SelectTrigger>
+              <SelectContent>
+                {departments.map((dept) => (
+                  <SelectItem key={dept} value={dept}>
+                    {dept}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="text-sm font-medium text-gray-700 mb-2 block">Year</label>
-                  <Select onValueChange={setYear} value={year}>
-                    <SelectTrigger>
+            <Select onValueChange={setYear} value={year}>
+              <SelectTrigger>
                       <SelectValue placeholder="Year" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {years.map((y) => (
-                        <SelectItem key={y} value={y}>
-                          {y}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+              </SelectTrigger>
+              <SelectContent>
+                {years.map((y) => (
+                  <SelectItem key={y} value={y}>
+                    {y}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
                 </div>
 
                 <div>
                   <label className="text-sm font-medium text-gray-700 mb-2 block">Phase</label>
-                  <Select onValueChange={setPhase} value={phase}>
-                    <SelectTrigger>
+            <Select onValueChange={setPhase} value={phase}>
+              <SelectTrigger>
                       <SelectValue placeholder="Phase" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {phases.map((p) => (
-                        <SelectItem key={p} value={p}>
-                          {p}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+              </SelectTrigger>
+              <SelectContent>
+                {phases.map((p) => (
+                  <SelectItem key={p} value={p}>
+                    {p}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
                 </div>
               </div>
 
@@ -332,7 +328,7 @@ const FlashcardsPage = () => {
             onEdit={handleEdit}
             onToggleFavorite={handleToggleFavorite}
           />
-        </div>
+              </div>
       </section>
 
       {/* Floating Create Button removed: page is dedicated to creation */}

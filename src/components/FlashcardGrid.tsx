@@ -106,23 +106,23 @@ const FlashcardGrid: React.FC<FlashcardGridProps> = ({
   return (
     <div className={cn("space-y-6", className)}>
       {/* Search and Filter Bar */}
-      <div className="bg-white rounded-lg border p-4 shadow-sm">
+      <div className="bg-white dark:bg-gray-900 rounded-lg border p-4 shadow-sm">
         <div className="flex flex-col lg:flex-row gap-4">
           {/* Search */}
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
             <Input
               placeholder="Search flashcards..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
+              className="pl-10 bg-background dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-foreground placeholder:text-gray-500 dark:placeholder:text-gray-400"
             />
           </div>
 
           {/* Filters */}
           <div className="flex flex-wrap gap-2">
             <Select value={filterDepartment} onValueChange={setFilterDepartment}>
-              <SelectTrigger className="w-40">
+              <SelectTrigger className="w-40 bg-background dark:bg-gray-800 border-gray-300 dark:border-gray-700">
                 <SelectValue placeholder="Department" />
               </SelectTrigger>
               <SelectContent>
@@ -134,7 +134,7 @@ const FlashcardGrid: React.FC<FlashcardGridProps> = ({
             </Select>
 
             <Select value={filterDifficulty} onValueChange={setFilterDifficulty}>
-              <SelectTrigger className="w-32">
+              <SelectTrigger className="w-32 bg-background dark:bg-gray-800 border-gray-300 dark:border-gray-700">
                 <SelectValue placeholder="Difficulty" />
               </SelectTrigger>
               <SelectContent>
@@ -248,8 +248,8 @@ const FlashcardGrid: React.FC<FlashcardGridProps> = ({
       {filteredFlashcards.length === 0 ? (
         <div className="text-center py-12">
           <div className="text-6xl mb-4">🔍</div>
-          <h3 className="text-lg font-semibold text-gray-600 mb-2">No flashcards found</h3>
-          <p className="text-gray-500 mb-4">Try adjusting your search or filters</p>
+          <h3 className="text-lg font-semibold text-muted-foreground mb-2">No flashcards found</h3>
+          <p className="text-muted-foreground mb-4">Try adjusting your search or filters</p>
           <Button variant="outline" onClick={clearFilters}>
             Clear all filters
           </Button>

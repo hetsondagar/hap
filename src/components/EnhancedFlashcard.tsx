@@ -72,7 +72,7 @@ const EnhancedFlashcard: React.FC<EnhancedFlashcardProps> = ({
           "relative w-full h-64 cursor-pointer transition-all duration-500 transform-gpu",
           "hover:scale-105 hover:shadow-2xl",
           "border-2 border-transparent hover:border-primary/20",
-          "bg-gradient-to-br from-white to-gray-50",
+          "bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800",
           "overflow-hidden"
         )}
         onClick={() => onFlip?.(id)}
@@ -89,15 +89,15 @@ const EnhancedFlashcard: React.FC<EnhancedFlashcardProps> = ({
             className={cn(
               "absolute inset-0 w-full h-full backface-hidden",
               "flex flex-col justify-between p-6",
-              "bg-gradient-to-br from-blue-50 to-indigo-100",
-              "border border-blue-200"
+              "bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-950/30 dark:to-indigo-950/20",
+              "border border-blue-200 dark:border-blue-900/40"
             )}
           >
             {/* Header */}
             <div className="flex items-start justify-between">
               <div className="flex flex-wrap gap-2">
                 {department && (
-                  <Badge variant="secondary" className="text-xs">
+                <Badge variant="secondary" className="text-xs dark:bg-gray-700 dark:text-gray-200">
                     {department}
                   </Badge>
                 )}
@@ -171,7 +171,7 @@ const EnhancedFlashcard: React.FC<EnhancedFlashcardProps> = ({
               <div className="text-xs text-gray-500">
                 {year && phase && `${year} • ${phase}`}
               </div>
-              <div className="flex items-center gap-2 text-sm text-blue-600">
+              <div className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400">
                 <Eye className="h-4 w-4" />
                 <span>Click to reveal</span>
               </div>
@@ -183,14 +183,14 @@ const EnhancedFlashcard: React.FC<EnhancedFlashcardProps> = ({
             className={cn(
               "absolute inset-0 w-full h-full backface-hidden rotate-y-180",
               "flex flex-col justify-between p-6",
-              "bg-gradient-to-br from-green-50 to-emerald-100",
-              "border border-green-200"
+              "bg-gradient-to-br from-green-50 to-emerald-100 dark:from-emerald-950/30 dark:to-green-950/20",
+              "border border-green-200 dark:border-green-900/40"
             )}
           >
             {/* Header */}
             <div className="flex items-start justify-between">
               <div className="flex flex-wrap gap-2">
-                <Badge variant="secondary" className="text-xs bg-green-100 text-green-800">
+                <Badge variant="secondary" className="text-xs bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
                   Answer
                 </Badge>
                 <Badge 
@@ -263,7 +263,7 @@ const EnhancedFlashcard: React.FC<EnhancedFlashcardProps> = ({
               <div className="text-xs text-gray-500">
                 {year && phase && `${year} • ${phase}`}
               </div>
-              <div className="flex items-center gap-2 text-sm text-green-600">
+              <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400">
                 <EyeOff className="h-4 w-4" />
                 <span>Click to hide</span>
               </div>
