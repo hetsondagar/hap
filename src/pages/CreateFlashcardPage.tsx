@@ -100,7 +100,19 @@ const CreateFlashcardPage = () => {
         navigate(`/subjects/${subjectParam}/flashcards`);
       }
     } catch (error: any) {
-      toast.error(error?.message || "Failed to create flashcard");
+      // Handle validation errors from backend
+      const errorMessage = error?.response?.data?.message || error?.message || "Failed to create flashcard";
+      const errors = error?.response?.data?.errors;
+      
+      if (errors && Array.isArray(errors)) {
+        // Show first validation error with field name
+        const firstError = errors[0];
+        const fieldName = firstError.path || firstError.param || 'field';
+        toast.error(`${fieldName}: ${firstError.msg || firstError.message}`);
+      } else {
+        toast.error(errorMessage);
+      }
+      
       console.error("Error creating flashcard:", error);
     } finally {
       setCreating(false);

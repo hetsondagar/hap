@@ -16,14 +16,17 @@ export const validateCreateFlashcard = [
     .isLength({ max: 1000 })
     .withMessage('Back side cannot exceed 1000 characters'),
   body('department')
-    .notEmpty()
-    .withMessage('Department is required')
-    .isIn([
-      'Computer Science', 'Mathematics', 'Physics', 'Chemistry', 'Biology',
-      'Engineering', 'Medicine', 'Business', 'Literature', 'History',
-      'Geography', 'Art', 'Music', 'Sports', 'Other'
-    ])
+    .optional()
+    .isIn(['cse', 'mechanical', 'electrical', 'chemical', 'civil', 'other'])
     .withMessage('Invalid department'),
+  body('year')
+    .optional()
+    .isIn(['1st-year', '2nd-year', '3rd-year', '4th-year'])
+    .withMessage('Invalid year'),
+  body('subjectId')
+    .optional()
+    .isString()
+    .withMessage('Subject ID must be a string'),
   body('difficulty')
     .optional()
     .isIn(['easy', 'medium', 'hard'])
@@ -31,7 +34,11 @@ export const validateCreateFlashcard = [
   body('tags')
     .optional()
     .isArray()
-    .withMessage('Tags must be an array')
+    .withMessage('Tags must be an array'),
+  body('public')
+    .optional()
+    .isBoolean()
+    .withMessage('Public must be a boolean')
 ];
 
 export const validateFlashcardId = [
