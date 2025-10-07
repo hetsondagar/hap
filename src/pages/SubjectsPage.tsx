@@ -21,8 +21,20 @@ const SubjectsPage = () => {
       const storedUserInfo = localStorage.getItem("userInfo");
       if (storedUserInfo) {
         const user = JSON.parse(storedUserInfo);
-        setUserInfo({ department: user.department, year: user.year });
-        setSubjects(getSubjectsByDeptYear(user.department, user.year));
+        
+        // Normalize year format (handle both '1st' and '1st-year' formats)
+        let normalizedYear = user.year;
+        if (!normalizedYear.includes('-year')) {
+          normalizedYear = `${user.year}-year`;
+        }
+        
+        setUserInfo({ department: user.department, year: normalizedYear });
+        
+        // Get subjects for this department and year
+        const subjectsList = getSubjectsByDeptYear(user.department, normalizedYear);
+        console.log('User department:', user.department, 'Year:', normalizedYear);
+        console.log('Subjects found:', subjectsList);
+        setSubjects(subjectsList);
       } else {
         // Redirect to login if no user info
         navigate("/login");

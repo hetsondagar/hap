@@ -21,10 +21,17 @@ const SubjectFlashcardsPage = () => {
       const storedUserInfo = localStorage.getItem("userInfo");
       if (storedUserInfo) {
         const user = JSON.parse(storedUserInfo);
-        setUserInfo({ department: user.department, year: user.year });
+        
+        // Normalize year format (handle both '1st' and '1st-year' formats)
+        let normalizedYear = user.year;
+        if (!normalizedYear.includes('-year')) {
+          normalizedYear = `${user.year}-year`;
+        }
+        
+        setUserInfo({ department: user.department, year: normalizedYear });
         
         // Find the subject
-        const subjects = getSubjectsByDeptYear(user.department, user.year);
+        const subjects = getSubjectsByDeptYear(user.department, normalizedYear);
         const foundSubject = subjects.find(s => s.id === subjectId);
         setSubject(foundSubject);
         
