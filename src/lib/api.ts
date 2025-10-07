@@ -35,6 +35,10 @@ export const API_ENDPOINTS = {
     COMMENT_DECK: (id: string) => `${API_BASE_URL}/community/decks/${id}/comment`,
     FOLLOW_USER: (id: string) => `${API_BASE_URL}/community/follow/${id}`,
     USER_DECKS: (userId: string) => `${API_BASE_URL}/community/users/${userId}/decks`,
+    POSTS: `${API_BASE_URL}/community/posts`,
+    POST_BY_ID: (id: string) => `${API_BASE_URL}/community/posts/${id}`,
+    LIKE_POST: (id: string) => `${API_BASE_URL}/community/posts/${id}/like`,
+    COMMENT_POST: (id: string) => `${API_BASE_URL}/community/posts/${id}/comment`,
   },
   
   // Analytics
@@ -399,6 +403,94 @@ export const communityAPI = {
     });
     
     const url = `${API_ENDPOINTS.COMMUNITY.DECKS}/search?${searchParams}`;
+    const response = await apiRequest(url);
+    return response.json();
+  },
+
+  // ========== POST/DISCUSSION FUNCTIONS ==========
+  getPosts: async (params?: {
+    page?: number;
+    limit?: number;
+    department?: string;
+    year?: string;
+    sortBy?: string;
+    sortOrder?: 'asc' | 'desc';
+  }) => {
+    const searchParams = new URLSearchParams();
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined) {
+          searchParams.append(key, value.toString());
+        }
+      });
+    }
+    
+    const url = `${API_ENDPOINTS.COMMUNITY.POSTS}?${searchParams}`;
+    const response = await apiRequest(url);
+    return response.json();
+  },
+
+  createPost: async (postData: {
+    title: string;
+    content: string;
+    department?: string;
+    year?: string;
+    tags?: string[];
+  }) => {
+    const response = await apiRequest(API_ENDPOINTS.COMMUNITY.POSTS, {
+      method: 'POST',
+      body: JSON.stringify(postData),
+    });
+    return response.json();
+  },
+
+  getPost: async (id: string) => {
+    const response = await apiRequest(API_ENDPOINTS.COMMUNITY.POST_BY_ID(id));
+    return response.json();
+  },
+
+  likePost: async (id: string) => {
+    const response = await apiRequest(API_ENDPOINTS.COMMUNITY.LIKE_POST(id), {
+      method: 'PUT',
+    });
+    return response.json();
+  },
+
+  commentPost: async (id: string, comment: { text: string }) => {
+    const response = await apiRequest(API_ENDPOINTS.COMMUNITY.COMMENT_POST(id), {
+      method: 'POST',
+      body: JSON.stringify(comment),
+    });
+    return response.json();
+  },
+
+  deletePost: async (id: string) => {
+    const response = await apiRequest(API_ENDPOINTS.COMMUNITY.POST_BY_ID(id), {
+      method: 'DELETE',
+    });
+    return response.json();
+  },
+
+  searchPosts: async (params: {
+    q?: string;
+    department?: string;
+    year?: string;
+    tags?: string[];
+    page?: number;
+    limit?: number;
+  }) => {
+    const searchParams = new URLSearchParams();
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined) {
+        if (Array.isArray(value)) {
+          value.forEach(v => searchParams.append(key, v));
+        } else {
+          searchParams.append(key, value.toString());
+        }
+      }
+    });
+    
+    const url = `${API_ENDPOINTS.COMMUNITY.POSTS}/search?${searchParams}`;
     const response = await apiRequest(url);
     return response.json();
   },

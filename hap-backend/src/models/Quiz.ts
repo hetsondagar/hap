@@ -15,7 +15,7 @@ export interface IQuiz extends Document {
   attempts: number;
   userId: mongoose.Types.ObjectId;
   deckId?: mongoose.Types.ObjectId;
-  department: string;
+  department?: string;
   difficulty: 'easy' | 'medium' | 'hard';
   timeSpent: number; // in seconds
   completedAt: Date;
@@ -81,23 +81,13 @@ const quizSchema = new Schema<IQuiz>({
   },
   department: {
     type: String,
-    required: [true, 'Department is required'],
     enum: [
-      'Computer Science',
-      'Mathematics',
-      'Physics',
-      'Chemistry',
-      'Biology',
-      'Engineering',
-      'Medicine',
-      'Business',
-      'Literature',
-      'History',
-      'Geography',
-      'Art',
-      'Music',
-      'Sports',
-      'Other'
+      'cse',
+      'mechanical',
+      'electrical',
+      'chemical',
+      'civil',
+      'other'
     ]
   },
   difficulty: {
@@ -118,10 +108,8 @@ const quizSchema = new Schema<IQuiz>({
   timestamps: true
 });
 
-// Indexes for efficient queries
-quizSchema.index({ userId: 1, completedAt: -1 });
-quizSchema.index({ department: 1, difficulty: 1 });
-quizSchema.index({ score: -1 });
-quizSchema.index({ completedAt: -1 });
+// Optimized indexes for efficient queries
+quizSchema.index({ userId: 1, completedAt: -1 }); // User's quiz history
+quizSchema.index({ department: 1, difficulty: 1, score: -1 }); // Leaderboards
 
 export default mongoose.model<IQuiz>('Quiz', quizSchema);

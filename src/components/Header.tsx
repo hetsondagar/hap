@@ -89,12 +89,6 @@ const Header = () => {
               <span className="text-sm text-muted-foreground mr-2 hidden lg:inline">
                 {username ? `Hi, ${username}` : 'Signed in'}
               </span>
-              <Link to="/analytics">
-                <Button variant="outline" className="border-primary/20 hover:border-primary flex items-center gap-2">
-                  <BarChart3 className="w-4 h-4" />
-                  Analytics
-                </Button>
-              </Link>
               <Link to="/">
                 <Button variant="outline" className="border-primary/20 hover:border-primary flex items-center gap-2">
                   <LayoutDashboard className="w-4 h-4" />
@@ -155,15 +149,6 @@ const Header = () => {
             <div className="pt-4 space-y-3">
               {isAuthenticated ? (
                 <>
-                  <Link to="/analytics" onClick={() => setIsMenuOpen(false)}>
-                    <Button 
-                      variant="outline" 
-                      className="w-full border-primary/20 hover:border-primary flex items-center justify-center gap-2"
-                    >
-                      <BarChart3 className="w-4 h-4" />
-                      Analytics
-                    </Button>
-                  </Link>
                   <Link to="/" onClick={() => setIsMenuOpen(false)}>
                     <Button 
                       variant="outline" 

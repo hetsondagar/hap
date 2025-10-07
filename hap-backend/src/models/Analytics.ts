@@ -68,21 +68,12 @@ const analyticsSchema = new Schema<IAnalytics>({
       type: String,
       required: true,
       enum: [
-        'Computer Science',
-        'Mathematics',
-        'Physics',
-        'Chemistry',
-        'Biology',
-        'Engineering',
-        'Medicine',
-        'Business',
-        'Literature',
-        'History',
-        'Geography',
-        'Art',
-        'Music',
-        'Sports',
-        'Other'
+        'cse',
+        'mechanical',
+        'electrical',
+        'chemical',
+        'civil',
+        'other'
       ]
     },
     studiedCount: {
@@ -137,10 +128,9 @@ const analyticsSchema = new Schema<IAnalytics>({
   timestamps: true
 });
 
-// Indexes for efficient queries
-analyticsSchema.index({ userId: 1 });
-analyticsSchema.index({ 'streaks.current': -1 });
-analyticsSchema.index({ studiedCount: -1 });
-analyticsSchema.index({ quizAccuracy: -1 });
+// Optimized indexes for efficient queries
+// Note: userId already has unique index from schema definition (line 32)
+analyticsSchema.index({ studiedCount: -1, quizAccuracy: -1 }); // Leaderboards
+analyticsSchema.index({ 'streaks.current': -1 }); // Streak leaderboards
 
 export default mongoose.model<IAnalytics>('Analytics', analyticsSchema);

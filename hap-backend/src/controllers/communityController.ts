@@ -3,6 +3,7 @@ import { body, validationResult, param, query } from 'express-validator';
 import Deck from '../models/Deck';
 import User from '../models/User';
 import Flashcard from '../models/Flashcard';
+import Post from '../models/Post';
 
 // Validation rules
 export const validateCreateDeck = [
@@ -55,6 +56,31 @@ export const validateComment = [
     .withMessage('Comment text is required')
     .isLength({ max: 500 })
     .withMessage('Comment cannot exceed 500 characters')
+];
+
+export const validatePost = [
+  body('title')
+    .notEmpty()
+    .withMessage('Title is required')
+    .isLength({ max: 200 })
+    .withMessage('Title cannot exceed 200 characters'),
+  body('content')
+    .notEmpty()
+    .withMessage('Content is required')
+    .isLength({ max: 2000 })
+    .withMessage('Content cannot exceed 2000 characters'),
+  body('department')
+    .optional()
+    .isIn(['cse', 'mechanical', 'electrical', 'chemical', 'civil', 'other'])
+    .withMessage('Invalid department'),
+  body('year')
+    .optional()
+    .isIn(['1st-year', '2nd-year', '3rd-year', '4th-year'])
+    .withMessage('Invalid year'),
+  body('tags')
+    .optional()
+    .isArray()
+    .withMessage('Tags must be an array')
 ];
 
 // Browse public decks
@@ -564,6 +590,331 @@ export const searchDecks = async (req: Request, res: Response): Promise<void> =>
     res.status(500).json({
       success: false,
       message: 'Internal server error while searching decks'
+    });
+  }
+};
+
+// ============ GLOBAL POSTS/DOUBTS ============
+
+// Create post
+export const createPost = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(400).json({
+        success: false,
+        message: 'Validation failed',
+        errors: errors.array()
+      });
+      return;
+    }
+
+    const { title, content, department, year, tags = [] } = req.body;
+    const userId = req.user?.userId;
+
+    const post = new Post({
+      userId,
+      title,
+      content,
+      department,
+      year,
+      tags
+    });
+
+    await post.save();
+
+    const populatedPost = await Post.findById(post._id)
+      .populate('userId', 'username');
+
+    res.status(201).json({
+      success: true,
+      message: 'Post created successfully',
+      data: { post: populatedPost }
+    });
+  } catch (error) {
+    console.error('Create post error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error while creating post'
+    });
+  }
+};
+
+// Get all posts with filters
+export const getPosts = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { 
+      page = 1, 
+      limit = 20, 
+      department, 
+      year,
+      sortBy = 'createdAt',
+      sortOrder = 'desc'
+    } = req.query;
+
+    const filter: any = {};
+
+    if (department) {
+      filter.department = department;
+    }
+
+    if (year) {
+      filter.year = year;
+    }
+
+    const skip = (Number(page) - 1) * Number(limit);
+    const sortOptions: any = {};
+    sortOptions[sortBy as string] = sortOrder === 'desc' ? -1 : 1;
+
+    const posts = await Post.find(filter)
+      .populate('userId', 'username')
+      .sort(sortOptions)
+      .skip(skip)
+      .limit(Number(limit));
+
+    const total = await Post.countDocuments(filter);
+
+    res.status(200).json({
+      success: true,
+      data: {
+        posts,
+        pagination: {
+          current: Number(page),
+          pages: Math.ceil(total / Number(limit)),
+          total
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Get posts error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error while fetching posts'
+    });
+  }
+};
+
+// Get single post
+export const getPost = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+
+    const post = await Post.findById(id)
+      .populate('userId', 'username')
+      .populate('likes', 'username')
+      .populate('comments.userId', 'username');
+
+    if (!post) {
+      res.status(404).json({
+        success: false,
+        message: 'Post not found'
+      });
+      return;
+    }
+
+    res.status(200).json({
+      success: true,
+      data: { post }
+    });
+  } catch (error) {
+    console.error('Get post error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error while fetching post'
+    });
+  }
+};
+
+// Like/unlike post
+export const togglePostLike = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const userId = req.user?.userId;
+
+    const post = await Post.findById(id);
+
+    if (!post) {
+      res.status(404).json({
+        success: false,
+        message: 'Post not found'
+      });
+      return;
+    }
+
+    const isLiked = post.likes.includes(userId as any);
+
+    if (isLiked) {
+      post.likes = post.likes.filter(likeId => likeId.toString() !== userId);
+    } else {
+      post.likes.push(userId as any);
+    }
+
+    await post.save();
+
+    res.status(200).json({
+      success: true,
+      message: isLiked ? 'Post unliked' : 'Post liked',
+      data: {
+        isLiked: !isLiked,
+        likesCount: post.likes.length
+      }
+    });
+  } catch (error) {
+    console.error('Toggle post like error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error while toggling like'
+    });
+  }
+};
+
+// Add comment to post
+export const addPostComment = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(400).json({
+        success: false,
+        message: 'Validation failed',
+        errors: errors.array()
+      });
+      return;
+    }
+
+    const { id } = req.params;
+    const { text } = req.body;
+    const userId = req.user?.userId;
+
+    const post = await Post.findById(id);
+
+    if (!post) {
+      res.status(404).json({
+        success: false,
+        message: 'Post not found'
+      });
+      return;
+    }
+
+    // Get user info
+    const user = await User.findById(userId).select('username');
+
+    if (!user) {
+      res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+      return;
+    }
+
+    const comment = {
+      userId: userId as any,
+      username: user.username,
+      text,
+      createdAt: new Date()
+    };
+
+    post.comments.push(comment);
+    await post.save();
+
+    res.status(201).json({
+      success: true,
+      message: 'Comment added successfully',
+      data: { comment }
+    });
+  } catch (error) {
+    console.error('Add post comment error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error while adding comment'
+    });
+  }
+};
+
+// Delete post (owner only)
+export const deletePost = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const userId = req.user?.userId;
+
+    const post = await Post.findById(id);
+    if (!post) {
+      res.status(404).json({ success: false, message: 'Post not found' });
+      return;
+    }
+    if (post.userId.toString() !== userId) {
+      res.status(403).json({ success: false, message: 'Not authorized to delete this post' });
+      return;
+    }
+
+    await Post.findByIdAndDelete(id);
+    res.status(200).json({ success: true, message: 'Post deleted' });
+  } catch (error) {
+    console.error('Delete post error:', error);
+    res.status(500).json({ success: false, message: 'Internal server error while deleting post' });
+  }
+};
+
+// Search posts
+export const searchPosts = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { 
+      q, 
+      department, 
+      year,
+      tags,
+      page = 1, 
+      limit = 20 
+    } = req.query;
+
+    const filter: any = {};
+
+    // Text search
+    if (q) {
+      filter.$or = [
+        { title: { $regex: q, $options: 'i' } },
+        { content: { $regex: q, $options: 'i' } }
+      ];
+    }
+
+    if (department) {
+      filter.department = department;
+    }
+
+    if (year) {
+      filter.year = year;
+    }
+
+    if (tags) {
+      const tagArray = Array.isArray(tags) ? tags : [tags];
+      filter.tags = { $in: tagArray };
+    }
+
+    const skip = (Number(page) - 1) * Number(limit);
+
+    const posts = await Post.find(filter)
+      .populate('userId', 'username')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(Number(limit));
+
+    const total = await Post.countDocuments(filter);
+
+    res.status(200).json({
+      success: true,
+      data: {
+        posts,
+        pagination: {
+          current: Number(page),
+          pages: Math.ceil(total / Number(limit)),
+          total
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Search posts error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error while searching posts'
     });
   }
 };

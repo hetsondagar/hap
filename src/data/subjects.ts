@@ -1,31 +1,43 @@
 // src/data/subjects.ts
 export const SUBJECTS_BY_DEPT_YEAR = {
   cse: {
-    '1st': [
-      { id: 'math1', name: 'Mathematics I', code: 'MATH101' },
-      { id: 'physics1', name: 'Physics I', code: 'PHY101' },
-      { id: 'chemistry1', name: 'Chemistry I', code: 'CHEM101' },
-      { id: 'english1', name: 'English Communication', code: 'ENG101' },
-      { id: 'programming1', name: 'Programming Fundamentals', code: 'CS101' },
-      { id: 'mechanics', name: 'Engineering Mechanics', code: 'ME101' }
+    '1st-year': [
+      { id: 'civil-fund', name: 'Fundamentals of Civil Engineering', code: 'CE101' },
+      { id: 'material-sci', name: 'Material Science', code: 'MS101' },
+      { id: 'applied-physics1', name: 'Applied Physics - 1', code: 'PHY101' },
+      { id: 'applied-maths1', name: 'Applied Maths - 1', code: 'MATH101' },
+      { id: 'engg-drawing', name: 'Engineering Drawing', code: 'ED101' },
+      { id: 'programming-c-cpp', name: 'Programming in C and C++', code: 'CS101' },
+      { id: 'applied-physics2', name: 'Applied Physics - 2', code: 'PHY102' },
+      { id: 'applied-maths2', name: 'Applied Maths - 2', code: 'MATH102' },
+      { id: 'engg-mechanics', name: 'Engineering Mechanics', code: 'EM101' },
+      { id: 'electrical-machines', name: 'Electrical Engineering and Machines', code: 'EE101' }
     ],
-    '2nd': [
-      { id: 'math2', name: 'Mathematics II', code: 'MATH201' },
-      { id: 'dsa', name: 'Data Structures & Algorithms', code: 'CS201' },
-      { id: 'oop', name: 'Object Oriented Programming', code: 'CS202' },
-      { id: 'dbms', name: 'Database Management Systems', code: 'CS203' },
-      { id: 'coa', name: 'Computer Organization & Architecture', code: 'CS204' },
-      { id: 'discrete', name: 'Discrete Mathematics', code: 'MATH202' }
+    '2nd-year': [
+      { id: 'oops-java', name: 'OoPS in JAVA', code: 'CS201' },
+      { id: 'data-structure', name: 'Data Structure', code: 'CS202' },
+      { id: 'applied-maths3', name: 'Applied Maths-3', code: 'MATH201' },
+      { id: 'electronic-engg', name: 'Electronic Engineering', code: 'EE201' },
+      { id: 'communication-skills', name: 'Communication Skills', code: 'COM201' },
+      { id: 'combinatorial-method', name: 'Combinatorial Method', code: 'MATH202' },
+      { id: 'dbms', name: 'Database and Management System', code: 'CS203' },
+      { id: 'daa', name: 'Design and Analysis of Algorithms', code: 'CS204' },
+      { id: 'analog-digital-comm', name: 'Analog and Digital Communication', code: 'EE202' }
     ],
-    '3rd': [
-      { id: 'os', name: 'Operating Systems', code: 'CS301' },
-      { id: 'networks', name: 'Computer Networks', code: 'CS302' },
-      { id: 'software', name: 'Software Engineering', code: 'CS303' },
-      { id: 'ai', name: 'Artificial Intelligence', code: 'CS304' },
-      { id: 'web', name: 'Web Technologies', code: 'CS305' },
-      { id: 'algorithms', name: 'Advanced Algorithms', code: 'CS306' }
+    '3rd-year': [
+      { id: 'theory-computation', name: 'Theory of Computation', code: 'CS301' },
+      { id: 'computer-graphics', name: 'Computer Graphics', code: 'CS302' },
+      { id: 'computer-organization', name: 'Computer Organization', code: 'CS303' },
+      { id: 'web-programming', name: 'Basic of Web Programming', code: 'CS304' },
+      { id: 'engg-economics', name: 'Engineering Economics', code: 'ECO301' },
+      { id: 'computer-network', name: 'Computer Network', code: 'CS305' },
+      { id: 'dotnet-tech', name: '.NET Technology', code: 'CS306' },
+      { id: 'advanced-java', name: 'Advanced JAVA', code: 'CS307' },
+      { id: 'operating-system', name: 'Operating System', code: 'CS308' },
+      { id: 'software-engineer', name: 'Software Engineer', code: 'CS309' },
+      { id: 'compiler-design', name: 'Compiler Design', code: 'CS310' }
     ],
-    '4th': [
+    '4th-year': [
       { id: 'ml', name: 'Machine Learning', code: 'CS401' },
       { id: 'cyber', name: 'Cybersecurity', code: 'CS402' },
       { id: 'cloud', name: 'Cloud Computing', code: 'CS403' },
@@ -35,7 +47,7 @@ export const SUBJECTS_BY_DEPT_YEAR = {
     ]
   },
   mechanical: {
-    '1st': [
+    '1st-year': [
       { id: 'math1', name: 'Mathematics I', code: 'MATH101' },
       { id: 'physics1', name: 'Physics I', code: 'PHY101' },
       { id: 'chemistry1', name: 'Chemistry I', code: 'CHEM101' },
@@ -43,7 +55,7 @@ export const SUBJECTS_BY_DEPT_YEAR = {
       { id: 'mechanics', name: 'Engineering Mechanics', code: 'ME101' },
       { id: 'drawing', name: 'Engineering Drawing', code: 'ME102' }
     ],
-    '2nd': [
+    '2nd-year': [
       { id: 'math2', name: 'Mathematics II', code: 'MATH201' },
       { id: 'thermo', name: 'Thermodynamics', code: 'ME201' },
       { id: 'materials', name: 'Materials Science', code: 'ME202' },
@@ -51,7 +63,7 @@ export const SUBJECTS_BY_DEPT_YEAR = {
       { id: 'fluids', name: 'Fluid Mechanics', code: 'ME204' },
       { id: 'machines', name: 'Theory of Machines', code: 'ME205' }
     ],
-    '3rd': [
+    '3rd-year': [
       { id: 'heat', name: 'Heat Transfer', code: 'ME301' },
       { id: 'design', name: 'Machine Design', code: 'ME302' },
       { id: 'control', name: 'Control Systems', code: 'ME303' },
@@ -59,7 +71,7 @@ export const SUBJECTS_BY_DEPT_YEAR = {
       { id: 'automotive', name: 'Automotive Engineering', code: 'ME305' },
       { id: 'cad', name: 'CAD/CAM', code: 'ME306' }
     ],
-    '4th': [
+    '4th-year': [
       { id: 'project', name: 'Final Year Project', code: 'ME401' },
       { id: 'internship', name: 'Industrial Training', code: 'ME402' },
       { id: 'robotics', name: 'Robotics', code: 'ME403' },
@@ -69,7 +81,7 @@ export const SUBJECTS_BY_DEPT_YEAR = {
     ]
   },
   electrical: {
-    '1st': [
+    '1st-year': [
       { id: 'math1', name: 'Mathematics I', code: 'MATH101' },
       { id: 'physics1', name: 'Physics I', code: 'PHY101' },
       { id: 'chemistry1', name: 'Chemistry I', code: 'CHEM101' },
@@ -77,7 +89,7 @@ export const SUBJECTS_BY_DEPT_YEAR = {
       { id: 'circuits', name: 'Basic Electrical Circuits', code: 'EE101' },
       { id: 'mechanics', name: 'Engineering Mechanics', code: 'ME101' }
     ],
-    '2nd': [
+    '2nd-year': [
       { id: 'math2', name: 'Mathematics II', code: 'MATH201' },
       { id: 'electronics', name: 'Electronics I', code: 'EE201' },
       { id: 'machines', name: 'Electrical Machines', code: 'EE202' },
@@ -85,7 +97,7 @@ export const SUBJECTS_BY_DEPT_YEAR = {
       { id: 'signals', name: 'Signals & Systems', code: 'EE204' },
       { id: 'control', name: 'Control Systems', code: 'EE205' }
     ],
-    '3rd': [
+    '3rd-year': [
       { id: 'power2', name: 'Advanced Power Systems', code: 'EE301' },
       { id: 'electronics2', name: 'Electronics II', code: 'EE302' },
       { id: 'communication', name: 'Communication Systems', code: 'EE303' },
@@ -93,7 +105,7 @@ export const SUBJECTS_BY_DEPT_YEAR = {
       { id: 'instrumentation', name: 'Instrumentation', code: 'EE305' },
       { id: 'renewable', name: 'Renewable Energy', code: 'EE306' }
     ],
-    '4th': [
+    '4th-year': [
       { id: 'project', name: 'Final Year Project', code: 'EE401' },
       { id: 'internship', name: 'Industrial Training', code: 'EE402' },
       { id: 'smart', name: 'Smart Grid', code: 'EE403' },
@@ -103,7 +115,7 @@ export const SUBJECTS_BY_DEPT_YEAR = {
     ]
   },
   chemical: {
-    '1st': [
+    '1st-year': [
       { id: 'math1', name: 'Mathematics I', code: 'MATH101' },
       { id: 'physics1', name: 'Physics I', code: 'PHY101' },
       { id: 'chemistry1', name: 'Chemistry I', code: 'CHEM101' },
@@ -111,7 +123,7 @@ export const SUBJECTS_BY_DEPT_YEAR = {
       { id: 'organic', name: 'Organic Chemistry', code: 'CH101' },
       { id: 'mechanics', name: 'Engineering Mechanics', code: 'ME101' }
     ],
-    '2nd': [
+    '2nd-year': [
       { id: 'math2', name: 'Mathematics II', code: 'MATH201' },
       { id: 'thermo', name: 'Chemical Thermodynamics', code: 'CH201' },
       { id: 'kinetics', name: 'Chemical Kinetics', code: 'CH202' },
@@ -119,7 +131,7 @@ export const SUBJECTS_BY_DEPT_YEAR = {
       { id: 'materials', name: 'Materials Science', code: 'CH204' },
       { id: 'fluids', name: 'Fluid Mechanics', code: 'CH205' }
     ],
-    '3rd': [
+    '3rd-year': [
       { id: 'reactors', name: 'Chemical Reactors', code: 'CH301' },
       { id: 'separation', name: 'Separation Processes', code: 'CH302' },
       { id: 'heat', name: 'Heat Transfer', code: 'CH303' },
@@ -127,7 +139,7 @@ export const SUBJECTS_BY_DEPT_YEAR = {
       { id: 'process2', name: 'Process Design', code: 'CH305' },
       { id: 'safety', name: 'Process Safety', code: 'CH306' }
     ],
-    '4th': [
+    '4th-year': [
       { id: 'project', name: 'Final Year Project', code: 'CH401' },
       { id: 'internship', name: 'Industrial Training', code: 'CH402' },
       { id: 'environmental', name: 'Environmental Engineering', code: 'CH403' },
@@ -137,7 +149,7 @@ export const SUBJECTS_BY_DEPT_YEAR = {
     ]
   },
   civil: {
-    '1st': [
+    '1st-year': [
       { id: 'math1', name: 'Mathematics I', code: 'MATH101' },
       { id: 'physics1', name: 'Physics I', code: 'PHY101' },
       { id: 'chemistry1', name: 'Chemistry I', code: 'CHEM101' },
@@ -145,7 +157,7 @@ export const SUBJECTS_BY_DEPT_YEAR = {
       { id: 'mechanics', name: 'Engineering Mechanics', code: 'CE101' },
       { id: 'drawing', name: 'Engineering Drawing', code: 'CE102' }
     ],
-    '2nd': [
+    '2nd-year': [
       { id: 'math2', name: 'Mathematics II', code: 'MATH201' },
       { id: 'structures', name: 'Structural Analysis', code: 'CE201' },
       { id: 'materials', name: 'Construction Materials', code: 'CE202' },
@@ -153,7 +165,7 @@ export const SUBJECTS_BY_DEPT_YEAR = {
       { id: 'geotech', name: 'Geotechnical Engineering', code: 'CE204' },
       { id: 'fluids', name: 'Fluid Mechanics', code: 'CE205' }
     ],
-    '3rd': [
+    '3rd-year': [
       { id: 'concrete', name: 'Concrete Technology', code: 'CE301' },
       { id: 'steel', name: 'Steel Structures', code: 'CE302' },
       { id: 'transportation', name: 'Transportation Engineering', code: 'CE303' },
@@ -161,7 +173,7 @@ export const SUBJECTS_BY_DEPT_YEAR = {
       { id: 'construction', name: 'Construction Management', code: 'CE305' },
       { id: 'hydraulics', name: 'Hydraulics', code: 'CE306' }
     ],
-    '4th': [
+    '4th-year': [
       { id: 'project', name: 'Final Year Project', code: 'CE401' },
       { id: 'internship', name: 'Industrial Training', code: 'CE402' },
       { id: 'earthquake', name: 'Earthquake Engineering', code: 'CE403' },
@@ -171,7 +183,7 @@ export const SUBJECTS_BY_DEPT_YEAR = {
     ]
   },
   other: {
-    '1st': [
+    '1st-year': [
       { id: 'math1', name: 'Mathematics I', code: 'MATH101' },
       { id: 'physics1', name: 'Physics I', code: 'PHY101' },
       { id: 'chemistry1', name: 'Chemistry I', code: 'CHEM101' },
@@ -179,7 +191,7 @@ export const SUBJECTS_BY_DEPT_YEAR = {
       { id: 'basics', name: 'Engineering Basics', code: 'EN101' },
       { id: 'mechanics', name: 'Engineering Mechanics', code: 'ME101' }
     ],
-    '2nd': [
+    '2nd-year': [
       { id: 'math2', name: 'Mathematics II', code: 'MATH201' },
       { id: 'specialized1', name: 'Specialized Subject I', code: 'EN201' },
       { id: 'specialized2', name: 'Specialized Subject II', code: 'EN202' },
@@ -187,7 +199,7 @@ export const SUBJECTS_BY_DEPT_YEAR = {
       { id: 'specialized4', name: 'Specialized Subject IV', code: 'EN204' },
       { id: 'specialized5', name: 'Specialized Subject V', code: 'EN205' }
     ],
-    '3rd': [
+    '3rd-year': [
       { id: 'advanced1', name: 'Advanced Subject I', code: 'EN301' },
       { id: 'advanced2', name: 'Advanced Subject II', code: 'EN302' },
       { id: 'advanced3', name: 'Advanced Subject III', code: 'EN303' },
@@ -195,7 +207,7 @@ export const SUBJECTS_BY_DEPT_YEAR = {
       { id: 'advanced5', name: 'Advanced Subject V', code: 'EN305' },
       { id: 'advanced6', name: 'Advanced Subject VI', code: 'EN306' }
     ],
-    '4th': [
+    '4th-year': [
       { id: 'project', name: 'Final Year Project', code: 'EN401' },
       { id: 'internship', name: 'Industrial Training', code: 'EN402' },
       { id: 'elective1', name: 'Elective I', code: 'EN403' },
@@ -216,10 +228,10 @@ export const DEPARTMENTS = [
 ];
 
 export const YEARS = [
-  { id: "1st", label: "1st Year" },
-  { id: "2nd", label: "2nd Year" },
-  { id: "3rd", label: "3rd Year" },
-  { id: "4th", label: "4th Year" },
+  { id: "1st-year", label: "1st Year" },
+  { id: "2nd-year", label: "2nd Year" },
+  { id: "3rd-year", label: "3rd Year" },
+  { id: "4th-year", label: "4th Year" },
 ];
 
 export const getSubjectsByDeptYear = (department: string, year: string) => {

@@ -15,9 +15,9 @@ export interface IDeck extends Document {
   likes: mongoose.Types.ObjectId[];
   comments: IComment[];
   creatorId: mongoose.Types.ObjectId;
-  department: string;
-  year: string;
-  subjectId: mongoose.Types.ObjectId;
+  department?: string;
+  year?: string;
+  subjectId?: mongoose.Types.ObjectId;
   tags: string[];
   difficulty: 'beginner' | 'intermediate' | 'advanced';
   createdAt: Date;
@@ -78,7 +78,6 @@ const deckSchema = new Schema<IDeck>({
   },
   department: {
     type: String,
-    required: [true, 'Department is required'],
     enum: [
       'cse',
       'mechanical',
@@ -90,18 +89,16 @@ const deckSchema = new Schema<IDeck>({
   },
   year: {
     type: String,
-    required: [true, 'Year is required'],
     enum: [
-      '1st',
-      '2nd',
-      '3rd',
-      '4th'
+      '1st-year',
+      '2nd-year',
+      '3rd-year',
+      '4th-year'
     ]
   },
   subjectId: {
     type: Schema.Types.ObjectId,
-    ref: 'Subject',
-    required: [true, 'Subject is required']
+    ref: 'Subject'
   },
   tags: [{
     type: String,
@@ -117,12 +114,10 @@ const deckSchema = new Schema<IDeck>({
   timestamps: true
 });
 
-// Indexes for efficient queries
-deckSchema.index({ creatorId: 1 });
-deckSchema.index({ public: 1, department: 1, year: 1 });
-deckSchema.index({ subjectId: 1 });
-deckSchema.index({ likes: 1 });
-deckSchema.index({ tags: 1 });
-deckSchema.index({ createdAt: -1 });
+// Optimized indexes for efficient queries
+deckSchema.index({ department: 1, year: 1, createdAt: -1 }); // Main browse query
+deckSchema.index({ creatorId: 1, createdAt: -1 }); // User's decks
+deckSchema.index({ public: 1, department: 1, year: 1 }); // Public decks filtering
+deckSchema.index({ title: 'text', description: 'text' }); // Text search
 
 export default mongoose.model<IDeck>('Deck', deckSchema);

@@ -59,10 +59,10 @@ const userSchema = new Schema<IUser>({
     type: String,
     required: [true, 'Year is required'],
     enum: [
-      '1st',
-      '2nd',
-      '3rd',
-      '4th'
+      '1st-year',
+      '2nd-year',
+      '3rd-year',
+      '4th-year'
     ]
   },
   followers: [{

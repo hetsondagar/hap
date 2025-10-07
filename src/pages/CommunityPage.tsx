@@ -8,7 +8,10 @@ import { communityAPI } from "@/lib/api";
 import CreateDeckDialog from "./community/CreateDeckDialog";
 import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
-import { Heart, MessageSquare, Loader2, Users } from "lucide-react";
+import { Heart, MessageSquare, Loader2, Users, BookOpen, MessagesSquare, Plus, Send } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { toast } from "@/components/ui/sonner";
 
 type Deck = {
   _id: string;
@@ -25,18 +28,44 @@ type Deck = {
   createdAt?: string;
 };
 
+type Post = {
+  _id: string;
+  userId: { username?: string } | string;
+  title: string;
+  content: string;
+  department?: string;
+  year?: string;
+  tags?: string[];
+  likes?: any[] | number;
+  comments?: Array<{
+    userId: string;
+    username: string;
+    text: string;
+    createdAt: string;
+  }>;
+  createdAt?: string;
+};
+
 const CommunityPage: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [decks, setDecks] = useState<Deck[]>([]);
   const [activeTab, setActiveTab] = useState("browse");
+  const [mainSection, setMainSection] = useState<"decks" | "discussion">("decks");
   const [query, setQuery] = useState("");
   const [sortBy, setSortBy] = useState<string | undefined>("trending");
   const [userInfo, setUserInfo] = useState<{ department: string; year: string } | null>(null);
+  
+  // Posts state
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [isCreatePostOpen, setIsCreatePostOpen] = useState(false);
+  const [newPostTitle, setNewPostTitle] = useState("");
+  const [newPostContent, setNewPostContent] = useState("");
+  const [postComment, setPostComment] = useState<{[key: string]: string}>({});
 
-  const likeCount = (d: Deck) => (Array.isArray(d.likes) ? d.likes.length : Number(d.likes || 0));
-  const commentCount = (d: Deck) => (Array.isArray(d.comments) ? d.comments.length : Number(d.comments || 0));
+  const likeCount = (d: Deck | Post) => (Array.isArray(d.likes) ? d.likes.length : Number(d.likes || 0));
+  const commentCount = (d: Deck | Post) => (Array.isArray(d.comments) ? d.comments.length : Number(d.comments || 0));
 
   useEffect(() => {
     // Get user info from localStorage - will be used to filter decks automatically
@@ -90,10 +119,81 @@ const CommunityPage: React.FC = () => {
     }
   };
 
+  const loadPosts = async () => {
+    if (!userInfo) return;
+    
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await communityAPI.getPosts({ 
+        department: userInfo.department, 
+        year: userInfo.year,
+        sortBy: 'createdAt',
+        sortOrder: 'desc'
+      });
+      const items: Post[] = res?.data?.posts || res?.posts || res?.data || res || [];
+      setPosts(items);
+    } catch (e: any) {
+      setError(e?.message || "Failed to load posts");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCreatePost = async () => {
+    if (!newPostTitle.trim() || !newPostContent.trim()) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+    
+    try {
+      await communityAPI.createPost({
+        title: newPostTitle,
+        content: newPostContent,
+        department: userInfo?.department,
+        year: userInfo?.year
+      });
+      toast.success("Post created successfully!");
+      setNewPostTitle("");
+      setNewPostContent("");
+      setIsCreatePostOpen(false);
+      loadPosts();
+    } catch (e: any) {
+      toast.error(e?.message || "Failed to create post");
+    }
+  };
+
+  const handleLikePost = async (id: string) => {
+    try {
+      await communityAPI.likePost(id);
+      loadPosts();
+    } catch (e: any) {
+      toast.error("Failed to like post");
+    }
+  };
+
+  const handleCommentPost = async (id: string) => {
+    const text = postComment[id]?.trim();
+    if (!text) return;
+    
+    try {
+      await communityAPI.commentPost(id, { text });
+      setPostComment({ ...postComment, [id]: "" });
+      loadPosts();
+      toast.success("Comment added!");
+    } catch (e: any) {
+      toast.error("Failed to add comment");
+    }
+  };
+
   useEffect(() => {
-    loadDecks();
+    if (mainSection === "decks") {
+      loadDecks();
+    } else {
+      loadPosts();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeTab, sortBy, userInfo]);
+  }, [activeTab, sortBy, userInfo, mainSection]);
 
   const handleLike = async (id: string) => {
     try {
@@ -112,26 +212,49 @@ const CommunityPage: React.FC = () => {
 
   return (
     <div className="p-6 space-y-10">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-primary">Community Sharing</h1>
-          <p className="text-muted-foreground">
-            Explore and share flashcards with peers from your department and year.
-          </p>
-        </div>
-        {userInfo && (
-          <div className="flex items-center gap-2 text-sm">
-            <Users className="h-4 w-4 text-primary" />
-            <Badge variant="secondary" className="text-sm px-3 py-1">
-              {userInfo.department.toUpperCase()} - {userInfo.year.replace('-', ' ').toUpperCase()}
-            </Badge>
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-primary">Community Sharing</h1>
+            <p className="text-muted-foreground">
+              Explore and share flashcards with peers from your department and year.
+            </p>
           </div>
-        )}
+          {userInfo && (
+            <div className="flex items-center gap-2 text-sm">
+              <Users className="h-4 w-4 text-primary" />
+              <Badge variant="secondary" className="text-sm px-3 py-1">
+                {userInfo.department.toUpperCase()} - {userInfo.year.replace('-', ' ').toUpperCase()}
+              </Badge>
+            </div>
+          )}
+        </div>
+        
+        {/* Section Switcher */}
+        <div className="flex gap-3">
+          <Button
+            variant={mainSection === "decks" ? "default" : "outline"}
+            onClick={() => setMainSection("decks")}
+            className="flex items-center gap-2"
+          >
+            <BookOpen className="h-4 w-4" />
+            Flashcard Decks
+          </Button>
+          <Button
+            variant={mainSection === "discussion" ? "default" : "outline"}
+            onClick={() => setMainSection("discussion")}
+            className="flex items-center gap-2"
+          >
+            <MessagesSquare className="h-4 w-4" />
+            Discussion & Doubts
+          </Button>
+        </div>
       </div>
 
-      {/* Content Discovery */}
+      {/* DECKS SECTION */}
+      {mainSection === "decks" && (
       <section className="space-y-4">
-        <h2 className="text-2xl font-semibold">Content Discovery</h2>
+        <h2 className="text-2xl font-semibold">Flashcard Decks</h2>
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList>
             <TabsTrigger value="browse">Browse Decks</TabsTrigger>
@@ -398,6 +521,150 @@ const CommunityPage: React.FC = () => {
           </CardContent>
         </Card>
       </section>
+      </section>
+      )}
+
+      {/* DISCUSSION SECTION */}
+      {mainSection === "discussion" && (
+      <section className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-semibold">Community Discussion & Doubts</h2>
+          <Dialog open={isCreatePostOpen} onOpenChange={setIsCreatePostOpen}>
+            <DialogTrigger asChild>
+              <Button className="flex items-center gap-2">
+                <Plus className="h-4 w-4" />
+                Ask a Question
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>Post a Question or Doubt</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 py-4">
+                <div className="space-y-2">
+                  <Label htmlFor="title">Title</Label>
+                  <Input
+                    id="title"
+                    placeholder="Brief title for your question..."
+                    value={newPostTitle}
+                    onChange={(e) => setNewPostTitle(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="content">Question Details</Label>
+                  <Textarea
+                    id="content"
+                    placeholder="Describe your question or doubt in detail..."
+                    value={newPostContent}
+                    onChange={(e) => setNewPostContent(e.target.value)}
+                    className="min-h-[150px]"
+                  />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setIsCreatePostOpen(false)}>
+                  Cancel
+                </Button>
+                <Button onClick={handleCreatePost}>
+                  <Send className="h-4 w-4 mr-2" />
+                  Post Question
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
+
+        {/* Posts List */}
+        <div className="space-y-4">
+          {loading && (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            </div>
+          )}
+          {error && (
+            <Card className="border-destructive">
+              <CardContent className="py-6 text-center text-destructive">
+                {error}
+              </CardContent>
+            </Card>
+          )}
+          {!loading && !error && posts.length === 0 && (
+            <Card>
+              <CardContent className="py-12 text-center text-muted-foreground">
+                <MessagesSquare className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <p>No questions posted yet. Be the first to ask!</p>
+              </CardContent>
+            </Card>
+          )}
+          {!loading && !error && posts.map((post) => (
+            <Card key={post._id} className="hover:shadow-md transition">
+              <CardHeader>
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <CardTitle className="text-lg mb-2">{post.title}</CardTitle>
+                    <p className="text-sm text-muted-foreground line-clamp-3">{post.content}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 mt-2 text-xs text-muted-foreground">
+                  <span>by {typeof post.userId === 'string' ? post.userId : post.userId?.username || 'Unknown'}</span>
+                  <span>•</span>
+                  <span>{new Date(post.createdAt || '').toLocaleDateString()}</span>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {/* Actions */}
+                <div className="flex items-center gap-4 mb-4">
+                  <button
+                    className="flex items-center gap-1 text-sm hover:text-primary transition"
+                    onClick={() => handleLikePost(post._id)}
+                  >
+                    <Heart className="w-4 h-4" />
+                    <span>{likeCount(post)}</span>
+                  </button>
+                  <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                    <MessageSquare className="w-4 h-4" />
+                    <span>{commentCount(post)}</span>
+                  </div>
+                </div>
+
+                {/* Comments */}
+                {Array.isArray(post.comments) && post.comments.length > 0 && (
+                  <div className="space-y-2 mb-4 pl-4 border-l-2 border-muted">
+                    {post.comments.slice(0, 3).map((comment, idx) => (
+                      <div key={idx} className="text-sm">
+                        <span className="font-medium">{comment.username}: </span>
+                        <span className="text-muted-foreground">{comment.text}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Add Comment */}
+                <div className="flex gap-2">
+                  <Input
+                    placeholder="Add a comment..."
+                    value={postComment[post._id] || ""}
+                    onChange={(e) => setPostComment({ ...postComment, [post._id]: e.target.value })}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        handleCommentPost(post._id);
+                      }
+                    }}
+                  />
+                  <Button
+                    size="sm"
+                    onClick={() => handleCommentPost(post._id)}
+                    disabled={!postComment[post._id]?.trim()}
+                  >
+                    <Send className="h-4 w-4" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </section>
+      )}
 
     </div>
   );
