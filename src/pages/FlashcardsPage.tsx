@@ -25,6 +25,7 @@ import { authAPI, flashcardAPI } from "@/lib/api";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import FlashcardGrid from "@/components/FlashcardGrid";
 import { Badge } from "@/components/ui/badge";
+import { toast } from "@/components/ui/sonner";
 
 // Use the full department names from mapping
 const departments = Object.values(departmentMap);
@@ -45,6 +46,20 @@ const FlashcardsPage = () => {
   const [creating, setCreating] = useState(false);
   const [favorites, setFavorites] = useState<Set<string | number>>(new Set());
   const [searchParams] = useSearchParams();
+
+  // Helpers to convert human labels to URL ids
+  const nameToDeptId = (name: string): string | null => {
+    const entry = Object.entries(departmentMap).find(([, v]) => v === name);
+    return entry ? entry[0] : null;
+  };
+  const yearNameToId = (name: string): string | null => {
+    const map: Record<string, string> = { '1st Year': '1st-year', '2nd Year': '2nd-year', '3rd Year': '3rd-year', '4th Year': '4th-year' };
+    return map[name] || null;
+  };
+  const phaseNameToId = (name: string): string | null => {
+    const map: Record<string, string> = { 'Mid-Semester': 'mid-sem', 'End-Semester': 'end-sem' };
+    return map[name] || null;
+  };
 
   useEffect(() => {
     let mounted = true;
@@ -103,6 +118,17 @@ const FlashcardsPage = () => {
             tags: [year, phase],
           } as any);
           addCard({ front, back, department, year, phase, difficulty });
+          // Success toast with quick link to department view
+          const deptIdFromName = nameToDeptId(department);
+          const yearIdFromName = yearNameToId(year);
+          const phaseIdFromName = phaseNameToId(phase);
+          toast.success("Flashcard created", {
+            description: `${department} • ${year} • ${phase}`,
+            action: deptIdFromName && yearIdFromName && phaseIdFromName ? {
+              label: "View in Department",
+              onClick: () => navigate(`/departments/${deptIdFromName}/${yearIdFromName}/${phaseIdFromName}`)
+            } : undefined
+          });
           setFront("");
           setBack("");
           setDepartment("");
@@ -309,27 +335,7 @@ const FlashcardsPage = () => {
         </div>
       </section>
 
-      {/* Enhanced Floating Create Button */}
-      <div className="fixed bottom-6 right-6 z-50">
-        <div className="relative group">
-          <button
-            className="w-14 h-14 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-110 flex items-center justify-center"
-            aria-label="Create flashcard"
-            onClick={() => {
-              // Scroll to the form
-              document.querySelector('form')?.scrollIntoView({ behavior: 'smooth' });
-            }}
-          >
-            <Plus className="w-6 h-6" />
-          </button>
-          
-          {/* Tooltip */}
-          <div className="absolute bottom-full right-0 mb-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
-            Create New Flashcard
-            <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
-          </div>
-        </div>
-      </div>
+      {/* Floating Create Button removed: page is dedicated to creation */}
     </div>
   );
 };
