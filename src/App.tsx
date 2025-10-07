@@ -15,6 +15,7 @@ import NotFound from "./pages/NotFound";
 import FlashcardsPage from "./pages/FlashcardsPage"; // global flashcards
 import QuizPage from "./pages/QuizPage";
 import CommunityPage from "./pages/CommunityPage";
+import DeckDetail from "./pages/community/DeckDetail";
 import AnalyticsPage from "./pages/AnalyticsPage";
 
 import Departments from "./pages/Departments";
@@ -43,6 +44,7 @@ const App = () => (
             <Route path="/flashcards" element={<FlashcardsPage />} /> {/* global */}
             <Route path="/quiz" element={<QuizPage />} />
             <Route path="/community" element={<CommunityPage />} />
+            <Route path="/community/:id" element={<DeckDetail />} />
             <Route path="/analytics" element={<AnalyticsPage />} />
 
             {/* Department flow */}

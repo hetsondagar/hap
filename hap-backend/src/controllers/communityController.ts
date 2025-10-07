@@ -320,6 +320,75 @@ export const addComment = async (req: Request, res: Response): Promise<void> => 
   }
 };
 
+// Update deck (owner only)
+export const updateDeck = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const userId = req.user?.userId;
+    const { title, description, department, difficulty, tags, flashcards } = req.body;
+
+    const deck = await Deck.findById(id);
+    if (!deck) {
+      res.status(404).json({ success: false, message: 'Deck not found' });
+      return;
+    }
+    if (deck.creatorId.toString() !== userId) {
+      res.status(403).json({ success: false, message: 'Not authorized to update this deck' });
+      return;
+    }
+
+    // Optional: if flashcards provided, ensure ownership
+    if (Array.isArray(flashcards)) {
+      const owned = await Flashcard.countDocuments({ _id: { $in: flashcards }, ownerId: userId });
+      if (owned !== flashcards.length) {
+        res.status(400).json({ success: false, message: 'Some flashcards not found or not owned by you' });
+        return;
+      }
+      (deck as any).flashcards = flashcards;
+    }
+
+    if (title !== undefined) deck.title = title;
+    if (description !== undefined) deck.description = description;
+    if (department !== undefined) (deck as any).department = department;
+    if (difficulty !== undefined) (deck as any).difficulty = difficulty;
+    if (tags !== undefined) (deck as any).tags = tags;
+
+    await deck.save();
+    const populated = await Deck.findById(deck._id)
+      .populate('creatorId', 'username')
+      .populate('flashcards', 'front back');
+
+    res.status(200).json({ success: true, message: 'Deck updated', data: { deck: populated } });
+  } catch (error) {
+    console.error('Update deck error:', error);
+    res.status(500).json({ success: false, message: 'Internal server error while updating deck' });
+  }
+};
+
+// Delete deck (owner only)
+export const deleteDeck = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const userId = req.user?.userId;
+
+    const deck = await Deck.findById(id);
+    if (!deck) {
+      res.status(404).json({ success: false, message: 'Deck not found' });
+      return;
+    }
+    if (deck.creatorId.toString() !== userId) {
+      res.status(403).json({ success: false, message: 'Not authorized to delete this deck' });
+      return;
+    }
+
+    await Deck.findByIdAndDelete(id);
+    res.status(200).json({ success: true, message: 'Deck deleted' });
+  } catch (error) {
+    console.error('Delete deck error:', error);
+    res.status(500).json({ success: false, message: 'Internal server error while deleting deck' });
+  }
+};
+
 // Follow/unfollow user
 export const toggleFollow = async (req: Request, res: Response): Promise<void> => {
   try {

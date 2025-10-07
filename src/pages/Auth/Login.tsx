@@ -22,6 +22,10 @@ const Login: React.FC = () => {
       const token = res?.token || res?.data?.token;
       if (!token) throw new Error(res?.message || "Login failed");
       localStorage.setItem("token", token);
+      // Persist user id for ownership checks in UI
+      const profile = await authAPI.getProfile();
+      const userId = profile?.user?._id || profile?.data?.user?.id || profile?.id || profile?._id;
+      if (userId) localStorage.setItem('userId', String(userId));
       navigate("/analytics");
     } catch (e: any) {
       setError(e?.message || "Login failed");

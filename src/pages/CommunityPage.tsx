@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { communityAPI } from "@/lib/api";
+import CreateDeckDialog from "./community/CreateDeckDialog";
+import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Heart, MessageSquare, Loader2 } from "lucide-react";
 
@@ -31,6 +33,7 @@ const departments = [
 ];
 
 const CommunityPage: React.FC = () => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [decks, setDecks] = useState<Deck[]>([]);
@@ -50,6 +53,16 @@ const CommunityPage: React.FC = () => {
         const res = await communityAPI.searchDecks({ q: query.trim(), department, sortBy });
         const items: Deck[] = res?.data?.decks || res?.decks || res?.data || res || [];
         setDecks(items);
+      } else if (activeTab === "mine") {
+        // attempt to read user id if stored; otherwise just fetch decks and let backend filter public if not owner
+        const storedUserId = localStorage.getItem('userId');
+        if (storedUserId) {
+          const res = await communityAPI.getUserDecks(storedUserId, {});
+          const items: Deck[] = res?.data?.decks || res?.decks || res?.data || res || [];
+          setDecks(items);
+        } else {
+          setDecks([]);
+        }
       } else {
         const res = await communityAPI.getDecks({ department, sortBy });
         const items: Deck[] = res?.data?.decks || res?.decks || res?.data || res || [];
@@ -93,7 +106,8 @@ const CommunityPage: React.FC = () => {
             <TabsTrigger value="browse">Browse Decks</TabsTrigger>
             <TabsTrigger value="search">Search & Filter</TabsTrigger>
             <TabsTrigger value="trending">Trending</TabsTrigger>
-            <TabsTrigger value="new">Newly Published</TabsTrigger>
+            <TabsTrigger value="new">New</TabsTrigger>
+            <TabsTrigger value="mine">My Decks</TabsTrigger>
           </TabsList>
 
           <TabsContent value="browse">
@@ -124,7 +138,7 @@ const CommunityPage: React.FC = () => {
                     <div className="col-span-full text-sm text-red-500">{error}</div>
                   )}
                   {!loading && !error && visibleDecks.map((deck) => (
-                    <Card key={deck._id} className="hover:shadow-md transition">
+                    <Card key={deck._id} className="hover:shadow-md transition cursor-pointer" onClick={() => navigate(`/community/${deck._id}`)}>
                       <CardHeader>
                         <CardTitle className="text-lg">
                           {deck.title || "Untitled Deck"}
@@ -259,6 +273,37 @@ const CommunityPage: React.FC = () => {
             </div>
           </TabsContent>
 
+          <TabsContent value="mine">
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-sm text-muted-foreground">Your decks only.</p>
+              <CreateDeckDialog onCreated={(id) => navigate(`/community/${id}`)} />
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {loading && (
+                <div className="col-span-full flex items-center justify-center py-8 text-muted-foreground">
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Loading…
+                </div>
+              )}
+              {error && (
+                <div className="col-span-full text-sm text-red-500">{error}</div>
+              )}
+              {!loading && !error && visibleDecks.map((deck) => (
+                <Card key={deck._id} className="hover:shadow-md transition cursor-pointer" onClick={() => navigate(`/community/${deck._id}`)}>
+                  <CardHeader>
+                    <CardTitle className="text-lg">{deck.title || "Untitled Deck"}</CardTitle>
+                    <div className="flex gap-2">
+                      {deck.department && <Badge variant="secondary">{deck.department}</Badge>}
+                      {deck.difficulty && <Badge>{deck.difficulty}</Badge>}
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground line-clamp-3 mb-3">{deck.description || "No description provided."}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+
           <TabsContent value="new">
             <p className="text-sm text-muted-foreground mb-3">🆕 Latest contributions from the community.</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -320,6 +365,9 @@ const CommunityPage: React.FC = () => {
             </div>
             <Textarea placeholder="Add a comment or ask a doubt..." />
             <Button>Post Comment</Button>
+            <div className="pt-2">
+              <CreateDeckDialog onCreated={(id) => navigate(`/community/${id}`)} />
+            </div>
           </CardContent>
         </Card>
       </section>

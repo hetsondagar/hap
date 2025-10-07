@@ -26,6 +26,8 @@ router.get('/users/:userId/decks', getUserDecks);
 router.post('/decks', authenticateToken, validateCreateDeck, createDeck);
 router.put('/decks/:id/like', authenticateToken, validateDeckId, toggleLike);
 router.post('/decks/:id/comment', authenticateToken, validateDeckId, validateComment, addComment);
+router.put('/decks/:id', authenticateToken, validateDeckId, require('../controllers/communityController').updateDeck);
+router.delete('/decks/:id', authenticateToken, validateDeckId, require('../controllers/communityController').deleteDeck);
 router.post('/follow/:id', authenticateToken, toggleFollow);
 
 export default router;
