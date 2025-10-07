@@ -16,6 +16,7 @@ interface Flashcard {
   phase?: string;
   difficulty?: 'easy' | 'medium' | 'hard';
   isFavorite?: boolean;
+  ownerId?: string; // used to authorize delete client-side
 }
 
 interface FlashcardGridProps {
@@ -270,7 +271,7 @@ const FlashcardGrid: React.FC<FlashcardGridProps> = ({
                 {...card}
                 isFlipped={flippedCards.has(card.id)}
                 onFlip={handleFlip}
-                onDelete={onDelete}
+                onDelete={card.ownerId ? onDelete : undefined}
                 onEdit={onEdit}
                 onToggleFavorite={onToggleFavorite}
                 className={viewMode === 'list' ? "h-32" : ""}

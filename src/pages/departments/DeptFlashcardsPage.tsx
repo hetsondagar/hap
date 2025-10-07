@@ -267,7 +267,14 @@ const DeptFlashcardsPage = () => {
               isFavorite: favorites.has(card._id || card.id)
             }))}
             onFlip={(id) => toggleFlip(Number(id))}
-            onDelete={(id) => console.log('Delete card:', id)}
+            onDelete={async (id) => {
+              try {
+                await flashcardAPI.delete(String(id));
+                await refreshFromServer();
+              } catch (e) {
+                console.error(e);
+              }
+            }}
             onEdit={handleEdit}
             onToggleFavorite={handleToggleFavorite}
           />
