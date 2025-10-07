@@ -36,6 +36,11 @@ export const validateCreateDeck = [
     .optional()
     .isArray()
     .withMessage('Tags must be an array')
+  ,
+  body('public')
+    .optional()
+    .isBoolean()
+    .withMessage('Public must be a boolean')
 ];
 
 export const validateDeckId = [
@@ -126,7 +131,7 @@ export const createDeck = async (req: Request, res: Response): Promise<void> => 
       return;
     }
 
-    const { title, description, flashcards, department, difficulty = 'intermediate', tags = [] } = req.body;
+    const { title, description, flashcards, department, difficulty = 'intermediate', tags = [], public: isPublic } = req.body;
     const creatorId = req.user?.userId;
 
     // Verify all flashcards exist and belong to user
@@ -150,6 +155,7 @@ export const createDeck = async (req: Request, res: Response): Promise<void> => 
       department,
       difficulty,
       tags,
+      public: typeof isPublic === 'boolean' ? isPublic : true,
       creatorId
     });
 
