@@ -57,8 +57,8 @@ export const postProjection = {
  * Apply lean to query for better performance
  * Use this when you don't need Mongoose document methods
  */
-export function applyLean<T>(query: Query<T, any>): Query<T, any> {
-  return query.lean();
+export function applyLean<T>(query: Query<T, any>): Query<any, any> {
+  return query.lean() as any;
 }
 
 /**
@@ -68,16 +68,16 @@ export function applyPagination<T>(
   query: Query<T, any>,
   page: number = 1,
   limit: number = 20
-): Query<T, any> {
+): Query<any, any> {
   const skip = (page - 1) * limit;
-  return query.skip(skip).limit(limit);
+  return query.skip(skip).limit(limit) as any;
 }
 
 /**
  * Apply sorting by creation date (newest first)
  */
-export function applySortByNewest<T>(query: Query<T, any>): Query<T, any> {
-  return query.sort({ createdAt: -1 });
+export function applySortByNewest<T>(query: Query<T, any>): Query<any, any> {
+  return query.sort({ createdAt: -1 }) as any;
 }
 
 /**
@@ -86,8 +86,8 @@ export function applySortByNewest<T>(query: Query<T, any>): Query<T, any> {
 export function applySortByPopularity<T>(
   query: Query<T, any>,
   field: string = 'likes'
-): Query<T, any> {
-  return query.sort({ [field]: -1, createdAt: -1 });
+): Query<any, any> {
+  return query.sort({ [field]: -1, createdAt: -1 }) as any;
 }
 
 /**
