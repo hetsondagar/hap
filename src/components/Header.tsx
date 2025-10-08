@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Menu, X, Trophy, BookOpen, Users, Home, BarChart3, LayoutDashboard } from 'lucide-react';
-import HapLogo from '@/assets/hap-logo-3.png';
+import hapLogo from '../assets/hap-logo-3.png';
 import { authAPI } from '@/lib/api';
 
 const Header = () => {
@@ -54,77 +54,77 @@ const Header = () => {
   ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 card-gradient border-b border-border/20">
-      <nav className="container mx-auto px-4 py-4 flex items-center justify-between">
-        {/* Logo */}
-        <Link to="/" className="flex items-center space-x-2 group">
-          <img src={HapLogo} alt="Hap Logo" className="w-8 h-8 object-contain" />
-          <span className="text-2xl font-display font-bold gradient-text">
-            hap
-          </span>
-        </Link>
+    <header className="w-full flex items-center justify-between px-8 py-4 bg-[#18181b] shadow-md fixed top-0 left-0 z-50">
+      {/* Logo section - left aligned, more zoomed out for bigger "Hap" */}
+      <div className="flex items-center">
+        <img
+          src={hapLogo}
+          alt="Hap Logo"
+          className="h-16 w-16 object-contain scale-75"
+          style={{ objectFit: "contain" }}
+        />
+      </div>
 
-        {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center space-x-8">
-          {navItems.map((item) => (
-            <Link
-              key={item.name}
-              to={item.path}
-              className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-all duration-300 ${
-                location.pathname === item.path
-                  ? 'text-primary bg-primary/10 glow-effect'
-                  : 'text-muted-foreground hover:text-primary hover:bg-primary/5'
-              }`}
-            >
-              <item.icon className="w-4 h-4" />
-              <span className="font-medium">{item.name}</span>
-            </Link>
-          ))}
-        </div>
+      {/* Desktop Navigation */}
+      <div className="hidden md:flex items-center space-x-8">
+        {navItems.map((item) => (
+          <Link
+            key={item.name}
+            to={item.path}
+            className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-all duration-300 ${
+              location.pathname === item.path
+                ? 'text-primary bg-primary/10 glow-effect'
+                : 'text-muted-foreground hover:text-primary hover:bg-primary/5'
+            }`}
+          >
+            <item.icon className="w-4 h-4" />
+            <span className="font-medium">{item.name}</span>
+          </Link>
+        ))}
+      </div>
 
-        {/* CTA Buttons */}
-        <div className="hidden md:flex items-center space-x-4">
-          {isAuthenticated ? (
-            <>
-              <span className="text-sm text-muted-foreground mr-2 hidden lg:inline">
-                {username ? `Hi, ${username}` : 'Signed in'}
-              </span>
-              <Link to="/">
-                <Button variant="outline" className="border-primary/20 hover:border-primary flex items-center gap-2">
-                  <LayoutDashboard className="w-4 h-4" />
-                  Dashboard
-                </Button>
-              </Link>
-              <Button onClick={handleLogout} className="bg-gradient-primary hover:opacity-90 text-white font-medium shadow-glow">
-                Logout
+      {/* CTA Buttons */}
+      <div className="hidden md:flex items-center space-x-4">
+        {isAuthenticated ? (
+          <>
+            <span className="text-sm text-muted-foreground mr-2 hidden lg:inline">
+              {username ? `Hi, ${username}` : 'Signed in'}
+            </span>
+            <Link to="/">
+              <Button variant="outline" className="border-primary/20 hover:border-primary flex items-center gap-2">
+                <LayoutDashboard className="w-4 h-4" />
+                Dashboard
               </Button>
-            </>
-          ) : (
-            <>
-              <Link to = "/login">
-                <Button variant="outline" className="border-primary/20 hover:border-primary">
-                  Log In
-                </Button>
-              </Link>
-              <Link to = "/signup">
-                <Button className="bg-gradient-primary hover:opacity-90 text-white font-medium shadow-glow">
-                  Sign Up
-                </Button>
-              </Link>
-            </>
-          )}
-        </div>
+            </Link>
+            <Button onClick={handleLogout} className="bg-gradient-primary hover:opacity-90 text-white font-medium shadow-glow">
+              Logout
+            </Button>
+          </>
+        ) : (
+          <>
+            <Link to = "/login">
+              <Button variant="outline" className="border-primary/20 hover:border-primary">
+                Log In
+              </Button>
+            </Link>
+            <Link to = "/signup">
+              <Button className="bg-gradient-primary hover:opacity-90 text-white font-medium shadow-glow">
+                Sign Up
+              </Button>
+            </Link>
+          </>
+        )}
+      </div>
 
-        {/* Mobile Menu Button */}
-        <Button
-          variant="outline"
-          size="sm"
-          className="md:hidden"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-        >
-          {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </Button>
-      </nav>
+      {/* Mobile Menu Button */}
+      <Button
+        variant="outline"
+        size="sm"
+        className="md:hidden"
+        onClick={() => setIsMenuOpen(!isMenuOpen)}
+      >
+        {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+      </Button>
 
       {/* Mobile Menu */}
       {isMenuOpen && (
