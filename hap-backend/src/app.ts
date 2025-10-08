@@ -17,6 +17,10 @@ dotenv.config();
 
 const app: Application = express();
 
+// Trust proxy - Required for Render, Heroku, and other cloud platforms
+// This allows Express to correctly identify client IPs behind reverse proxies
+app.set('trust proxy', 1);
+
 // CORS configuration (supports multiple comma-separated origins)
 const allowedOrigins = (process.env.FRONTEND_URLS || process.env.FRONTEND_URL || 'http://localhost:5173')
   .split(',')
