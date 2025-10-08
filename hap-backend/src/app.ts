@@ -22,20 +22,39 @@ const app: Application = express();
 app.set('trust proxy', 1);
 
 // CORS configuration (supports multiple comma-separated origins)
-const allowedOrigins = (process.env.FRONTEND_URLS || process.env.FRONTEND_URL || 'http://localhost:5173')
+const allowedOrigins = (process.env.FRONTEND_URLS || process.env.FRONTEND_URL || 'http://localhost:5173,http://localhost:3000')
   .split(',')
   .map((o) => o.trim())
   .filter(Boolean);
 
 const corsConfig: CorsOptions = {
   origin: (origin, callback) => {
+    // Allow requests with no origin (mobile apps, Postman, etc.)
     if (!origin) return callback(null, true);
-    if (allowedOrigins.includes('*') || allowedOrigins.includes(origin)) return callback(null, true);
+    
+    // In development, allow localhost
+    if (process.env.NODE_ENV === 'development' && origin.includes('localhost')) {
+      return callback(null, true);
+    }
+    
+    // Allow if origin is in the allowed list or wildcard is set
+    if (allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    
+    // Allow any Vercel deployment URLs in production
+    if (origin.endsWith('.vercel.app')) {
+      return callback(null, true);
+    }
+    
+    console.log(`CORS blocked for origin: ${origin}`);
+    console.log(`Allowed origins: ${allowedOrigins.join(', ')}`);
     return callback(new Error(`CORS blocked for origin ${origin}`));
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // mutable array
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  exposedHeaders: ['Content-Length', 'X-Request-Id'],
   optionsSuccessStatus: 204
 };
 
