@@ -70,7 +70,7 @@ const CreateFlashcardPage = () => {
       // Create flashcard via API
       const tagArray = tags.trim() ? tags.split(',').map(t => t.trim()).filter(t => t) : [];
       
-      await flashcardAPI.create({
+      const flashcardData = {
         front: front.trim(),
         back: back.trim(),
         department: userInfo.department,
@@ -79,7 +79,12 @@ const CreateFlashcardPage = () => {
         difficulty,
         tags: tagArray,
         public: true // Make flashcards public so others can view them
-      } as any);
+      };
+      
+      console.log('Creating flashcard with data:', flashcardData);
+      
+      const response = await flashcardAPI.create(flashcardData as any);
+      console.log('Flashcard created successfully:', response);
       
       toast.success("Flashcard created successfully!");
       
@@ -101,19 +106,20 @@ const CreateFlashcardPage = () => {
       }
     } catch (error: any) {
       // Handle validation errors from backend
+      console.error("Full error creating flashcard:", error);
+      console.error("Error response data:", error?.response?.data);
+      
       const errorMessage = error?.response?.data?.message || error?.message || "Failed to create flashcard";
       const errors = error?.response?.data?.errors;
       
       if (errors && Array.isArray(errors)) {
-        // Show first validation error with field name
-        const firstError = errors[0];
-        const fieldName = firstError.path || firstError.param || 'field';
-        toast.error(`${fieldName}: ${firstError.msg || firstError.message}`);
+        // Show all validation errors
+        const errorMessages = errors.map(e => `${e.path || e.param}: ${e.msg || e.message}`).join(', ');
+        toast.error(`Validation errors: ${errorMessages}`);
+        console.error("Validation errors:", errors);
       } else {
         toast.error(errorMessage);
       }
-      
-      console.error("Error creating flashcard:", error);
     } finally {
       setCreating(false);
     }
