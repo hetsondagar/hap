@@ -202,6 +202,26 @@ All colors MUST be HSL. Dark theme with aqua-blue to purple gradient.
   .dept-card-header span {
     color: #fff;
   }
+
+  /* Add this to your global CSS file */
+  .dark-select {
+    background-color: #18181b;
+    color: #f4f4f5;
+    border: 1px solid #27272a;
+    border-radius: 0.5rem;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .dark-select:focus, .dark-select:hover {
+    background-color: #232329;
+    border-color: #6366f1; /* Tailwind's indigo-500 (primary) */
+    outline: none;
+  }
+
+  .dark-select option {
+    background-color: #18181b;
+    color: #f4f4f5;
+  }
 }
 
 @layer utilities {

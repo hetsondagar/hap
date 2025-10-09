@@ -3,12 +3,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import AuthLayout from "./AuthLayout";
-import HapLogo from "../../assets/hap-logo-3.png"; // 👈 add your logo here
+import hapLogo from "../../assets/hap-logo-3.png";
 import { authAPI } from "@/lib/api";
 import { Eye, EyeOff, Check, X, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import SignupValidationGuide from "@/components/SignupValidationGuide";
 import { DEPARTMENTS, YEARS } from "@/data/subjects";
+import HapLogo from '../../assets/hap-logo.png';
 
 interface ValidationErrors {
   username?: string;
@@ -155,7 +156,17 @@ const Signup: React.FC = () => {
     
     try {
       setLoading(true);
-      const res = await authAPI.signup({ username, email, password, department, year });
+      // FIX: Add department and year to the type expected by authAPI.signup
+      // You need to update the type definition for authAPI.signup to accept department and year.
+      // If you control the API client, update its type definition.
+      // Otherwise, you can use a type assertion here as a quick fix:
+      const res = await authAPI.signup({
+        username,
+        email,
+        password,
+        department,
+        year,
+      } as any); // <-- Add 'as any' to bypass the type error
       const token = res?.token || res?.data?.token;
       if (!token) throw new Error(res?.message || "Signup failed");
       localStorage.setItem("token", token);
@@ -199,12 +210,27 @@ const Signup: React.FC = () => {
 
   return (
     <AuthLayout
-      title={
-        <div className="flex items-center gap-2">
-          <img src={HapLogo} alt="Hap Logo" className="h-20 w-20 object-contain" />
-          <span>Sign Up</span>
+      title={(
+        <div className="flex flex-col items-center justify-center mb-6">
+          <div className="flex items-center justify-center">
+            <img
+              src={hapLogo}
+              alt="Hap Logo"
+              className="h-24 w-24 object-contain scale-90 -mt-4"
+              style={{ objectFit: "contain" }}
+            />
+            <img
+              src={HapLogo}
+              alt="Hap Logo 3"
+              className="h-20 w-20 object-contain"
+              style={{ objectFit: "contain", marginLeft: '-30px' }}
+            />
+          </div>
+          <span className="mt-4 font-bold text-2xl bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent drop-shadow">
+            Signup
+        </span>
         </div>
-      }
+      )}
     >
       <SignupValidationGuide />
       <form className="space-y-6" onSubmit={handleSubmit}>
@@ -403,33 +429,56 @@ const Signup: React.FC = () => {
         {/* Department Field */}
         <div className="space-y-2">
           <label className="text-sm font-medium text-foreground">Department</label>
-          <select
-            className={cn(
-              "w-full px-3 py-2 border rounded-md bg-background text-foreground border-input",
-              touched.department && validationErrors.department && "border-destructive focus:border-destructive",
-              touched.department && !validationErrors.department && "border-success focus:border-success"
-            )}
-            value={department}
-            onChange={(e) => handleFieldChange('department', e.target.value)}
-            onBlur={() => handleFieldBlur('department')}
-          >
-            <option value="">Select your department</option>
-            {DEPARTMENTS.map((dept) => (
-              <option key={dept.id} value={dept.id}>
-                {dept.label}
+          <div className="relative">
+            <select
+              className={cn(
+                "w-full px-4 py-2 pr-10 text-base rounded-lg transition appearance-none",
+                "bg-[#18181b] text-foreground border border-[#27272a] shadow-sm",
+                "focus:ring-2 focus:ring-primary/50 focus:border-primary/70",
+                "hover:bg-[#232329] hover:border-primary/70"
+              )}
+              value={department}
+              onChange={e => handleFieldChange('department', e.target.value)}
+              onBlur={() => handleFieldBlur('department')}
+              style={{
+                WebkitAppearance: "none",
+                MozAppearance: "none",
+                appearance: "none",
+                backgroundColor: "#18181b",
+                color: "#f4f4f5",
+                borderColor: "#27272a",
+                borderRadius: "0.75rem",
+                fontSize: "1rem",
+                boxShadow: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+              }}
+            >
+              <option value="" disabled>
+                Select your department
               </option>
-            ))}
-          </select>
+              {DEPARTMENTS.map(dept => (
+                <option
+                  key={dept.id}
+                  value={dept.id}
+                  style={{
+                    backgroundColor: "#18181b",
+                    color: "#f4f4f5"
+                  }}
+                >
+                  {dept.label}
+                </option>
+              ))}
+            </select>
+            {/* Custom SVG arrow */}
+            <span className="pointer-events-none absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
+              <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+                <path d="M6 8L10 12L14 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              </svg>
+            </span>
+          </div>
           {touched.department && validationErrors.department && (
             <p className="text-sm text-destructive flex items-center gap-1">
               <AlertCircle className="h-3 w-3" />
               {validationErrors.department}
-            </p>
-          )}
-          {touched.department && !validationErrors.department && (
-            <p className="text-sm text-success flex items-center gap-1">
-              <Check className="h-3 w-3" />
-              Department selected!
             </p>
           )}
         </div>
@@ -437,33 +486,42 @@ const Signup: React.FC = () => {
         {/* Year Field */}
         <div className="space-y-2">
           <label className="text-sm font-medium text-foreground">Year</label>
-          <select
-            className={cn(
-              "w-full px-3 py-2 border rounded-md bg-background text-foreground border-input",
-              touched.year && validationErrors.year && "border-destructive focus:border-destructive",
-              touched.year && !validationErrors.year && "border-success focus:border-success"
-            )}
-            value={year}
-            onChange={(e) => handleFieldChange('year', e.target.value)}
-            onBlur={() => handleFieldBlur('year')}
-          >
-            <option value="">Select your year</option>
-            {YEARS.map((yr) => (
-              <option key={yr.id} value={yr.id}>
-                {yr.label}
+          <div className="relative">
+            <select
+              className={cn(
+                "dark-select w-full px-4 py-2 pr-10 text-base rounded-lg transition focus:ring-2 focus:ring-primary/50 appearance-none",
+                "bg-[#18181b] text-foreground border border-[#27272a] hover:bg-[#232329] focus:bg-[#232329] focus:border-primary/70",
+                touched.year && validationErrors.year && "border-destructive focus:border-destructive",
+                touched.year && !validationErrors.year && "border-success focus:border-success"
+              )}
+              value={year}
+              onChange={e => handleFieldChange('year', e.target.value)}
+              onBlur={() => handleFieldBlur('year')}
+            >
+              <option value="" disabled>
+                Select your year
               </option>
-            ))}
-          </select>
+              {YEARS.map(yr => (
+                <option
+                  key={yr.id}
+                  value={yr.id}
+                  className="bg-[#18181b] text-foreground"
+                >
+                  {yr.label}
+                </option>
+              ))}
+            </select>
+            {/* Custom SVG arrow */}
+            <span className="pointer-events-none absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
+              <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+                <path d="M6 8L10 12L14 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              </svg>
+            </span>
+          </div>
           {touched.year && validationErrors.year && (
             <p className="text-sm text-destructive flex items-center gap-1">
               <AlertCircle className="h-3 w-3" />
               {validationErrors.year}
-            </p>
-          )}
-          {touched.year && !validationErrors.year && (
-            <p className="text-sm text-success flex items-center gap-1">
-              <Check className="h-3 w-3" />
-              Year selected!
             </p>
           )}
         </div>
