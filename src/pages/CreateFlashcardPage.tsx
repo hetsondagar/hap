@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Plus, Save } from "lucide-react";
+import { ArrowLeft, Plus, Save, Eye, Trash2 } from "lucide-react";
 import { getSubjectsByDeptYear } from "@/data/subjects";
 import { toast } from "@/components/ui/sonner";
 import { flashcardAPI } from "@/lib/api";
@@ -25,6 +25,10 @@ const CreateFlashcardPage = () => {
   const [difficulty, setDifficulty] = useState<"easy" | "medium" | "hard">("medium");
   const [tags, setTags] = useState("");
   const [creating, setCreating] = useState(false);
+  
+  // Recently created flashcards
+  const [recentFlashcards, setRecentFlashcards] = useState<any[]>([]);
+  const [loadingRecent, setLoadingRecent] = useState(false);
 
   useEffect(() => {
     // Get user info from localStorage
@@ -52,10 +56,36 @@ const CreateFlashcardPage = () => {
       if (subjectParam) {
         setSelectedSubject(subjectParam);
       }
+      
+      // Load recent flashcards
+      loadRecentFlashcards(user.department, normalizedYear);
     } else {
       navigate("/login");
     }
   }, [navigate, searchParams]);
+
+  const loadRecentFlashcards = async (department: string, year: string) => {
+    try {
+      setLoadingRecent(true);
+      const response = await flashcardAPI.search({
+        department,
+        year,
+        public: true,
+        limit: 10,
+        sortBy: 'createdAt',
+        sortOrder: 'desc'
+      } as any);
+      
+      console.log('Recent flashcards loaded:', response);
+      const flashcards = response.flashcards || response.data || response || [];
+      setRecentFlashcards(flashcards);
+    } catch (error: any) {
+      console.error("Error loading recent flashcards:", error);
+      setRecentFlashcards([]);
+    } finally {
+      setLoadingRecent(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -100,9 +130,17 @@ const CreateFlashcardPage = () => {
       setDifficulty("medium");
       setTags("");
       
+      // Reload recent flashcards to show the newly created one
+      if (userInfo) {
+        loadRecentFlashcards(userInfo.department, userInfo.year);
+      }
+      
       // Navigate back to the specific subject page if we came from there
       if (subjectParam) {
-        navigate(`/subjects/${subjectParam}/flashcards`);
+        // Add a small delay to ensure the flashcard is visible in the list
+        setTimeout(() => {
+          navigate(`/subjects/${subjectParam}/flashcards`);
+        }, 500);
       }
     } catch (error: any) {
       // Handle validation errors from backend
@@ -287,6 +325,81 @@ const CreateFlashcardPage = () => {
             </div>
           </form>
         </Card>
+
+        {/* Recently Created Flashcards */}
+        <div className="mt-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-2xl font-bold text-foreground">Recently Created Flashcards</h2>
+            <Badge variant="secondary">{recentFlashcards.length} total</Badge>
+          </div>
+          
+          {loadingRecent ? (
+            <div className="flex items-center justify-center py-12">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            </div>
+          ) : recentFlashcards.length > 0 ? (
+            <div className="space-y-3">
+              {recentFlashcards.map((flashcard, index) => {
+                const subject = subjects.find(s => s.id === flashcard.subjectId);
+                return (
+                  <Card key={flashcard._id || index} className="p-4 hero-card hover:shadow-lg transition-shadow">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Badge variant="outline" className="text-xs">
+                            {subject?.name || flashcard.subjectId || 'Unknown Subject'}
+                          </Badge>
+                          <Badge 
+                            variant={
+                              flashcard.difficulty === "easy" ? "default" : 
+                              flashcard.difficulty === "hard" ? "destructive" : 
+                              "secondary"
+                            }
+                            className={flashcard.difficulty === "easy" ? "bg-green-500" : ""}
+                          >
+                            {flashcard.difficulty || "medium"}
+                          </Badge>
+                        </div>
+                        <div className="space-y-2">
+                          <div>
+                            <p className="text-sm font-medium text-muted-foreground">Front:</p>
+                            <p className="text-foreground">{flashcard.front}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-muted-foreground">Back:</p>
+                            <p className="text-foreground">{flashcard.back}</p>
+                          </div>
+                          {flashcard.tags && flashcard.tags.length > 0 && (
+                            <div className="flex flex-wrap gap-1">
+                              {flashcard.tags.map((tag: string, i: number) => (
+                                <Badge key={i} variant="secondary" className="text-xs">
+                                  {tag}
+                                </Badge>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => navigate(`/subjects/${flashcard.subjectId}/flashcards`)}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </Card>
+                );
+              })}
+            </div>
+          ) : (
+            <Card className="p-8 text-center hero-card">
+              <p className="text-muted-foreground">No flashcards created yet. Create your first flashcard above!</p>
+            </Card>
+          )}
+        </div>
       </div>
     </div>
   );
