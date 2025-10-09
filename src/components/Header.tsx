@@ -156,37 +156,40 @@ const Header = () => {
               {isAuthenticated ? (
                 <>
                   <Link to="/" onClick={() => setIsMenuOpen(false)}>
-                    <Button 
-                      variant="outline" 
-                      className="w-full border-primary/20 hover:border-primary flex items-center justify-center gap-2"
+                    <PremiumButton 
+                      variant="glass" 
+                      className="w-full flex items-center justify-center gap-2"
                     >
                       <LayoutDashboard className="w-4 h-4" />
                       Dashboard
-                    </Button>
+                    </PremiumButton>
                   </Link>
-                  <Button 
-                    className="w-full bg-gradient-primary hover:opacity-90 text-white font-medium shadow-glow"
+                  <PremiumButton 
+                    variant="glow"
+                    className="w-full"
                     onClick={handleLogout}
                   >
                     Logout
-                  </Button>
+                  </PremiumButton>
                 </>
               ) : (
                 <>
                   <Link to="/login" onClick={() => setIsMenuOpen(false)}>
-                    <Button 
-                      variant="outline" 
-                      className="w-full border-primary/20 hover:border-primary"
+                    <PremiumButton 
+                      variant="ghost" 
+                      className="w-full"
                     >
                       Log In
-                    </Button>
+                    </PremiumButton>
                   </Link>
                   <Link to="/signup" onClick={() => setIsMenuOpen(false)}>
-                    <Button 
-                      className="w-full bg-gradient-primary hover:opacity-90 text-white font-medium shadow-glow"
+                    <PremiumButton 
+                      variant="premium"
+                      className="w-full"
                     >
+                      <Sparkles className="w-4 h-4" />
                       Sign Up
-                    </Button>
+                    </PremiumButton>
                   </Link>
                 </>
               )}
