@@ -24,7 +24,7 @@ export const validateSignup = [
     .isIn(['cse', 'mechanical', 'electrical', 'chemical', 'civil', 'other'])
     .withMessage('Please select a valid department'),
   body('year')
-    .isIn(['1st', '2nd', '3rd', '4th'])
+    .isIn(['1st-year', '2nd-year', '3rd-year', '4th-year'])
     .withMessage('Please select a valid year')
 ];
 

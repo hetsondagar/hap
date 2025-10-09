@@ -30,9 +30,6 @@ import { toast } from "@/components/ui/sonner";
 // Use the full department names from mapping
 const departments = Object.values(departmentMap);
 
-const years = ["1st Year", "2nd Year", "3rd Year", "4th Year"];
-const phases = ["Mid-Semester", "End-Semester"];
-
 const FlashcardsPage = () => {
   const { cards, addCard, deleteCard } = useFlashcards();
   const navigate = useNavigate();
@@ -41,26 +38,12 @@ const FlashcardsPage = () => {
   const [back, setBack] = useState("");
   const [department, setDepartment] = useState("");
   const [year, setYear] = useState("");
-  const [phase, setPhase] = useState("");
   const [difficulty, setDifficulty] = useState<"easy" | "medium" | "hard">("medium");
   const [creating, setCreating] = useState(false);
   const [favorites, setFavorites] = useState<Set<string | number>>(new Set());
   const [searchParams] = useSearchParams();
   const [userInfo, setUserInfo] = useState<{ department: string; year: string } | null>(null);
 
-  // Helpers to convert human labels to URL ids
-  const nameToDeptId = (name: string): string | null => {
-    const entry = Object.entries(departmentMap).find(([, v]) => v.toLowerCase() === name.toLowerCase());
-    return entry ? entry[0] : encodeURIComponent(name);
-  };
-  const yearNameToId = (name: string): string | null => {
-    const map: Record<string, string> = { '1st Year': '1st-year', '2nd Year': '2nd-year', '3rd Year': '3rd-year', '4th Year': '4th-year' };
-    return map[name] || null;
-  };
-  const phaseNameToId = (name: string): string | null => {
-    const map: Record<string, string> = { 'Mid-Semester': 'mid-sem', 'End-Semester': 'end-sem' };
-    return map[name] || null;
-  };
 
   useEffect(() => {
     let mounted = true;
@@ -105,59 +88,54 @@ const FlashcardsPage = () => {
     return () => { mounted = false; };
   }, [navigate]);
 
-  // Prefill selections if coming from Features/Department flow
-  useEffect(() => {
-    const deptId = searchParams.get('deptId');
-    const yearId = searchParams.get('yearId');
-    const phaseId = searchParams.get('phaseId');
-
-    if (deptId) {
-      const byKey = Object.entries(departmentMap).find(([k]) => k === deptId)?.[1];
-      const decoded = decodeURIComponent(deptId);
-      const byValue = Object.values(departmentMap).find((v) => v.toLowerCase() === decoded.toLowerCase());
-      setDepartment(byKey || byValue || decoded);
-    }
-    if (yearId) {
-      const map: Record<string, string> = { '1st-year': '1st Year', '2nd-year': '2nd Year', '3rd-year': '3rd Year', '4th-year': '4th Year' };
-      setYear(map[yearId] || "");
-    }
-    if (phaseId) {
-      const map: Record<string, string> = { 'mid-sem': 'Mid-Semester', 'end-sem': 'End-Semester' };
-      setPhase(map[phaseId] || "");
-    }
-  }, [searchParams]);
 
   const handleAddCard = () => {
     (async () => {
-      // Department and year are now auto-filled from signup, only need to check phase
-      if (front.trim() && back.trim() && phase) {
+      // Department and year are auto-filled from signup
+      if (front.trim() && back.trim() && userInfo) {
         try {
           setCreating(true);
-          // Map UI department name to backend enum
-          const backendDept = department.toLowerCase().includes('computer') ? 'Computer Science' : 'Engineering';
-          await flashcardAPI.create({
-            front,
-            back,
-            department: backendDept,
-            tags: [year, phase],
-          } as any);
-          addCard({ front, back, department, year, phase, difficulty });
-          // Success toast with quick link to department view
-          const deptIdFromName = nameToDeptId(department);
-          const yearIdFromName = yearNameToId(year);
-          const phaseIdFromName = phaseNameToId(phase);
-          toast.success("Flashcard created", {
-            description: `${department} • ${year} • ${phase}`,
-            action: deptIdFromName && yearIdFromName && phaseIdFromName ? {
-              label: "View in Department",
-              onClick: () => navigate(`/departments/${deptIdFromName}/${yearIdFromName}/${phaseIdFromName}`)
-            } : undefined
+          
+          const tagArray = [];
+          
+          const flashcardData = {
+            front: front.trim(),
+            back: back.trim(),
+            department: userInfo.department,
+            year: userInfo.year,
+            difficulty,
+            tags: tagArray,
+            public: true
+          };
+          
+          console.log('Creating flashcard with data:', flashcardData);
+          
+          const response = await flashcardAPI.create(flashcardData as any);
+          console.log('Flashcard created:', response);
+          
+          addCard({ front, back, department, year: userInfo.year, difficulty } as any);
+          
+          toast.success("Flashcard created successfully!", {
+            description: `${userInfo.department.toUpperCase()} • ${userInfo.year}`
           });
+          
           setFront("");
           setBack("");
           // Don't reset department and year - they're auto-filled
-          setPhase("");
           setDifficulty("medium");
+        } catch (error: any) {
+          console.error("Error creating flashcard:", error);
+          console.error("Error response:", error?.response?.data);
+          
+          const errorMessage = error?.response?.data?.message || error?.message || "Failed to create flashcard";
+          const errors = error?.response?.data?.errors;
+          
+          if (errors && Array.isArray(errors)) {
+            const errorMessages = errors.map((e: any) => `${e.path || e.param}: ${e.msg || e.message}`).join(', ');
+            toast.error(`Validation errors: ${errorMessages}`);
+          } else {
+            toast.error(errorMessage);
+          }
         } finally {
           setCreating(false);
         }
@@ -193,8 +171,8 @@ const FlashcardsPage = () => {
           Smart Flashcard Creation
         </h1>
         <p className="text-lg text-muted-foreground mb-12 text-center max-w-2xl mx-auto">
-          Create custom flashcards with questions and answers. Categorize them by
-          department, year, and exam phase for structured study.
+          Create custom flashcards with questions and answers. Your department and year
+          are automatically set from your profile.
         </p>
 
         {/* Enhanced Add Flashcard Form */}
@@ -243,33 +221,15 @@ const FlashcardsPage = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-sm font-medium text-foreground mb-2 block">
-                    Year {userInfo && <Badge variant="secondary" className="ml-2">Auto-filled</Badge>}
-                  </label>
-                  <Input
-                    value={year}
-                    disabled
-                    className="bg-muted/50 cursor-not-allowed"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-sm font-medium text-foreground mb-2 block">Exam Phase</label>
-            <Select onValueChange={setPhase} value={phase}>
-              <SelectTrigger>
-                      <SelectValue placeholder="Select Phase" />
-              </SelectTrigger>
-              <SelectContent>
-                {phases.map((p) => (
-                  <SelectItem key={p} value={p}>
-                    {p}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-                </div>
+              <div>
+                <label className="text-sm font-medium text-foreground mb-2 block">
+                  Year {userInfo && <Badge variant="secondary" className="ml-2">Auto-filled</Badge>}
+                </label>
+                <Input
+                  value={year}
+                  disabled
+                  className="h-12 bg-muted/50 cursor-not-allowed"
+                />
               </div>
 
               <div>
@@ -303,7 +263,7 @@ const FlashcardsPage = () => {
 
               <Button 
                 onClick={handleAddCard} 
-                disabled={creating || !front.trim() || !back.trim() || !phase} 
+                disabled={creating || !front.trim() || !back.trim()} 
                 className="w-full h-12 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold"
               >
                 {creating ? (
@@ -336,7 +296,6 @@ const FlashcardsPage = () => {
               back: card.back,
               department: card.department,
               year: card.year,
-              phase: card.phase,
               difficulty: (card as any).difficulty || 'medium',
               isFavorite: favorites.has(card.id)
             }))}
