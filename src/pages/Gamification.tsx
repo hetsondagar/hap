@@ -88,14 +88,7 @@ const Gamification = () => {
             </Button>
           </div>
 
-          {/* Gamification Preview Image */}
-          <div className="max-w-4xl mx-auto mt-16">
-            <img 
-              src={gamificationBadges} 
-              alt="Gamification badges and achievements"
-              className="w-full rounded-2xl shadow-intense"
-            />
-          </div>
+          
         </div>
       </section>
 
