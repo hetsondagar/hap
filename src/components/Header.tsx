@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Trophy, BookOpen, Users, Home, BarChart3, LayoutDashboard } from 'lucide-react';
+import { Menu, X, Trophy, BookOpen, Users, Home, BarChart3, LayoutDashboard ,Sparkles} from 'lucide-react';
 import hapLogo from '../assets/hap-logo-3.png';
 import HapLogo from '../assets/hap-logo.png';
 import { authAPI } from '@/lib/api';
+import { PremiumButton } from '@/components/ui/premium-button';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
