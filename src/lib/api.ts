@@ -193,6 +193,8 @@ export const flashcardAPI = {
     public?: boolean;
     page?: number;
     limit?: number;
+    sortBy?: string;
+    sortOrder?: 'asc' | 'desc';
   }) => {
     const searchParams = new URLSearchParams();
     Object.entries(params).forEach(([key, value]) => {
