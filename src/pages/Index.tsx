@@ -1,5 +1,6 @@
 import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
+import { PremiumButton } from '@/components/ui/premium-button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { 
@@ -101,42 +102,56 @@ const Index = () => {
       <Header />
 
       {/* Hero Section */}
-      <section className="pt-32 pb-16">
-        <div className="container mx-auto px-4">
+      <section className="pt-32 pb-16 relative overflow-hidden">
+        {/* Animated background elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-20 left-10 w-72 h-72 bg-primary/20 rounded-full blur-3xl animate-float"></div>
+          <div className="absolute bottom-20 right-10 w-96 h-96 bg-secondary/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }}></div>
+        </div>
+        
+        <div className="container mx-auto px-4 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Left Content */}
-            <div className="animate-fade-in">
-              <Badge className="mb-6 bg-primary/10 text-primary border-primary/20">
-                <Zap className="w-3 h-3 mr-1" />
+            <div className="animate-slide-in-left space-y-6">
+              <Badge className="mb-2 bg-gradient-to-r from-primary/20 to-secondary/20 text-primary border-primary/20 hover-glow inline-flex items-center gap-2">
+                <Zap className="w-3 h-3" />
                 Gamified Learning Platform
               </Badge>
               
-              <h1 className="text-5xl md:text-6xl font-display font-bold mb-6">
-                <span className="gradient-text">Master Engineering</span>
+              <h1 className="text-5xl md:text-7xl font-display font-bold leading-tight">
+                <span className="gradient-text animate-gradient-shift">Master Engineering</span>
                 <br />
-                with Smart Flashcards
+                <span className="text-foreground">with Smart</span>
+                <br />
+                <span className="text-foreground">Flashcards</span>
               </h1>
               
-              <p className="text-xl text-muted-foreground mb-8 max-w-lg">
-                Create, share, and study with bite-sized flashcard decks. Join thousands of engineering students using hap for quick revision and exam prep.
+              <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed max-w-lg">
+                Create, share, and study with bite-sized flashcard decks. Join <span className="text-primary font-semibold">60K+</span> engineering students using hap.
               </p>
               
-              <div className="flex flex-col sm:flex-row gap-4 mb-8">
+              <div className="flex flex-col sm:flex-row gap-4 pt-4">
                 {isAuthenticated ? (
                   <Link to="/analytics">
-                    <Button size="lg" className="bg-gradient-primary hover:opacity-90 text-white font-medium shadow-glow">
+                    <PremiumButton size="xl" variant="premium" className="group">
                       Go to Dashboard
-                      <ArrowRight className="w-5 h-5 ml-2" />
-                    </Button>
+                      <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                    </PremiumButton>
                   </Link>
                 ) : (
                   <Link to="/signup">
-                    <Button size="lg" className="bg-gradient-primary hover:opacity-90 text-white font-medium shadow-glow">
+                    <PremiumButton size="xl" variant="premium" className="group">
                       Get Started Free
-                      <ArrowRight className="w-5 h-5 ml-2" />
-                    </Button>
+                      <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                    </PremiumButton>
                   </Link>
                 )}
+                <Link to="/features">
+                  <PremiumButton size="xl" variant="glass">
+                    <BookOpen className="w-5 h-5 mr-2" />
+                    Explore Features
+                  </PremiumButton>
+                </Link>
               </div>
               
               <div className="flex items-center space-x-6 text-sm text-muted-foreground">
@@ -156,12 +171,15 @@ const Index = () => {
             </div>
             
             {/* Right Content - Hero Image */}
-            <div className="animate-slide-up">
-              <img 
-                src={heroImage} 
-                alt="Interactive flashcards floating in digital space"
-                className="w-full rounded-2xl shadow-intense glow-effect"
-              />
+            <div className="animate-slide-in-right relative">
+              <div className="relative group">
+                <div className="absolute -inset-1 bg-gradient-to-r from-primary to-secondary rounded-2xl blur-2xl opacity-30 group-hover:opacity-50 transition-opacity duration-500"></div>
+                <img 
+                  src={heroImage} 
+                  alt="Interactive flashcards floating in digital space"
+                  className="relative w-full rounded-2xl shadow-2xl hover-lift border-2 border-white/10"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -170,12 +188,20 @@ const Index = () => {
       {/* Stats Section */}
       <section className="py-16">
         <div className="container mx-auto px-4">
-          <Card className="hero-card p-8">
+          <Card className="glass-effect p-12 hover-lift border-2 border-white/10 animate-scale-in">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               {stats.map((stat, index) => (
-                <div key={index} className="text-center">
-                  <div className="text-4xl font-bold gradient-text mb-2">{stat.number}</div>
-                  <div className="text-muted-foreground">{stat.label}</div>
+                <div 
+                  key={index} 
+                  className="text-center group cursor-default"
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                >
+                  <div className="text-5xl md:text-6xl font-bold gradient-text mb-3 group-hover:scale-110 transition-transform duration-300">
+                    {stat.number}
+                  </div>
+                  <div className="text-muted-foreground text-sm md:text-base font-medium">
+                    {stat.label}
+                  </div>
                 </div>
               ))}
             </div>
@@ -184,30 +210,45 @@ const Index = () => {
       </section>
 
       {/* Core Features */}
-      <section className="py-16">
+      <section className="py-20 relative">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-display font-bold mb-4">Everything You Need to Excel</h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <div className="text-center mb-16 animate-fade-in">
+            <Badge className="mb-4 bg-secondary/10 text-secondary border-secondary/20">
+              <Star className="w-3 h-3 mr-1" />
+              Premium Features
+            </Badge>
+            <h2 className="text-4xl md:text-5xl font-display font-bold mb-6">
+              Everything You Need to <span className="gradient-text">Excel</span>
+            </h2>
+            <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
               Powerful features designed specifically for engineering students to make learning efficient and engaging.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {features.map((feature, index) => (
-              <Link key={index} to={feature.link} className="block">
-                <Card className="hero-card p-8 group cursor-pointer hover:shadow-lg transition">
+              <Link 
+                key={index} 
+                to={feature.link} 
+                className="block animate-scale-in"
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
+                <Card className="glass-effect p-8 group cursor-pointer hover-lift border-2 border-white/10 h-full">
                   <div className="flex items-start space-x-6">
-                    <div className={`w-16 h-16 bg-gradient-to-r ${feature.gradient} rounded-xl flex items-center justify-center glow-effect`}>
-                      <feature.icon className="w-8 h-8 text-white" />
+                    <div className={`w-20 h-20 bg-gradient-to-br ${feature.gradient} rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-2xl transition-all duration-300 group-hover:scale-110 group-hover:rotate-6`}>
+                      <feature.icon className="w-10 h-10 text-white" />
                     </div>
                     <div className="flex-grow">
-                      <h3 className="text-2xl font-display font-bold mb-3 group-hover:text-primary transition-colors">
+                      <h3 className="text-2xl font-display font-bold mb-3 group-hover:gradient-text transition-all duration-300">
                         {feature.title}
                       </h3>
-                      <p className="text-muted-foreground leading-relaxed">
+                      <p className="text-muted-foreground leading-relaxed text-base">
                         {feature.description}
                       </p>
+                      <div className="mt-4 flex items-center text-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <span className="text-sm font-semibold">Learn more</span>
+                        <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                      </div>
                     </div>
                   </div>
                 </Card>
@@ -217,10 +258,10 @@ const Index = () => {
 
           <div className="text-center mt-12">
             <Link to="/features">
-              <Button variant="outline" className="border-primary/20 hover:border-primary">
+              <PremiumButton variant="outline" size="lg" className="group">
                 Explore All Features
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
+                <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+              </PremiumButton>
             </Link>
           </div>
         </div>

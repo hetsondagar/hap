@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Trophy, BookOpen, Users, Home, BarChart3, LayoutDashboard } from 'lucide-react';
+import { PremiumButton } from '@/components/ui/premium-button';
+import { Menu, X, Trophy, BookOpen, Users, Home, BarChart3, LayoutDashboard, Sparkles } from 'lucide-react';
 import HapLogo from '@/assets/hap-logo-3.png';
 import { authAPI } from '@/lib/api';
 
@@ -54,11 +55,11 @@ const Header = () => {
   ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 card-gradient border-b border-border/20">
+    <header className="fixed top-0 left-0 right-0 z-50 glass-effect border-b border-white/10 backdrop-blur-xl shadow-lg">
       <nav className="container mx-auto px-4 py-4 flex items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="flex items-center space-x-2 group">
-          <img src={HapLogo} alt="Hap Logo" className="w-8 h-8 object-contain" />
+        <Link to="/" className="flex items-center space-x-2 group hover-glow">
+          <img src={HapLogo} alt="Hap Logo" className="w-8 h-8 object-contain transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12" />
           <span className="text-2xl font-display font-bold gradient-text">
             hap
           </span>
@@ -90,26 +91,27 @@ const Header = () => {
                 {username ? `Hi, ${username}` : 'Signed in'}
               </span>
               <Link to="/">
-                <Button variant="outline" className="border-primary/20 hover:border-primary flex items-center gap-2">
+                <PremiumButton variant="glass" className="flex items-center gap-2">
                   <LayoutDashboard className="w-4 h-4" />
                   Dashboard
-                </Button>
+                </PremiumButton>
               </Link>
-              <Button onClick={handleLogout} className="bg-gradient-primary hover:opacity-90 text-white font-medium shadow-glow">
+              <PremiumButton onClick={handleLogout} variant="glow">
                 Logout
-              </Button>
+              </PremiumButton>
             </>
           ) : (
             <>
               <Link to = "/login">
-                <Button variant="outline" className="border-primary/20 hover:border-primary">
+                <PremiumButton variant="ghost">
                   Log In
-                </Button>
+                </PremiumButton>
               </Link>
               <Link to = "/signup">
-                <Button className="bg-gradient-primary hover:opacity-90 text-white font-medium shadow-glow">
+                <PremiumButton variant="premium">
+                  <Sparkles className="w-4 h-4" />
                   Sign Up
-                </Button>
+                </PremiumButton>
               </Link>
             </>
           )}
@@ -150,37 +152,40 @@ const Header = () => {
               {isAuthenticated ? (
                 <>
                   <Link to="/" onClick={() => setIsMenuOpen(false)}>
-                    <Button 
-                      variant="outline" 
-                      className="w-full border-primary/20 hover:border-primary flex items-center justify-center gap-2"
+                    <PremiumButton 
+                      variant="glass" 
+                      className="w-full flex items-center justify-center gap-2"
                     >
                       <LayoutDashboard className="w-4 h-4" />
                       Dashboard
-                    </Button>
+                    </PremiumButton>
                   </Link>
-                  <Button 
-                    className="w-full bg-gradient-primary hover:opacity-90 text-white font-medium shadow-glow"
+                  <PremiumButton 
+                    variant="glow"
+                    className="w-full"
                     onClick={handleLogout}
                   >
                     Logout
-                  </Button>
+                  </PremiumButton>
                 </>
               ) : (
                 <>
                   <Link to="/login" onClick={() => setIsMenuOpen(false)}>
-                    <Button 
-                      variant="outline" 
-                      className="w-full border-primary/20 hover:border-primary"
+                    <PremiumButton 
+                      variant="ghost" 
+                      className="w-full"
                     >
                       Log In
-                    </Button>
+                    </PremiumButton>
                   </Link>
                   <Link to="/signup" onClick={() => setIsMenuOpen(false)}>
-                    <Button 
-                      className="w-full bg-gradient-primary hover:opacity-90 text-white font-medium shadow-glow"
+                    <PremiumButton 
+                      variant="premium"
+                      className="w-full"
                     >
+                      <Sparkles className="w-4 h-4" />
                       Sign Up
-                    </Button>
+                    </PremiumButton>
                   </Link>
                 </>
               )}
