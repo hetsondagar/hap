@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Menu, X, Trophy, BookOpen, Users, Home, BarChart3, LayoutDashboard } from 'lucide-react';
 import hapLogo from '../assets/hap-logo-3.png';
+import HapLogo from '../assets/hap-logo.png';
 import { authAPI } from '@/lib/api';
 
 const Header = () => {
@@ -54,17 +55,22 @@ const Header = () => {
   ];
 
   return (
-    <header className="w-full flex items-center justify-between px-8 py-4 bg-[#18181b] shadow-md fixed top-0 left-0 z-50">
-      {/* Logo section - left aligned, more zoomed out for bigger "Hap" */}
-      <div className="flex items-center">
-        <img
-          src={hapLogo}
-          alt="Hap Logo"
-          className="h-16 w-16 object-contain scale-75"
-          style={{ objectFit: "contain" }}
-        />
-      </div>
-
+<header className="w-full flex items-center justify-between px-8 py-4 bg-[#18181b] shadow-md fixed top-0 left-0 z-50">
+  {/* Logo section - left aligned, first image zoomed and slightly up */}
+  <div className="flex items-center">
+    <img
+      src={hapLogo}
+      alt="Hap Logo"
+      className="h-24 w-24 object-contain scale-90 -mt-4"
+      style={{ objectFit: "contain" }}
+    />
+    <img
+      src={HapLogo}
+      alt="Hap Logo 3"
+      className="h-20 w-15 object-contain -ml-5"
+      style={{ objectFit: "contain", marginLeft: '-18px' }} // -ml-5 is Tailwind for -1.25rem, marginLeft for fine-tuning
+    />
+  </div>
       {/* Desktop Navigation */}
       <div className="hidden md:flex items-center space-x-8">
         {navItems.map((item) => (

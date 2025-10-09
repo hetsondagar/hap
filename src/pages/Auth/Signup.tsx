@@ -9,6 +9,7 @@ import { Eye, EyeOff, Check, X, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import SignupValidationGuide from "@/components/SignupValidationGuide";
 import { DEPARTMENTS, YEARS } from "@/data/subjects";
+import HapLogo from '../../assets/hap-logo.png';
 
 interface ValidationErrors {
   username?: string;
@@ -210,14 +211,24 @@ const Signup: React.FC = () => {
   return (
     <AuthLayout
       title={(
-        <div className="flex items-center justify-center mb-6">
-          <img
-            src={hapLogo}
-            alt="Hap Logo"
-            className="h-16 w-16 object-contain"
-            style={{ objectFit: "contain" }}
-          />
-          <span className="ml-4 font-bold text-2xl text-white">Sign Up</span>
+        <div className="flex flex-col items-center justify-center mb-6">
+          <div className="flex items-center justify-center">
+            <img
+              src={hapLogo}
+              alt="Hap Logo"
+              className="h-24 w-24 object-contain scale-90 -mt-4"
+              style={{ objectFit: "contain" }}
+            />
+            <img
+              src={HapLogo}
+              alt="Hap Logo 3"
+              className="h-20 w-20 object-contain"
+              style={{ objectFit: "contain", marginLeft: '-30px' }}
+            />
+          </div>
+          <span className="mt-4 font-bold text-2xl bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent drop-shadow">
+            Signup
+        </span>
         </div>
       )}
     >
