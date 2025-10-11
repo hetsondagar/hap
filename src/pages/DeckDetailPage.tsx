@@ -6,8 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Heart, Loader2, ArrowLeft, Send, Edit, Trash2, MessageSquare } from "lucide-react";
-import { communityAPI, authAPI } from "@/lib/api";
+import { communityAPI, authAPI, dashboardAPI } from "@/lib/api";
 import { toast } from "@/components/ui/sonner";
+import EnhancedFlashcard from "@/components/EnhancedFlashcard";
 
 type Deck = {
   _id: string;
@@ -33,6 +34,8 @@ const DeckDetailPage: React.FC = () => {
   const [currentUserYear, setCurrentUserYear] = useState("");
   const [isLiked, setIsLiked] = useState(false);
   const [editingComment, setEditingComment] = useState<{index: number, text: string} | null>(null);
+  const [flippedCards, setFlippedCards] = useState<Set<string>>(new Set());
+  const [likedFlashcards, setLikedFlashcards] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     // Get current user info
@@ -153,11 +156,45 @@ const DeckDetailPage: React.FC = () => {
     }
   };
 
+  const handleFlipCard = (id: string) => {
+    setFlippedCards(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(id)) {
+        newSet.delete(id);
+      } else {
+        newSet.add(id);
+      }
+      return newSet;
+    });
+  };
+
+  const handleToggleLikeFlashcard = async (id: string | number) => {
+    try {
+      const flashcardId = id.toString();
+      await dashboardAPI.toggleLikeFlashcard(flashcardId);
+      
+      setLikedFlashcards(prev => {
+        const newSet = new Set(prev);
+        if (newSet.has(flashcardId)) {
+          newSet.delete(flashcardId);
+          toast.success('Removed from favorites');
+        } else {
+          newSet.add(flashcardId);
+          toast.success('Added to favorites');
+        }
+        return newSet;
+      });
+    } catch (error) {
+      console.error('Error toggling like:', error);
+      toast.error('Failed to update favorite');
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen">
         <Header />
-        <div className="pt-32 pb-16 px-6 flex items-center justify-center">
+        <div className="pt-24 pb-16 px-6 flex items-center justify-center">
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
         </div>
       </div>
@@ -168,7 +205,7 @@ const DeckDetailPage: React.FC = () => {
     return (
       <div className="min-h-screen">
         <Header />
-        <div className="pt-32 pb-16 px-6">
+        <div className="pt-24 pb-16 px-6">
           <p className="text-muted-foreground">Deck not found</p>
           <Button onClick={() => navigate(-1)} className="mt-4">Go Back</Button>
         </div>
@@ -183,7 +220,7 @@ const DeckDetailPage: React.FC = () => {
     <div className="min-h-screen bg-gradient-subtle">
       <Header />
 
-      <div className="pt-32 pb-16 px-4 md:px-8">
+      <div className="pt-24 pb-16 px-4 md:px-8">
         <div className="max-w-4xl mx-auto">
           <Button
             variant="ghost"
@@ -334,19 +371,25 @@ const DeckDetailPage: React.FC = () => {
 
           {/* Flashcards in Deck */}
           <div>
-            <h2 className="text-2xl font-bold mb-4">Flashcards in this Deck</h2>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold">Flashcards in this Deck</h2>
+              <Badge variant="secondary" className="text-sm">{deck.flashcards?.length || 0} cards</Badge>
+            </div>
             {deck.flashcards && deck.flashcards.length > 0 ? (
-              <div className="grid gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {deck.flashcards.map((flashcard: any) => (
-                  <Card key={flashcard._id} className="glass-effect circuit-pattern border-2 border-white/10 dark:border-white/20">
-                    <CardContent className="p-6">
-                      <h3 className="font-semibold mb-2">Q: {flashcard.front}</h3>
-                      <p className="text-muted-foreground">A: {flashcard.back}</p>
-                      {flashcard.difficulty && (
-                        <Badge variant="outline" className="mt-2">{flashcard.difficulty}</Badge>
-                      )}
-                    </CardContent>
-                  </Card>
+                  <EnhancedFlashcard
+                    key={flashcard._id}
+                    id={flashcard._id}
+                    front={flashcard.front}
+                    back={flashcard.back}
+                    difficulty={flashcard.difficulty || 'medium'}
+                    department={flashcard.department}
+                    isFlipped={flippedCards.has(flashcard._id)}
+                    onFlip={handleFlipCard}
+                    isFavorite={likedFlashcards.has(flashcard._id)}
+                    onToggleFavorite={handleToggleLikeFlashcard}
+                  />
                 ))}
               </div>
             ) : (

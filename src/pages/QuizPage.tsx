@@ -153,7 +153,7 @@ export default function QuizPage() {
   return (
     <div className="min-h-screen">
       <Header />
-      <div className="pt-32 pb-16 px-6">
+      <div className="pt-24 pb-16 px-6">
         <h1 className="text-4xl font-bold text-primary text-center">
         Interactive Quiz Mode
       </h1>

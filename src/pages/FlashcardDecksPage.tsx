@@ -69,12 +69,22 @@ const FlashcardDecksPage: React.FC = () => {
     (async () => {
       try {
         const prof = await authAPI.getProfile();
-        const user = prof?.user || prof?.data || prof;
-        if (user) {
-          setCurrentUsername(user.username || storedUsername || '');
-          setCurrentUserYear(user.year || '');
-          if (user.likedDecks && Array.isArray(user.likedDecks)) {
-            setUserLikedDecks(new Set(user.likedDecks.map((d: any) => d._id || d)));
+        const userData = prof?.data?.user || prof?.user || prof?.data || prof;
+        if (userData) {
+          setCurrentUsername(userData.username || storedUsername || '');
+          setCurrentUserYear(userData.year || '');
+          setCurrentUserId(userData.id || userData._id || storedUserId || '');
+          
+          // Get liked decks - handle both ObjectId strings and populated objects
+          if (userData.likedDecks && Array.isArray(userData.likedDecks)) {
+            const likedDeckIds = userData.likedDecks.map((d: any) => {
+              // Handle if it's a string ID or an object with _id
+              if (typeof d === 'string') return d;
+              return d._id || d.id || d;
+            }).filter(Boolean);
+            
+            console.log('Loaded liked decks:', likedDeckIds);
+            setUserLikedDecks(new Set(likedDeckIds));
           }
         }
       } catch (e) {
@@ -218,7 +228,7 @@ const FlashcardDecksPage: React.FC = () => {
     <div className="min-h-screen bg-gradient-subtle">
       <Header />
 
-      <div className="pt-32 pb-16 px-4 md:px-8">
+      <div className="pt-24 pb-16 px-4 md:px-8">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="mb-8">

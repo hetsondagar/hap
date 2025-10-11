@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Heart, MessageSquare, Loader2, Plus, Send, Edit, Trash2 } from "lucide-react";
+import { Heart, MessageSquare, Loader2, Plus, Send, Edit, Trash2, ChevronDown, ChevronUp } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { communityAPI, authAPI } from "@/lib/api";
@@ -45,6 +45,7 @@ const CommunityDoubtsPage: React.FC = () => {
   const [currentUserYear, setCurrentUserYear] = useState<string>("");
   const [editingComment, setEditingComment] = useState<{postId: string, commentIndex: number, text: string} | null>(null);
   const [userLikedPosts, setUserLikedPosts] = useState<Set<string>>(new Set());
+  const [expandedAnswers, setExpandedAnswers] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -70,13 +71,22 @@ const CommunityDoubtsPage: React.FC = () => {
     (async () => {
       try {
         const prof = await authAPI.getProfile();
-        const user = prof?.user || prof?.data || prof;
-        if (user) {
-          setCurrentUsername(user.username || storedUsername || '');
-          setCurrentUserYear(user.year || '');
-          // Get liked posts
-          if (user.likedPosts && Array.isArray(user.likedPosts)) {
-            setUserLikedPosts(new Set(user.likedPosts.map((p: any) => p._id || p)));
+        const userData = prof?.data?.user || prof?.user || prof?.data || prof;
+        if (userData) {
+          setCurrentUsername(userData.username || storedUsername || '');
+          setCurrentUserYear(userData.year || '');
+          setCurrentUserId(userData.id || userData._id || storedUserId || '');
+          
+          // Get liked posts - handle both ObjectId strings and populated objects
+          if (userData.likedPosts && Array.isArray(userData.likedPosts)) {
+            const likedPostIds = userData.likedPosts.map((p: any) => {
+              // Handle if it's a string ID or an object with _id
+              if (typeof p === 'string') return p;
+              return p._id || p.id || p;
+            }).filter(Boolean);
+            
+            console.log('Loaded liked posts:', likedPostIds);
+            setUserLikedPosts(new Set(likedPostIds));
           }
         }
       } catch (e) {
@@ -155,10 +165,16 @@ const CommunityDoubtsPage: React.FC = () => {
       // Update local state
       setPosts(posts.map(post => {
         if (post._id === id) {
-          const currentLikes = Array.isArray(post.likes) ? post.likes.length : Number(post.likes || 0);
+          const currentLikes = Array.isArray(post.likes) ? post.likes : [];
+          const likesArray = isNowLiked 
+            ? [...currentLikes, currentUserId] 
+            : currentLikes.filter((likeId: any) => {
+                const lid = typeof likeId === 'string' ? likeId : likeId._id || likeId;
+                return lid !== currentUserId;
+              });
           return {
             ...post,
-            likes: isNowLiked ? currentLikes + 1 : Math.max(0, currentLikes - 1)
+            likes: likesArray as any[]
           };
         }
         return post;
@@ -261,12 +277,24 @@ const CommunityDoubtsPage: React.FC = () => {
 
   const likeCount = (post: Post) => Array.isArray(post.likes) ? post.likes.length : Number(post.likes || 0);
   const commentCount = (post: Post) => Array.isArray(post.comments) ? post.comments.length : Number(post.comments || 0);
+  
+  const toggleAnswers = (postId: string) => {
+    setExpandedAnswers(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(postId)) {
+        newSet.delete(postId);
+      } else {
+        newSet.add(postId);
+      }
+      return newSet;
+    });
+  };
 
   return (
     <div className="min-h-screen bg-gradient-subtle">
       <Header />
       
-      <div className="pt-32 pb-16 px-4 md:px-8">
+      <div className="pt-24 pb-16 px-4 md:px-8">
         <div className="max-w-5xl mx-auto">
           {/* Header */}
           <div className="mb-8">
@@ -361,6 +389,8 @@ const CommunityDoubtsPage: React.FC = () => {
               const postUserYear = typeof post.userId === 'string' ? '' : post.userId?.year || '';
               const isPostAuthor = currentUserId && postUserId === currentUserId;
               const isLiked = userLikedPosts.has(post._id);
+              const areAnswersExpanded = expandedAnswers.has(post._id);
+              const hasAnswers = Array.isArray(post.comments) && post.comments.length > 0;
               
               return (
                 <Card key={post._id} className="overflow-hidden border-2 border-border/50 dark:border-border/40 hover:border-primary/50 dark:hover:border-primary/60 transition-all duration-300 bg-card dark:bg-card/90 backdrop-blur-sm relative">
@@ -401,7 +431,7 @@ const CommunityDoubtsPage: React.FC = () => {
                   
                   <CardContent className="relative z-10">
                     {/* Actions */}
-                    <div className="flex items-center gap-6 mb-6 pb-4 border-b border-border/50 dark:border-border/30">
+                    <div className="flex items-center gap-6 pb-4 border-b border-border/50 dark:border-border/30">
                       <button
                         className="flex items-center gap-2 text-base font-medium hover:text-pink-600 dark:hover:text-pink-400 transition-all duration-200 group"
                         onClick={() => handleLikePost(post._id)}
@@ -423,14 +453,22 @@ const CommunityDoubtsPage: React.FC = () => {
                       </div>
                     </div>
 
-                    {/* Comments/Answers */}
-                    {Array.isArray(post.comments) && post.comments.length > 0 && (
-                      <div className="space-y-3 mb-6">
-                        <h4 className="font-bold text-base flex items-center gap-2">
-                          <MessageSquare className="h-5 w-5 text-primary" />
-                          Answers
-                        </h4>
-                        {post.comments.map((comment, idx) => {
+                    {/* View Answers Text (Instagram/Facebook style) */}
+                    {hasAnswers && !areAnswersExpanded && (
+                      <div className="mb-4">
+                        <button
+                          onClick={() => toggleAnswers(post._id)}
+                          className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200"
+                        >
+                          View all {commentCount(post)} {commentCount(post) === 1 ? 'answer' : 'answers'}
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Comments/Answers - Collapsible */}
+                    {areAnswersExpanded && hasAnswers && (
+                      <div className="space-y-3 mb-4 animate-in fade-in-0 slide-in-from-top-4 duration-300">
+                        {post.comments!.map((comment, idx) => {
                           const isCommentAuthor = currentUsername && comment.username === currentUsername;
                           const isEditing = editingComment?.postId === post._id && editingComment?.commentIndex === idx;
 
@@ -509,6 +547,14 @@ const CommunityDoubtsPage: React.FC = () => {
                             </div>
                           );
                         })}
+                        
+                        {/* Hide Answers Text */}
+                        <button
+                          onClick={() => toggleAnswers(post._id)}
+                          className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200 mt-2"
+                        >
+                          Hide answers
+                        </button>
                       </div>
                     )}
 

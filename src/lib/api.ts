@@ -256,6 +256,8 @@ export const flashcardAPI = {
     });
     return response.json();
   },
+  
+  // Note: update is already defined above, keeping this structure for clarity
 };
 
 // Quiz API

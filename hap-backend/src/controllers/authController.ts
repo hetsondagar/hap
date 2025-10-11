@@ -206,9 +206,17 @@ export const getProfile = async (req: Request, res: Response): Promise<void> => 
           username: user.username,
           email: user.email,
           bio: user.bio,
+          department: user.department,
+          year: user.year,
           badges: user.badges,
           followers: user.followers,
           following: user.following,
+          likedPosts: user.likedPosts,
+          likedFlashcards: user.likedFlashcards,
+          likedDecks: user.likedDecks,
+          xp: user.xp,
+          level: user.level,
+          streak: user.streak,
           createdAt: user.createdAt,
           updatedAt: user.updatedAt
         }

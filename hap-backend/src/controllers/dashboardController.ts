@@ -31,8 +31,15 @@ export const getDashboardData = async (req: Request, res: Response): Promise<voi
 
     // Get user with liked items populated
     const user = await User.findById(userId)
-      .populate('likedFlashcards')
-      .populate('likedDecks');
+      .populate({
+        path: 'likedFlashcards',
+        options: { sort: { createdAt: -1 } }
+      })
+      .populate({
+        path: 'likedDecks',
+        populate: { path: 'flashcards' },
+        options: { sort: { createdAt: -1 } }
+      });
 
     if (!user) {
       res.status(404).json({
@@ -54,7 +61,7 @@ export const getDashboardData = async (req: Request, res: Response): Promise<voi
       .populate('flashcards');
 
     // Get user's posts
-    const myPosts = await Post.find({ authorId: userId })
+    const myPosts = await Post.find({ userId: userId })
       .sort({ createdAt: -1 })
       .limit(50);
 

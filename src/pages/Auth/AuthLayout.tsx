@@ -13,7 +13,7 @@ interface AuthLayoutProps {
 
 const AuthLayout: React.FC<AuthLayoutProps> = ({ title, children }) => {
   return (
-    <div className="flex items-center justify-center min-h-screen pt-32 pb-16 bg-gradient-subtle">
+    <div className="flex items-center justify-center min-h-screen pt-24 pb-16 bg-gradient-subtle">
       <Card className="w-full max-w-md p-6 hero-card">
         <CardHeader className="flex flex-col items-center">
           {/* <img src={hapLogo} alt="Hap Logo" className="h-16 w-16 object-contain mb-3" /> */}

@@ -307,15 +307,30 @@ export const toggleLike = async (req: Request, res: Response): Promise<void> => 
       return;
     }
 
-    const isLiked = deck.likes.includes(userId as any);
+    const user = await User.findById(userId);
 
-    if (isLiked) {
-      deck.likes = deck.likes.filter(likeId => likeId.toString() !== userId);
-    } else {
-      deck.likes.push(userId as any);
+    if (!user) {
+      res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+      return;
     }
 
-    await deck.save();
+    const isLiked = deck.likes.includes(userId as any);
+    const userHasLiked = user.likedDecks.some((deckId: any) => deckId.toString() === id);
+
+    if (isLiked || userHasLiked) {
+      // Unlike
+      deck.likes = deck.likes.filter(likeId => likeId.toString() !== userId);
+      user.likedDecks = user.likedDecks.filter((deckId: any) => deckId.toString() !== id);
+    } else {
+      // Like
+      deck.likes.push(userId as any);
+      user.likedDecks.push(id as any);
+    }
+
+    await Promise.all([deck.save(), user.save()]);
 
     res.status(200).json({
       success: true,

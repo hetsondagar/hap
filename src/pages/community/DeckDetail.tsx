@@ -111,7 +111,7 @@ const DeckDetail: React.FC = () => {
     return (
       <div className="min-h-screen">
         <Header />
-        <div className="pt-32 pb-16 px-6 flex items-center justify-center text-muted-foreground">
+        <div className="pt-24 pb-16 px-6 flex items-center justify-center text-muted-foreground">
           <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Loading…
         </div>
       </div>
@@ -122,7 +122,7 @@ const DeckDetail: React.FC = () => {
     return (
       <div className="min-h-screen">
         <Header />
-        <div className="pt-32 pb-16 px-6">
+        <div className="pt-24 pb-16 px-6">
           <p className="text-sm text-destructive mb-3">{error}</p>
           <Button variant="outline" onClick={() => navigate(-1)}>Back</Button>
         </div>
@@ -137,7 +137,7 @@ const DeckDetail: React.FC = () => {
   return (
     <div className="min-h-screen">
       <Header />
-      <div className="pt-32 pb-16 px-6 space-y-6">
+      <div className="pt-24 pb-16 px-6 space-y-6">
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold">{deck.title || "Untitled Deck"}</h1>

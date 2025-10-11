@@ -82,37 +82,37 @@ const Header = () => {
   ];
 
   return (
-    <header className="w-full flex items-center justify-between px-8 py-4 glass-effect circuit-pattern fixed top-0 left-0 z-50">
-      {/* Logo section - left aligned, first image zoomed and slightly up */}
+    <header className="w-full flex items-center justify-between px-8 py-2 glass-effect circuit-pattern fixed top-0 left-0 z-50">
+      {/* Logo section - left aligned, compact and centered */}
       <div className="flex items-center">
         <img
           src={hapLogo}
           alt="Hap Logo"
-          className="h-24 w-24 object-contain scale-90 -mt-4"
+          className="h-14 w-14 object-contain"
           style={{ objectFit: "contain" }}
         />
         <img
           src={HapLogo}
-          alt="Hap Logo 3"
-          className="h-20 w-15 object-contain -ml-5"
-          style={{ objectFit: "contain", marginLeft: '-18px' }}
+          alt="Hap Logo Text"
+          className="h-12 w-auto object-contain -ml-3"
+          style={{ objectFit: "contain", marginLeft: '-12px' }}
         />
       </div>
 
       {/* Desktop Navigation */}
-      <div className="hidden md:flex items-center space-x-8">
+      <div className="hidden md:flex items-center space-x-6">
         {navItems.map((item) => (
           <Link
             key={item.name}
             to={item.path}
-            className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-all duration-300 ${
+            className={`flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all duration-300 ${
               location.pathname === item.path
                 ? 'text-primary bg-primary/10 glow-effect'
                 : 'text-muted-foreground hover:text-primary hover:bg-primary/5'
             }`}
           >
             <item.icon className="w-4 h-4" />
-            <span className="font-medium">{item.name}</span>
+            <span className="font-medium text-sm">{item.name}</span>
           </Link>
         ))}
       </div>

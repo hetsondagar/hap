@@ -345,7 +345,7 @@ const CommunityPage: React.FC = () => {
   return (
     <div className="min-h-screen">
       <Header />
-      <div className="pt-32 pb-16 px-6 space-y-10">
+      <div className="pt-24 pb-16 px-6 space-y-10">
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div>

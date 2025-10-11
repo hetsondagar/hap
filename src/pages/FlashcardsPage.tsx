@@ -173,7 +173,7 @@ const FlashcardsPage = () => {
     <div className="min-h-screen">
       <Header />
 
-      <section className="pt-32 pb-16 container mx-auto px-4">
+      <section className="pt-24 pb-16 container mx-auto px-4">
         <h1 className="text-4xl font-display font-bold mb-6 text-center">
           Smart Flashcard Creation
         </h1>

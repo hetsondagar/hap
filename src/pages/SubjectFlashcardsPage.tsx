@@ -7,8 +7,14 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { getSubjectsByDeptYear } from "@/data/subjects";
 import { ArrowLeft, Plus, BookOpen, Star, Users, Loader2 } from "lucide-react";
-import { flashcardAPI } from "@/lib/api";
+import { flashcardAPI, dashboardAPI } from "@/lib/api";
 import { toast } from "@/components/ui/sonner";
+import EnhancedFlashcard from "@/components/EnhancedFlashcard";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const SubjectFlashcardsPage = () => {
   const { subjectId } = useParams();
@@ -17,6 +23,13 @@ const SubjectFlashcardsPage = () => {
   const [subject, setSubject] = useState<any>(null);
   const [flashcards, setFlashcards] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [flippedCards, setFlippedCards] = useState<Set<string>>(new Set());
+  const [likedFlashcards, setLikedFlashcards] = useState<Set<string>>(new Set());
+  const [currentUserId, setCurrentUserId] = useState<string>('');
+  const [editingFlashcard, setEditingFlashcard] = useState<any>(null);
+  const [editFront, setEditFront] = useState('');
+  const [editBack, setEditBack] = useState('');
+  const [editDifficulty, setEditDifficulty] = useState<'easy' | 'medium' | 'hard'>('medium');
 
   useEffect(() => {
     // Get user info from localStorage or API
@@ -81,6 +94,92 @@ const SubjectFlashcardsPage = () => {
     navigate(`/community?subject=${subjectId}`);
   };
 
+  const handleFlipCard = (id: string) => {
+    setFlippedCards(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(id)) {
+        newSet.delete(id);
+      } else {
+        newSet.add(id);
+      }
+      return newSet;
+    });
+  };
+
+  const handleToggleLike = async (id: string | number) => {
+    try {
+      const flashcardId = id.toString();
+      await dashboardAPI.toggleLikeFlashcard(flashcardId);
+      
+      setLikedFlashcards(prev => {
+        const newSet = new Set(prev);
+        if (newSet.has(flashcardId)) {
+          newSet.delete(flashcardId);
+          toast.success('Removed from favorites');
+        } else {
+          newSet.add(flashcardId);
+          toast.success('Added to favorites');
+        }
+        return newSet;
+      });
+    } catch (error) {
+      console.error('Error toggling like:', error);
+      toast.error('Failed to update favorite');
+    }
+  };
+
+  const handleEditFlashcard = (id: string | number) => {
+    const flashcard = flashcards.find(f => (f._id || f.id) === id);
+    if (flashcard) {
+      setEditingFlashcard(flashcard);
+      setEditFront(flashcard.front);
+      setEditBack(flashcard.back);
+      setEditDifficulty(flashcard.difficulty || 'medium');
+    }
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editingFlashcard || !editFront.trim() || !editBack.trim()) {
+      toast.error('Please fill in all fields');
+      return;
+    }
+
+    try {
+      await flashcardAPI.update(editingFlashcard._id || editingFlashcard.id, {
+        front: editFront,
+        back: editBack,
+        difficulty: editDifficulty
+      });
+
+      setFlashcards(flashcards.map(f => 
+        (f._id || f.id) === (editingFlashcard._id || editingFlashcard.id)
+          ? { ...f, front: editFront, back: editBack, difficulty: editDifficulty }
+          : f
+      ));
+
+      setEditingFlashcard(null);
+      setEditFront('');
+      setEditBack('');
+      toast.success('Flashcard updated successfully!');
+    } catch (error) {
+      console.error('Error updating flashcard:', error);
+      toast.error('Failed to update flashcard');
+    }
+  };
+
+  const handleDeleteFlashcard = async (id: string | number) => {
+    if (!confirm('Are you sure you want to delete this flashcard?')) return;
+
+    try {
+      await flashcardAPI.delete(id.toString());
+      setFlashcards(flashcards.filter(f => (f._id || f.id) !== id));
+      toast.success('Flashcard deleted successfully!');
+    } catch (error) {
+      console.error('Error deleting flashcard:', error);
+      toast.error('Failed to delete flashcard');
+    }
+  };
+
   if (!userInfo || !subject) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -92,7 +191,7 @@ const SubjectFlashcardsPage = () => {
   return (
     <div className="min-h-screen bg-gradient-subtle">
       <Header />
-      <div className="pt-32 pb-16 px-8">
+      <div className="pt-24 pb-16 px-8">
         <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -132,47 +231,45 @@ const SubjectFlashcardsPage = () => {
           </Button>
         </div>
 
-        {/* Flashcards List */}
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold mb-4">All Flashcards</h2>
+        {/* Flashcards Grid */}
+        <div>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold">All Flashcards</h2>
+            <Badge variant="secondary" className="text-sm">{flashcards.length} cards</Badge>
+          </div>
           
           {loading ? (
-            <Card className="p-12 text-center glass-effect circuit-pattern feature-card-hover border-2 border-white/10">
+            <Card className="p-12 text-center glass-effect circuit-pattern feature-card-hover border-2 border-white/10 dark:border-white/20">
               <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
               <p className="text-muted-foreground">Loading flashcards...</p>
             </Card>
           ) : flashcards.length > 0 ? (
-            flashcards.map((flashcard: any) => (
-              <Card key={flashcard._id || flashcard.id} className="p-6 glass-effect circuit-pattern feature-card-hover border-2 border-white/10">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-lg mb-2">{flashcard.front}</h3>
-                    <p className="text-muted-foreground mb-3">{flashcard.back}</p>
-                    <div className="flex gap-2 flex-wrap">
-                      <Badge 
-                        variant={flashcard.difficulty === 'easy' ? 'default' : 
-                                flashcard.difficulty === 'medium' ? 'secondary' : 'destructive'}
-                      >
-                        {flashcard.difficulty || 'medium'}
-                      </Badge>
-                      {flashcard.tags && flashcard.tags.length > 0 && flashcard.tags.map((tag: string, index: number) => (
-                        <Badge key={index} variant="outline" className="text-xs">
-                          {tag}
-                        </Badge>
-                      ))}
-                      {flashcard.public && (
-                        <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
-                          Public
-                        </Badge>
-                      )}
-                    </div>
-                  </div>
-                  <Star className="h-5 w-5 text-muted-foreground" />
-                </div>
-              </Card>
-            ))
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {flashcards.map((flashcard: any) => {
+                const flashcardOwnerId = flashcard.ownerId?._id || flashcard.ownerId || flashcard.owner?._id || flashcard.owner;
+                const isOwner = currentUserId && flashcardOwnerId && flashcardOwnerId.toString() === currentUserId;
+                
+                return (
+                  <EnhancedFlashcard
+                    key={flashcard._id || flashcard.id}
+                    id={flashcard._id || flashcard.id}
+                    front={flashcard.front}
+                    back={flashcard.back}
+                    difficulty={flashcard.difficulty || 'medium'}
+                    department={flashcard.department}
+                    year={flashcard.year}
+                    isFlipped={flippedCards.has(flashcard._id || flashcard.id)}
+                    onFlip={handleFlipCard}
+                    isFavorite={likedFlashcards.has(flashcard._id || flashcard.id)}
+                    onToggleFavorite={handleToggleLike}
+                    onEdit={isOwner ? handleEditFlashcard : undefined}
+                    onDelete={isOwner ? handleDeleteFlashcard : undefined}
+                  />
+                );
+              })}
+            </div>
           ) : (
-            <Card className="p-12 text-center glass-effect circuit-pattern feature-card-hover border-2 border-white/10">
+            <Card className="p-12 text-center glass-effect circuit-pattern feature-card-hover border-2 border-white/10 dark:border-white/20">
               <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-semibold mb-2">No flashcards yet</h3>
               <p className="text-muted-foreground mb-4">
@@ -188,6 +285,58 @@ const SubjectFlashcardsPage = () => {
         </div>
         </div>
       </div>
+
+      {/* Edit Flashcard Dialog */}
+      <Dialog open={!!editingFlashcard} onOpenChange={(open) => !open && setEditingFlashcard(null)}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Edit Flashcard</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="edit-front">Question (Front)</Label>
+              <Textarea
+                id="edit-front"
+                placeholder="Enter the question or term..."
+                value={editFront}
+                onChange={(e) => setEditFront(e.target.value)}
+                className="min-h-[100px]"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-back">Answer (Back)</Label>
+              <Textarea
+                id="edit-back"
+                placeholder="Enter the answer or definition..."
+                value={editBack}
+                onChange={(e) => setEditBack(e.target.value)}
+                className="min-h-[100px]"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-difficulty">Difficulty</Label>
+              <Select value={editDifficulty} onValueChange={(value: any) => setEditDifficulty(value)}>
+                <SelectTrigger id="edit-difficulty">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="easy">Easy</SelectItem>
+                  <SelectItem value="medium">Medium</SelectItem>
+                  <SelectItem value="hard">Hard</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditingFlashcard(null)}>
+              Cancel
+            </Button>
+            <Button onClick={handleSaveEdit} className="bg-gradient-primary">
+              Save Changes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
