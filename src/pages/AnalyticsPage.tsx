@@ -141,7 +141,7 @@ const AnalyticsPage: React.FC = () => {
   }, [analytics]);
 
   return (
-    <div className="p-8 space-y-10 bg-background min-h-screen">
+    <div className="p-8 space-y-10 min-h-screen">
       <header className="space-y-2">
         <h1 className="text-4xl font-extrabold tracking-tight text-primary">
           Study Analytics Dashboard
@@ -161,7 +161,7 @@ const AnalyticsPage: React.FC = () => {
       </header>
 
       {loading && (
-        <Card className="shadow-md">
+        <Card className="glass-effect circuit-pattern feature-card-hover border-2 border-white/10">
           <CardHeader>
             <CardTitle>Loading analytics…</CardTitle>
           </CardHeader>
@@ -172,7 +172,7 @@ const AnalyticsPage: React.FC = () => {
       )}
 
       {!loading && error && (
-        <Card className="shadow-md">
+        <Card className="glass-effect circuit-pattern feature-card-hover border-2 border-white/10">
           <CardHeader>
             <CardTitle>Error</CardTitle>
           </CardHeader>
@@ -186,7 +186,7 @@ const AnalyticsPage: React.FC = () => {
       <section>
         <h2 className="text-2xl font-semibold mb-4">Study Progress & Activity</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card className="shadow-md">
+          <Card className="glass-effect circuit-pattern feature-card-hover border-2 border-white/10">
             <CardHeader>
               <CardTitle>Weekly Study Hours</CardTitle>
             </CardHeader>
@@ -209,7 +209,7 @@ const AnalyticsPage: React.FC = () => {
             </CardContent>
           </Card>
 
-          <Card className="shadow-md">
+          <Card className="glass-effect circuit-pattern feature-card-hover border-2 border-white/10">
             <CardHeader>
               <CardTitle>Active Study Streak</CardTitle>
             </CardHeader>
@@ -228,7 +228,7 @@ const AnalyticsPage: React.FC = () => {
       <section>
         <h2 className="text-2xl font-semibold mb-4">Quiz & Test Performance</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card className="shadow-md">
+          <Card className="glass-effect circuit-pattern feature-card-hover border-2 border-white/10">
             <CardHeader>
               <CardTitle>Quiz Scores Over Time</CardTitle>
             </CardHeader>
@@ -245,7 +245,7 @@ const AnalyticsPage: React.FC = () => {
             </CardContent>
           </Card>
 
-          <Card className="shadow-md">
+          <Card className="glass-effect circuit-pattern feature-card-hover border-2 border-white/10">
             <CardHeader>
               <CardTitle>Topic Accuracy Radar</CardTitle>
             </CardHeader>
@@ -274,7 +274,7 @@ const AnalyticsPage: React.FC = () => {
       <section>
         <h2 className="text-2xl font-semibold mb-4">Content Analytics</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card className="shadow-md">
+          <Card className="glass-effect circuit-pattern feature-card-hover border-2 border-white/10">
             <CardHeader>
               <CardTitle>Topic Coverage</CardTitle>
             </CardHeader>
@@ -303,7 +303,7 @@ const AnalyticsPage: React.FC = () => {
             </CardContent>
           </Card>
 
-          <Card className="shadow-md">
+          <Card className="glass-effect circuit-pattern feature-card-hover border-2 border-white/10">
             <CardHeader>
               <CardTitle>Flashcard Mastery</CardTitle>
             </CardHeader>
@@ -329,7 +329,7 @@ const AnalyticsPage: React.FC = () => {
       <section>
         <h2 className="text-2xl font-semibold mb-4">Goals & Achievements</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card className="shadow-md">
+          <Card className="glass-effect circuit-pattern feature-card-hover border-2 border-white/10">
             <CardHeader>
               <CardTitle>Weekly Study Goal</CardTitle>
             </CardHeader>
@@ -342,7 +342,7 @@ const AnalyticsPage: React.FC = () => {
             </CardContent>
           </Card>
 
-          <Card className="shadow-md">
+          <Card className="glass-effect circuit-pattern feature-card-hover border-2 border-white/10">
             <CardHeader>
               <CardTitle>Achievements</CardTitle>
             </CardHeader>

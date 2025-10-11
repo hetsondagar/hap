@@ -70,7 +70,7 @@ const SubjectsPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-subtle">
+    <div className="min-h-screen">
       <Header />
       
       <div className="pt-24 pb-16 px-4 sm:px-6 lg:px-8">
@@ -125,14 +125,14 @@ const SubjectsPage = () => {
           {subjects.map((subject, index) => (
             <Card 
               key={subject.id} 
-              className="glass-effect p-8 cursor-pointer hover-lift border-2 border-white/10 group animate-scale-in"
+              className="glass-effect circuit-pattern feature-card-hover p-8 cursor-pointer border-2 border-white/10 group animate-scale-in"
               onClick={() => handleSubjectClick(subject)}
               style={{ animationDelay: `${index * 0.1}s` }}
             >
               <div className="space-y-6">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-4">
-                    <div className="p-3 bg-gradient-to-br from-primary to-secondary rounded-xl shadow-lg group-hover:shadow-2xl group-hover:scale-110 transition-all duration-300">
+                    <div className="p-3 bg-gradient-to-br from-primary to-secondary rounded-xl shadow-lg group-hover:shadow-2xl group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
                       <BookOpen className="h-8 w-8 text-white" />
                     </div>
                     <div>
@@ -159,7 +159,7 @@ const SubjectsPage = () => {
         </div>
 
         {subjects.length === 0 && (
-          <Card className="glass-effect p-16 text-center border-2 border-white/10 animate-fade-in">
+          <Card className="glass-effect circuit-pattern feature-card-hover p-16 text-center border-2 border-white/10 animate-fade-in">
             <div className="max-w-md mx-auto">
               <div className="mb-6 inline-block p-6 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-2xl">
                 <BookOpen className="h-16 w-16 text-primary mx-auto" />

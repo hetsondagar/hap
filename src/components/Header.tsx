@@ -56,7 +56,7 @@ const Header = () => {
   ];
 
   return (
-<header className="w-full flex items-center justify-between px-8 py-4 bg-[#18181b] shadow-md fixed top-0 left-0 z-50">
+<header className="w-full flex items-center justify-between px-8 py-4 glass-effect circuit-pattern fixed top-0 left-0 z-50">
   {/* Logo section - left aligned, first image zoomed and slightly up */}
   <div className="flex items-center">
     <img

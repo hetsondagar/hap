@@ -150,7 +150,7 @@ export default function QuizPage() {
   };
 
   return (
-    <div className="p-6 min-h-screen bg-gradient-subtle">
+    <div className="p-6 min-h-screen">
       <h1 className="text-4xl font-bold text-primary text-center">
         Interactive Quiz Mode
       </h1>
@@ -160,7 +160,7 @@ export default function QuizPage() {
 
       {/* Setup Form */}
       {!isActive && !finished && (
-        <Card className="p-6 max-w-xl mx-auto mt-10">
+        <Card className="p-6 max-w-xl mx-auto mt-10 glass-effect circuit-pattern feature-card-hover border-2 border-white/10">
           <h2 className="text-2xl font-semibold mb-4">Setup Quiz</h2>
           <div className="space-y-4">
             {/* Department */}
@@ -217,7 +217,7 @@ export default function QuizPage() {
       {/* Quiz Section */}
       {isActive && !finished && quizCards.length > 0 && (
         <div className="max-w-2xl mx-auto mt-10">
-          <Card className="p-6">
+          <Card className="p-6 glass-effect circuit-pattern feature-card-hover border-2 border-white/10">
             <div className="flex justify-between items-center mb-4">
               <span className="text-sm">
                 Question {currentQ + 1} of {quizCards.length}
@@ -335,7 +335,7 @@ export default function QuizPage() {
 
       {/* Results Section */}
       {finished && (
-        <Card className="p-6 max-w-2xl mx-auto mt-10 text-center">
+        <Card className="p-6 max-w-2xl mx-auto mt-10 text-center glass-effect circuit-pattern feature-card-hover border-2 border-white/10">
           <h2 className="text-2xl font-bold mb-4">Quiz Finished 🎉</h2>
           <p className="mb-2">
             Final Score: {score} / {quizCards.length}

@@ -286,7 +286,7 @@ const CommunityPage: React.FC = () => {
           </TabsList>
 
           <TabsContent value="browse">
-            <Card>
+            <Card className="glass-effect circuit-pattern feature-card-hover border-2 border-white/10">
               <CardHeader>
                 <CardTitle>Browse Decks</CardTitle>
                 {userInfo && (
@@ -306,7 +306,7 @@ const CommunityPage: React.FC = () => {
                     <div className="col-span-full text-sm text-destructive">{error}</div>
                   )}
                   {!loading && !error && visibleDecks.map((deck) => (
-                    <Card key={deck._id} className="hover:shadow-md transition cursor-pointer" onClick={() => navigate(`/community/${deck._id}`)}>
+                    <Card key={deck._id} className="glass-effect circuit-pattern feature-card-hover border-2 border-white/10 cursor-pointer" onClick={() => navigate(`/community/${deck._id}`)}>
                       <CardHeader>
                         <CardTitle className="text-lg">
                           {deck.title || "Untitled Deck"}
@@ -364,7 +364,7 @@ const CommunityPage: React.FC = () => {
                 <div className="col-span-full text-sm text-destructive">{error}</div>
               )}
               {!loading && !error && visibleDecks.map((deck) => (
-                <Card key={deck._id} className="hover:shadow-md transition">
+                <Card key={deck._id} className="glass-effect circuit-pattern feature-card-hover border-2 border-white/10">
                   <CardHeader>
                     <CardTitle className="text-lg">{deck.title || "Untitled Deck"}</CardTitle>
                     <div className="flex gap-2">
@@ -414,7 +414,7 @@ const CommunityPage: React.FC = () => {
                 <div className="col-span-full text-sm text-destructive">{error}</div>
               )}
               {!loading && !error && visibleDecks.map((deck) => (
-                <Card key={deck._id} className="hover:shadow-md transition">
+                <Card key={deck._id} className="glass-effect circuit-pattern feature-card-hover border-2 border-white/10">
                   <CardHeader>
                     <CardTitle className="text-lg">{deck.title || "Untitled Deck"}</CardTitle>
                     <div className="flex gap-2">
@@ -460,7 +460,7 @@ const CommunityPage: React.FC = () => {
                 <div className="col-span-full text-sm text-destructive">{error}</div>
               )}
               {!loading && !error && visibleDecks.map((deck) => (
-                <Card key={deck._id} className="hover:shadow-md transition cursor-pointer" onClick={() => navigate(`/community/${deck._id}`)}>
+                <Card key={deck._id} className="glass-effect circuit-pattern feature-card-hover border-2 border-white/10 cursor-pointer" onClick={() => navigate(`/community/${deck._id}`)}>
                   <CardHeader>
                     <CardTitle className="text-lg">{deck.title || "Untitled Deck"}</CardTitle>
                     <div className="flex gap-2">
@@ -491,7 +491,7 @@ const CommunityPage: React.FC = () => {
                 <div className="col-span-full text-sm text-destructive">{error}</div>
               )}
               {!loading && !error && visibleDecks.map((deck) => (
-                <Card key={deck._id} className="hover:shadow-md transition">
+                <Card key={deck._id} className="glass-effect circuit-pattern feature-card-hover border-2 border-white/10">
                   <CardHeader>
                     <CardTitle className="text-lg">{deck.title || "Untitled Deck"}</CardTitle>
                     <div className="flex gap-2">
