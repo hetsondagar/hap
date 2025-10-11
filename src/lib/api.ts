@@ -323,6 +323,20 @@ export const quizAPI = {
     const response = await apiRequest(API_ENDPOINTS.QUIZZES.BY_ID(id));
     return response.json();
   },
+  
+  // Subject-based quiz methods (new system)
+  generateQuiz: async (subjectId: string) => {
+    const response = await apiRequest(API_ENDPOINTS.QUIZ.GENERATE(subjectId));
+    return response.json();
+  },
+  
+  submitQuiz: async (data: { subjectId: string; answers: number[]; timeTaken: number }) => {
+    const response = await apiRequest(API_ENDPOINTS.QUIZ.SUBMIT, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+    return response.json();
+  },
 };
 
 // Community API
@@ -580,21 +594,6 @@ export const gamificationAPI = {
   checkBadges: async () => {
     const response = await apiRequest(API_ENDPOINTS.GAMIFICATION.CHECK_BADGES, {
       method: 'POST',
-    });
-    return response.json();
-  },
-};
-
-export const quizAPI = {
-  generateQuiz: async (subjectId: string) => {
-    const response = await apiRequest(API_ENDPOINTS.QUIZ.GENERATE(subjectId));
-    return response.json();
-  },
-  
-  submitQuiz: async (data: { subjectId: string; answers: number[]; timeTaken: number }) => {
-    const response = await apiRequest(API_ENDPOINTS.QUIZ.SUBMIT, {
-      method: 'POST',
-      body: JSON.stringify(data),
     });
     return response.json();
   },
