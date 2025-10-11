@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { PremiumButton } from '@/components/ui/premium-button';
-import { Menu, X, Trophy, BookOpen, Users, Home, BarChart3, LayoutDashboard, Sparkles } from 'lucide-react';
+import { Menu, X, Trophy, BookOpen, Users, Home, BarChart3, LayoutDashboard, Sparkles, MessageSquare } from 'lucide-react';
 import HapLogo from '@/assets/hap-logo-3.png';
 import { authAPI } from '@/lib/api';
 
@@ -51,6 +51,7 @@ const Header = () => {
     { name: 'Home', path: '/', icon: Home },
     { name: 'Features', path: '/features', icon: BookOpen },
     { name: 'Subjects', path: '/subjects', icon: Users },
+    { name: 'Community', path: '/community', icon: MessageSquare },
     { name: 'Gamification', path: '/gamification', icon: Trophy },
   ];
 
@@ -59,7 +60,7 @@ const Header = () => {
       <nav className="container mx-auto px-4 py-4 flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center space-x-2 group hover-glow">
-          <img src={HapLogo} alt="Hap Logo" className="w-8 h-8 object-contain transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12" />
+          <img src={HapLogo} alt="Hap Logo" className="w-10 h-10 object-contain transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12" />
           <span className="text-2xl font-display font-bold gradient-text">
             hap
           </span>
