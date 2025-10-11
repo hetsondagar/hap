@@ -1,112 +1,128 @@
 import React from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
-  Brain,
+  BookOpen,
   Users,
   Trophy,
-  BarChart3,
-  Clock,
-  Shuffle,
+  Layers,
+  MessageSquare,
   Target,
   Zap,
   CheckCircle2,
   ArrowRight,
+  Flame,
+  LayoutDashboard,
+  Star
 } from "lucide-react";
 
 const Features = () => {
-  const [searchParams] = useSearchParams();
-  const deptId = searchParams.get("deptId");
-  const yearId = searchParams.get("yearId");
-  const phaseId = searchParams.get("phaseId");
-
-  const flashcardsRoute = (() => {
-    if (deptId && yearId && phaseId) {
-      return `/flashcards?deptId=${encodeURIComponent(deptId)}&yearId=${encodeURIComponent(yearId)}&phaseId=${encodeURIComponent(phaseId)}`;
-    }
-    return "/flashcards";
-  })();
-
   const coreFeatures = [
     {
-      icon: Brain,
+      icon: BookOpen,
       title: "Smart Flashcard Creation",
       description:
-        "Create interactive Q&A flashcards with rich formatting. Each deck focuses on one topic for maximum learning efficiency.",
+        "Create interactive flashcards organized by subjects. Perfect for department-specific and year-specific study materials with difficulty levels.",
       highlights: [
-        "Rich text formatting",
-        "Image support",
-        "Audio notes",
-        "LaTeX equations",
+        "Subject-based organization",
+        "Difficulty levels (Easy/Medium/Hard)",
+        "Tag system",
+        "Public sharing",
       ],
-      route: flashcardsRoute,
+      route: "/flashcards",
     },
     {
-      icon: Users,
-      title: "Community Sharing",
+      icon: Layers,
+      title: "Flashcard Decks",
       description:
-        "Share your decks publicly or keep them private. Follow other students and discover the best study materials.",
+        "Organize your flashcards into curated decks. Like, comment, and learn from decks created by other students.",
       highlights: [
-        "Public/Private decks",
-        "Follow creators",
-        "Discover trending",
-        "Collaborative learning",
+        "Multi-card collections",
+        "Like & comment system",
+        "Share with community",
+        "Track deck popularity",
       ],
-      route: "/community",
+      route: "/decks",
     },
     {
-      icon: Shuffle,
-      title: "Interactive Quiz Mode",
+      icon: Target,
+      title: "Interactive Quizzes",
       description:
-        "Test yourself with dynamic quizzes. Cards flip to reveal answers, track your progress automatically.",
+        "Test your knowledge with self-assessment quizzes. Earn XP and track your performance with real-time feedback.",
       highlights: [
-        "Spaced repetition",
-        "Auto-tracking",
-        "Difficulty levels",
-        "Progress analytics",
+        "Multiple quiz types",
+        "Instant feedback",
+        "Performance tracking",
+        "Earn XP & badges",
       ],
       route: "/quiz",
     },
     {
-      icon: BarChart3,
-      title: "Study Analytics Dashboard",
+      icon: MessageSquare,
+      title: "CSE Community & Doubts",
       description:
-        "Comprehensive insights into your learning journey with detailed progress tracking and performance metrics.",
+        "Ask questions and get answers from CSE students across all years. Share knowledge and help each other succeed.",
       highlights: [
-        "Daily activity",
-        "Accuracy rates",
-        "Learning streaks",
-        "Time tracking",
+        "Department-specific discussions",
+        "Year tags for answers",
+        "Like helpful answers",
+        "Edit/delete your posts",
       ],
-      route: "/analytics",
+      route: "/community",
+    },
+    {
+      icon: Trophy,
+      title: "Gamification & Achievements",
+      description:
+        "Level up your learning with XP points, badges, and streaks. Compete on department leaderboards and earn recognition.",
+      highlights: [
+        "27 unique achievements",
+        "20-level progression",
+        "Daily streaks",
+        "Department leaderboards",
+      ],
+      route: "/gamification",
+    },
+    {
+      icon: LayoutDashboard,
+      title: "Personal Dashboard",
+      description:
+        "Manage all your flashcards, decks, liked items, and account settings in one centralized dashboard.",
+      highlights: [
+        "View your content",
+        "Manage liked items",
+        "Change password",
+        "Update username",
+      ],
+      route: "/dashboard",
     },
   ];
 
   const advancedFeatures = [
     {
-      icon: Clock,
-      title: "Smart Reminders",
+      icon: Flame,
+      title: "Daily Streaks",
       description:
-        "Get notified when it's time to review. Automated emails keep you on track with your study schedule.",
+        "Build consistent study habits with daily streak tracking. The longer your streak, the more bonus XP you earn!",
     },
     {
-      icon: Target,
-      title: "Exam Phase Categorization",
+      icon: Star,
+      title: "Subject Organization",
       description:
-        "Organize decks by Mid-Sem and End-Sem phases for targeted preparation and better time management.",
+        "Browse subjects by department and year. Find exactly what you need to study organized by your curriculum.",
     },
     {
-      icon: Trophy,
-      title: "Leaderboards & Recognition",
+      icon: Zap,
+      title: "Real-time Updates",
       description:
-        "Compete with peers through department-wise leaderboards. Get recognized for creating helpful content.",
+        "All likes, comments, and interactions update instantly without page refreshes for a smooth experience.",
     },
   ];
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gradient-subtle">
       <Header />
 
       {/* Hero Section */}
@@ -114,42 +130,42 @@ const Features = () => {
         <div className="container mx-auto px-4">
           <div className="text-center max-w-4xl mx-auto">
             <h1 className="text-5xl md:text-6xl font-display font-bold mb-6">
-              <span className="gradient-text">Powerful Features</span>
+              <span className="gradient-text">Everything You Need</span>
               <br />
-              for Modern Learning
+              to Ace Your Exams
             </h1>
             <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Discover all the tools and features that make hap the ultimate
-              flashcard platform for engineering students.
+              A complete learning platform built specifically for engineering students
+              with all the features you need to study smarter, not harder.
             </p>
             <Button
               size="lg"
               className="bg-gradient-primary hover:opacity-90 text-white font-medium shadow-glow"
+              onClick={() => window.location.href = '/signup'}
             >
               <Zap className="w-5 h-5 mr-2" />
-              Start Learning Now
+              Get Started Free
             </Button>
           </div>
         </div>
       </section>
 
-      {/* Core Features */}
-      <section className="py-16">
+      {/* Core Features Grid */}
+      <section className="py-16 bg-muted/20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-display font-bold mb-4">
               Core Features
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Everything you need for effective flashcard-based learning, all in
-              one platform.
+              Six powerful features designed to supercharge your learning journey
             </p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
             {coreFeatures.map((feature, index) => (
               <Link key={index} to={feature.route} className="block">
-                <Card className="glass-effect circuit-pattern feature-card-hover p-8 group cursor-pointer border-2 border-white/10 h-full">
+                <Card className="glass-effect circuit-pattern feature-card-hover p-8 group cursor-pointer border-2 border-white/10 dark:border-white/20 h-full hover:border-primary/30 transition-all">
                   <div className="flex items-start space-x-6">
                     <div className="flex-shrink-0">
                       <div className="w-16 h-16 bg-gradient-primary rounded-xl flex items-center justify-center glow-effect group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
@@ -177,7 +193,7 @@ const Features = () => {
                         ))}
                       </div>
                       <div className="mt-4 flex items-center text-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <span className="text-sm font-semibold">Learn more</span>
+                        <span className="text-sm font-semibold">Explore feature</span>
                         <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                       </div>
                     </div>
@@ -194,11 +210,10 @@ const Features = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-display font-bold mb-4">
-              Advanced Features
+              Additional Features
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Take your learning to the next level with these powerful
-              additional features.
+              Even more tools to enhance your studying experience
             </p>
           </div>
 
@@ -206,7 +221,7 @@ const Features = () => {
             {advancedFeatures.map((feature, index) => (
               <Card
                 key={index}
-                className="glass-effect circuit-pattern feature-card-hover p-6 text-center group cursor-pointer border-2 border-white/10"
+                className="glass-effect circuit-pattern feature-card-hover p-6 text-center group cursor-pointer border-2 border-white/10 dark:border-white/20"
               >
                 <div className="w-12 h-12 bg-gradient-primary rounded-lg flex items-center justify-center mx-auto mb-4 glow-effect group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
                   <feature.icon className="w-6 h-6 text-white" />
@@ -224,23 +239,34 @@ const Features = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16">
+      <section className="py-16 bg-muted/20">
         <div className="container mx-auto px-4">
-          <Card className="glass-effect circuit-pattern feature-card-hover p-12 text-center border-2 border-white/10">
+          <Card className="glass-effect circuit-pattern feature-card-hover p-12 text-center border-2 border-white/10 dark:border-white/20 max-w-3xl mx-auto">
             <h2 className="text-3xl font-display font-bold mb-4">
-              Ready to Experience These Features?
+              Ready to Transform Your Learning?
             </h2>
             <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Join thousands of engineering students who are already using hap
-              to ace their exams with smart flashcard learning.
+              Join students who are already acing their exams with hap's comprehensive flashcard platform.
             </p>
-            <Button
-              size="lg"
-              className="bg-gradient-primary hover:opacity-90 text-white font-medium shadow-glow"
-            >
-              Get Started Free
-              <ArrowRight className="w-5 h-5 ml-2" />
-            </Button>
+            <div className="flex gap-4 justify-center">
+              <Link to="/signup">
+                <Button
+                  size="lg"
+                  className="bg-gradient-primary hover:opacity-90 text-white font-medium shadow-glow"
+                >
+                  Sign Up Now
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Button>
+              </Link>
+              <Link to="/subjects">
+                <Button
+                  size="lg"
+                  variant="outline"
+                >
+                  Browse Subjects
+                </Button>
+              </Link>
+            </div>
           </Card>
         </div>
       </section>

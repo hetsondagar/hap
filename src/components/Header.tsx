@@ -9,19 +9,28 @@ import { authAPI } from '@/lib/api';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [username, setUsername] = useState<string | null>(null);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
   const location = useLocation();
   const navigate = useNavigate();
+
+  // Initialize from localStorage immediately (no flicker)
+  const token = localStorage.getItem('token');
+  const cachedUsername = localStorage.getItem('username');
+  const [isAuthenticated, setIsAuthenticated] = useState(!!token);
+  const [username, setUsername] = useState<string | null>(cachedUsername);
 
   useEffect(() => {
     let mounted = true;
     const token = localStorage.getItem('token');
+    
     if (!token) {
       setIsAuthenticated(false);
       setUsername(null);
+      setIsAuthLoading(false);
       return;
     }
+    
+    // Token exists, verify it's still valid
     (async () => {
       try {
         const prof = await authAPI.getProfile();
@@ -29,12 +38,25 @@ const Header = () => {
         const user = prof?.user || prof?.data || prof;
         setIsAuthenticated(true);
         setUsername(user?.username || null);
+        
+        // Cache username for instant display next time
+        if (user?.username) {
+          localStorage.setItem('username', user.username);
+        }
       } catch {
         if (!mounted) return;
+        // Token is invalid, clear everything
+        localStorage.removeItem('token');
+        localStorage.removeItem('username');
         setIsAuthenticated(false);
         setUsername(null);
+      } finally {
+        if (mounted) {
+          setIsAuthLoading(false);
+        }
       }
     })();
+    
     return () => {
       mounted = false;
     };
@@ -42,6 +64,9 @@ const Header = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('username');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('userInfo');
     setIsAuthenticated(false);
     setUsername(null);
     if (isMenuOpen) setIsMenuOpen(false);
@@ -94,17 +119,19 @@ const Header = () => {
 
       {/* CTA Buttons */}
       <div className="hidden md:flex items-center space-x-4">
-        {isAuthenticated ? (
+        {isAuthLoading ? (
+          <div className="w-48 h-10"></div>
+        ) : isAuthenticated ? (
           <>
-              <span className="text-sm text-muted-foreground mr-2 hidden lg:inline">
-                {username ? `Hi, ${username}` : 'Signed in'}
-              </span>
-              <Link to="/dashboard">
-                <PremiumButton variant="glass" className="flex items-center gap-2">
-                  <LayoutDashboard className="w-4 h-4" />
-                  Dashboard
-                </PremiumButton>
-              </Link>
+            <span className="text-sm text-muted-foreground mr-2 hidden lg:inline">
+              {username ? `Hi, ${username}` : 'Signed in'}
+            </span>
+            <Link to="/dashboard">
+              <PremiumButton variant="glass" className="flex items-center gap-2">
+                <LayoutDashboard className="w-4 h-4" />
+                Dashboard
+              </PremiumButton>
+            </Link>
             <PremiumButton onClick={handleLogout} variant="glow">
               Logout
             </PremiumButton>
@@ -157,7 +184,9 @@ const Header = () => {
             ))}
             
             <div className="pt-4 space-y-3">
-              {isAuthenticated ? (
+              {isAuthLoading ? (
+                <div className="h-32"></div>
+              ) : isAuthenticated ? (
                 <>
                   <Link to="/dashboard" onClick={() => setIsMenuOpen(false)}>
                     <PremiumButton 

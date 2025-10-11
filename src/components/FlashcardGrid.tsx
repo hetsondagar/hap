@@ -107,7 +107,7 @@ const FlashcardGrid: React.FC<FlashcardGridProps> = ({
   return (
     <div className={cn("space-y-6", className)}>
       {/* Search and Filter Bar */}
-      <div className="bg-card rounded-lg border border-border p-4 shadow-sm">
+      <div className="bg-card dark:bg-card/90 rounded-lg border border-border dark:border-border/60 p-4 shadow-sm">
         <div className="flex flex-col lg:flex-row gap-4">
           {/* Search */}
           <div className="flex-1 relative">

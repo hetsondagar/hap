@@ -170,7 +170,18 @@ const Signup: React.FC = () => {
       const token = res?.token || res?.data?.token;
       if (!token) throw new Error(res?.message || "Signup failed");
       localStorage.setItem("token", token);
+      
+      // Store user info for instant navbar display
+      const userData = res?.data?.user || res?.user;
+      if (userData) {
+        localStorage.setItem("userId", String(userData.id || userData._id));
+        localStorage.setItem("username", userData.username || username);
+      } else {
+        // Fallback to form data if user object not in response
+        localStorage.setItem("username", username);
+      }
       localStorage.setItem("userInfo", JSON.stringify({ department, year }));
+      
       navigate("/");
     } catch (e: any) {
       console.error('Signup error:', e);

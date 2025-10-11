@@ -60,6 +60,14 @@ export const API_ENDPOINTS = {
     LIKED_FLASHCARDS: `${API_BASE_URL}/dashboard/liked/flashcards`,
     LIKED_DECKS: `${API_BASE_URL}/dashboard/liked/decks`,
   },
+  
+  // Gamification
+  GAMIFICATION: {
+    STATS: `${API_BASE_URL}/gamification/stats`,
+    ACHIEVEMENTS: `${API_BASE_URL}/gamification/achievements`,
+    LEADERBOARD: (department: string) => `${API_BASE_URL}/gamification/leaderboard/${department}`,
+    CHECK_BADGES: `${API_BASE_URL}/gamification/check-badges`,
+  },
 };
 
 // API utility functions
@@ -343,9 +351,11 @@ export const communityAPI = {
     title: string;
     description: string;
     flashcards: string[];
-    department: string;
+    department?: string;
+    year?: string;
     difficulty?: 'beginner' | 'intermediate' | 'advanced';
     tags?: string[];
+    public?: boolean;
   }) => {
     const response = await apiRequest(API_ENDPOINTS.COMMUNITY.DECKS, {
       method: 'POST',
@@ -539,6 +549,31 @@ export const analyticsAPI = {
   
   getProgressTracking: async (userId: string, period: 'week' | 'month' | 'year' = 'week') => {
     const response = await apiRequest(`${API_ENDPOINTS.ANALYTICS.PROGRESS(userId)}?period=${period}`);
+    return response.json();
+  },
+};
+
+// Gamification API
+export const gamificationAPI = {
+  getStats: async () => {
+    const response = await apiRequest(API_ENDPOINTS.GAMIFICATION.STATS);
+    return response.json();
+  },
+  
+  getAllAchievements: async () => {
+    const response = await apiRequest(API_ENDPOINTS.GAMIFICATION.ACHIEVEMENTS);
+    return response.json();
+  },
+  
+  getLeaderboard: async (department: string = 'all') => {
+    const response = await apiRequest(API_ENDPOINTS.GAMIFICATION.LEADERBOARD(department));
+    return response.json();
+  },
+  
+  checkBadges: async () => {
+    const response = await apiRequest(API_ENDPOINTS.GAMIFICATION.CHECK_BADGES, {
+      method: 'POST',
+    });
     return response.json();
   },
 };

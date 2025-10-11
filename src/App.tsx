@@ -14,8 +14,9 @@ import Gamification from "./pages/Gamification";
 import NotFound from "./pages/NotFound";
 import FlashcardsPage from "./pages/FlashcardsPage"; // global flashcards
 import QuizPage from "./pages/QuizPage";
-import CommunityPage from "./pages/CommunityPage";
-import DeckDetail from "./pages/community/DeckDetail";
+import CommunityDoubtsPage from "./pages/CommunityDoubtsPage";
+import FlashcardDecksPage from "./pages/FlashcardDecksPage";
+import DeckDetailPage from "./pages/DeckDetailPage";
 import DashboardPage from "./pages/DashboardPage";
 
 import SubjectsPage from "./pages/SubjectsPage";
@@ -42,8 +43,9 @@ const App = () => (
             <Route path="/gamification" element={<Gamification />} />
             <Route path="/flashcards" element={<FlashcardsPage />} /> {/* global */}
             <Route path="/quiz" element={<QuizPage />} />
-            <Route path="/community" element={<CommunityPage />} />
-            <Route path="/community/:id" element={<DeckDetail />} />
+            <Route path="/community" element={<CommunityDoubtsPage />} />
+            <Route path="/decks" element={<FlashcardDecksPage />} />
+            <Route path="/decks/:id" element={<DeckDetailPage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
 
             {/* Subjects flow */}

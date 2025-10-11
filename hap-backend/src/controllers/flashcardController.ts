@@ -2,6 +2,8 @@ import { Request, Response } from 'express';
 import { body, validationResult, param, query } from 'express-validator';
 import Flashcard from '../models/Flashcard';
 import Deck from '../models/Deck';
+import User from '../models/User';
+import { awardXP, updateStreak } from './gamificationController';
 
 // Validation rules
 export const validateCreateFlashcard = [
@@ -76,6 +78,19 @@ export const createFlashcard = async (req: Request, res: Response): Promise<void
     });
 
     await flashcard.save();
+
+    // Update user stats and award XP
+    if (ownerId) {
+      const user = await User.findById(ownerId);
+      if (user) {
+        user.totalFlashcardsCreated += 1;
+        await user.save();
+        
+        // Award XP and check badges
+        await awardXP(ownerId, 10, 'flashcard creation');
+        await updateStreak(ownerId);
+      }
+    }
 
     res.status(201).json({
       success: true,

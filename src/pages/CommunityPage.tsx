@@ -512,7 +512,11 @@ const CommunityPage: React.FC = () => {
             <div className="flex items-center justify-between mb-3">
               <p className="text-sm text-muted-foreground">🔥 Most popular decks from your department this week.</p>
               <div className="flex gap-2">
-                <CreateDeckDialog onCreated={(id) => navigate(`/community/${id}`)} />
+                <CreateDeckDialog onCreated={(id) => {
+                  loadDecks();
+                  toast.success('Deck created successfully! Reloading decks...');
+                  setTimeout(() => navigate(`/community/${id}`), 500);
+                }} />
                 <Button variant={sortBy === 'trending' ? 'default' : 'outline'} onClick={() => setSortBy('trending')}>Trending</Button>
                 <Button variant={sortBy === 'new' ? 'default' : 'outline'} onClick={() => setSortBy('new')}>Newest</Button>
               </div>
@@ -561,7 +565,11 @@ const CommunityPage: React.FC = () => {
           <TabsContent value="mine">
             <div className="flex items-center justify-between mb-3">
               <p className="text-sm text-muted-foreground">Your decks only.</p>
-              <CreateDeckDialog onCreated={(id) => navigate(`/community/${id}`)} />
+              <CreateDeckDialog onCreated={(id) => {
+                loadDecks();
+                toast.success('Deck created successfully! Reloading decks...');
+                setTimeout(() => navigate(`/community/${id}`), 500);
+              }} />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {loading && (
@@ -592,7 +600,11 @@ const CommunityPage: React.FC = () => {
           <TabsContent value="new">
             <div className="flex items-center justify-between mb-3">
               <p className="text-sm text-muted-foreground">🆕 Latest decks from your department and year.</p>
-              <CreateDeckDialog onCreated={(id) => navigate(`/community/${id}`)} />
+              <CreateDeckDialog onCreated={(id) => {
+                loadDecks();
+                toast.success('Deck created successfully! Reloading decks...');
+                setTimeout(() => navigate(`/community/${id}`), 500);
+              }} />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {loading && (

@@ -4,6 +4,7 @@ import Deck from '../models/Deck';
 import User from '../models/User';
 import Flashcard from '../models/Flashcard';
 import Post from '../models/Post';
+import { awardXP } from './gamificationController';
 
 // Validation rules
 export const validateCreateDeck = [
@@ -196,6 +197,18 @@ export const createDeck = async (req: Request, res: Response): Promise<void> => 
 
     await deck.save();
 
+    // Update user stats and award XP
+    if (creatorId) {
+      const user = await User.findById(creatorId);
+      if (user) {
+        user.totalDecksCreated += 1;
+        await user.save();
+        
+        // Award XP for deck creation
+        await awardXP(creatorId, 25, 'deck creation');
+      }
+    }
+
     const populatedDeck = await Deck.findById(deck._id)
       .populate('creatorId', 'username')
       .populate('flashcards', 'front back');
@@ -346,6 +359,18 @@ export const addComment = async (req: Request, res: Response): Promise<void> => 
 
     deck.comments.push(comment);
     await deck.save();
+
+    // Update user stats and award XP
+    if (userId) {
+      const commenter = await User.findById(userId);
+      if (commenter) {
+        commenter.totalCommentsPosted += 1;
+        await commenter.save();
+        
+        // Award XP for commenting
+        await awardXP(userId.toString(), 5, 'deck comment');
+      }
+    }
 
     res.status(201).json({
       success: true,
@@ -632,6 +657,11 @@ export const createPost = async (req: Request, res: Response): Promise<void> => 
 
     await post.save();
 
+    // Award XP for creating post
+    if (userId) {
+      await awardXP(userId.toString(), 15, 'post creation');
+    }
+
     const populatedPost = await Post.findById(post._id)
       .populate('userId', 'username');
 
@@ -741,7 +771,6 @@ export const togglePostLike = async (req: Request, res: Response): Promise<void>
     const userId = req.user?.userId;
 
     const post = await Post.findById(id);
-
     if (!post) {
       res.status(404).json({
         success: false,
@@ -750,15 +779,29 @@ export const togglePostLike = async (req: Request, res: Response): Promise<void>
       return;
     }
 
-    const isLiked = post.likes.includes(userId as any);
+    const user = await User.findById(userId);
+    if (!user) {
+      res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+      return;
+    }
+
+    const isLiked = post.likes.some(likeId => likeId.toString() === userId);
 
     if (isLiked) {
+      // Unlike
       post.likes = post.likes.filter(likeId => likeId.toString() !== userId);
+      user.likedPosts = user.likedPosts.filter(postId => postId.toString() !== id);
     } else {
+      // Like
       post.likes.push(userId as any);
+      user.likedPosts.push(post._id as any);
     }
 
     await post.save();
+    await user.save();
 
     res.status(200).json({
       success: true,
@@ -818,12 +861,25 @@ export const addPostComment = async (req: Request, res: Response): Promise<void>
     const comment = {
       userId: userId as any,
       username: user.username,
+      year: user.year,
       text,
       createdAt: new Date()
     };
 
     post.comments.push(comment);
     await post.save();
+
+    // Update user stats and award XP
+    if (userId) {
+      const commenter = await User.findById(userId);
+      if (commenter) {
+        commenter.totalCommentsPosted += 1;
+        await commenter.save();
+        
+        // Award XP for commenting
+        await awardXP(userId.toString(), 5, 'post comment');
+      }
+    }
 
     res.status(201).json({
       success: true,

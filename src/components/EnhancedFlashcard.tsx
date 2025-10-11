@@ -71,7 +71,8 @@ const EnhancedFlashcard: React.FC<EnhancedFlashcardProps> = ({
         className={cn(
           "relative w-full h-64 cursor-pointer transition-all duration-500 transform-gpu",
           "glass-effect circuit-pattern feature-card-hover",
-          "border-2 border-white/10",
+          "border-2 border-white/10 dark:border-white/20",
+          "bg-card dark:bg-card/50",
           "overflow-hidden"
         )}
         onClick={() => onFlip?.(id)}

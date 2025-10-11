@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { flashcardAPI, communityAPI } from "@/lib/api";
 import { useNavigate } from "react-router-dom";
+import { toast } from "@/components/ui/sonner";
 
 type FC = { _id: string; front: string; back: string; department?: string; difficulty?: string };
 
@@ -15,12 +16,13 @@ const CreateDeckDialog: React.FC<{ onCreated?: (id: string) => void } > = ({ onC
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [department, setDepartment] = useState<string>("Computer Science");
+  const [department, setDepartment] = useState<string>("cse");
   const [difficulty, setDifficulty] = useState<string>("intermediate");
   const [selected, setSelected] = useState<string[]>([]);
   const [isPublic, setIsPublic] = useState<boolean>(true);
   const [mine, setMine] = useState<FC[]>([]);
   const [loading, setLoading] = useState(false);
+  const [userInfo, setUserInfo] = useState<{ department: string; year: string } | null>(null);
 
   const loadMine = async () => {
     try {
@@ -28,10 +30,27 @@ const CreateDeckDialog: React.FC<{ onCreated?: (id: string) => void } > = ({ onC
       const res = await flashcardAPI.getUserFlashcards();
       const items: any[] = res?.data?.flashcards || res?.flashcards || [];
       setMine(items.map((x) => ({ _id: x._id || x.id, front: x.front, back: x.back, department: x.department, difficulty: x.difficulty })));
+    } catch (error: any) {
+      console.error('Error loading flashcards:', error);
+      toast.error('Failed to load your flashcards');
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    // Load user info on mount
+    const storedUserInfo = localStorage.getItem("userInfo");
+    if (storedUserInfo) {
+      const user = JSON.parse(storedUserInfo);
+      let normalizedYear = user.year;
+      if (!normalizedYear.includes('-year')) {
+        normalizedYear = `${user.year}-year`;
+      }
+      setUserInfo({ department: user.department, year: normalizedYear });
+      setDepartment(user.department); // Auto-fill from user's department
+    }
+  }, []);
 
   useEffect(() => {
     if (open) loadMine();
@@ -44,19 +63,68 @@ const CreateDeckDialog: React.FC<{ onCreated?: (id: string) => void } > = ({ onC
   const create = async () => {
     const token = localStorage.getItem('token');
     if (!token) {
+      toast.error('Please login to create a deck');
       navigate('/login');
       return;
     }
-    if (!title.trim() || selected.length === 0) return;
+    
+    if (!title.trim()) {
+      toast.error('Please enter a deck title');
+      return;
+    }
+    
+    if (!description.trim()) {
+      toast.error('Please enter a description');
+      return;
+    }
+    
+    if (selected.length === 0) {
+      toast.error('Please select at least one flashcard');
+      return;
+    }
+    
     try {
       setLoading(true);
-      const res = await communityAPI.createDeck({ title, description, flashcards: selected, department, difficulty, public: isPublic });
+      
+      // Prepare deck data with user info
+      const deckData = { 
+        title: title.trim(), 
+        description: description.trim(), 
+        flashcards: selected, 
+        department: userInfo?.department || department,
+        year: userInfo?.year,
+        difficulty, 
+        public: isPublic 
+      };
+      
+      console.log('Creating deck with data:', deckData);
+      
+      const res = await communityAPI.createDeck(deckData);
       const id = res?.data?.deck?._id || res?.deck?._id;
+      
+      toast.success('Deck created successfully!');
+      
+      // Reset form
       setOpen(false);
       setTitle("");
       setDescription("");
       setSelected([]);
-      if (onCreated && id) onCreated(id);
+      
+      // Callback to parent
+      if (onCreated && id) {
+        onCreated(id);
+      }
+    } catch (error: any) {
+      console.error('Error creating deck:', error);
+      const errorMessage = error?.response?.data?.message || error?.message || 'Failed to create deck';
+      const errors = error?.response?.data?.errors;
+      
+      if (errors && Array.isArray(errors)) {
+        // Show first validation error
+        toast.error(errors[0]?.msg || errorMessage);
+      } else {
+        toast.error(errorMessage);
+      }
     } finally {
       setLoading(false);
     }
@@ -81,18 +149,27 @@ const CreateDeckDialog: React.FC<{ onCreated?: (id: string) => void } > = ({ onC
         </DialogHeader>
         <div className="grid md:grid-cols-2 gap-4">
           <div className="space-y-3">
-            <Input placeholder="Deck title" value={title} onChange={(e) => setTitle(e.target.value)} />
-            <Textarea placeholder="Short description" value={description} onChange={(e) => setDescription(e.target.value)} />
             <div>
-              <label className="text-xs text-muted-foreground">Department</label>
+              <label className="text-xs text-muted-foreground">Title *</label>
+              <Input placeholder="Deck title" value={title} onChange={(e) => setTitle(e.target.value)} />
+            </div>
+            <div>
+              <label className="text-xs text-muted-foreground">Description *</label>
+              <Textarea placeholder="Short description" value={description} onChange={(e) => setDescription(e.target.value)} className="min-h-[80px]" />
+            </div>
+            <div>
+              <label className="text-xs text-muted-foreground">Department {userInfo && <Badge variant="secondary" className="ml-1 text-xs">Auto-filled</Badge>}</label>
               <Select value={department} onValueChange={setDepartment}>
                 <SelectTrigger>
                   <SelectValue placeholder="Department" />
                 </SelectTrigger>
                 <SelectContent>
-                  {['Computer Science','Engineering','Mathematics','Physics','Chemistry','Biology','Business','Other'].map((d) => (
-                    <SelectItem key={d} value={d}>{d}</SelectItem>
-                  ))}
+                  <SelectItem value="cse">Computer Science & Engineering</SelectItem>
+                  <SelectItem value="mechanical">Mechanical Engineering</SelectItem>
+                  <SelectItem value="electrical">Electrical Engineering</SelectItem>
+                  <SelectItem value="chemical">Chemical Engineering</SelectItem>
+                  <SelectItem value="civil">Civil Engineering</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -118,22 +195,35 @@ const CreateDeckDialog: React.FC<{ onCreated?: (id: string) => void } > = ({ onC
             </Button>
           </div>
           <div className="space-y-2 max-h-[60vh] overflow-auto">
-            <div className="text-sm text-muted-foreground">Select your flashcards</div>
-            {mine.length === 0 && (
-              <div className="text-xs text-muted-foreground">No flashcards found. Create some first.</div>
-            )}
-            {mine.map((fc) => (
-              <div key={fc._id} className={`p-3 rounded-md border hover:shadow-sm transition cursor-pointer ${selected.includes(fc._id) ? 'border-primary' : ''}`} onClick={() => toggleSelect(fc._id)}>
-                <div className="flex items-center justify-between gap-2">
-                  <div className="text-sm font-medium line-clamp-1">{fc.front}</div>
-                  <div className="flex gap-2">
-                    {fc.department && <Badge variant="secondary">{fc.department}</Badge>}
-                    {fc.difficulty && <Badge>{fc.difficulty}</Badge>}
-                  </div>
-                </div>
-                <div className="text-xs text-muted-foreground line-clamp-1">{fc.back}</div>
+            <div className="text-sm font-medium">
+              Select flashcards ({selected.length} selected)
+            </div>
+            {loading ? (
+              <div className="text-xs text-muted-foreground">Loading your flashcards...</div>
+            ) : mine.length === 0 ? (
+              <div className="text-center py-8 text-sm text-muted-foreground">
+                <p className="mb-2">No flashcards found.</p>
+                <p className="text-xs">Create some flashcards first to add them to a deck.</p>
               </div>
-            ))}
+            ) : (
+              mine.map((fc) => (
+                <div 
+                  key={fc._id} 
+                  className={`p-3 rounded-md border hover:shadow-sm transition cursor-pointer ${
+                    selected.includes(fc._id) ? 'border-primary bg-primary/5' : 'border-border'
+                  }`} 
+                  onClick={() => toggleSelect(fc._id)}
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="text-sm font-medium line-clamp-1">{fc.front}</div>
+                    <div className="flex gap-2">
+                      {fc.difficulty && <Badge variant="secondary">{fc.difficulty}</Badge>}
+                    </div>
+                  </div>
+                  <div className="text-xs text-muted-foreground line-clamp-1">{fc.back}</div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </DialogContent>

@@ -12,6 +12,7 @@ import communityRoutes from './routes/communityRoutes';
 import analyticsRoutes from './routes/analyticsRoutes';
 import subjectRoutes from './routes/subjectRoutes';
 import dashboardRoutes from './routes/dashboardRoutes';
+import gamificationRoutes from './routes/gamificationRoutes';
 
 // Load environment variables
 dotenv.config();
@@ -98,6 +99,7 @@ app.use('/api/community', communityRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/subjects', subjectRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/gamification', gamificationRoutes);
 
 // 404 handler
 app.use('*', (req: Request, res: Response) => {

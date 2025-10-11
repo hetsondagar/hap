@@ -13,6 +13,16 @@ export interface IUser extends Document {
   badges: string[];
   likedFlashcards: mongoose.Types.ObjectId[];
   likedDecks: mongoose.Types.ObjectId[];
+  likedPosts: mongoose.Types.ObjectId[];
+  xp: number;
+  level: number;
+  streak: number;
+  lastStudyDate?: Date;
+  totalFlashcardsCreated: number;
+  totalDecksCreated: number;
+  totalQuizzesTaken: number;
+  totalCommentsPosted: number;
+  perfectQuizzes: number;
   createdAt: Date;
   updatedAt: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
@@ -95,7 +105,54 @@ const userSchema = new Schema<IUser>({
   likedDecks: [{
     type: Schema.Types.ObjectId,
     ref: 'Deck'
-  }]
+  }],
+  likedPosts: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Post'
+  }],
+  xp: {
+    type: Number,
+    default: 0,
+    min: 0
+  },
+  level: {
+    type: Number,
+    default: 1,
+    min: 1
+  },
+  streak: {
+    type: Number,
+    default: 0,
+    min: 0
+  },
+  lastStudyDate: {
+    type: Date
+  },
+  totalFlashcardsCreated: {
+    type: Number,
+    default: 0,
+    min: 0
+  },
+  totalDecksCreated: {
+    type: Number,
+    default: 0,
+    min: 0
+  },
+  totalQuizzesTaken: {
+    type: Number,
+    default: 0,
+    min: 0
+  },
+  totalCommentsPosted: {
+    type: Number,
+    default: 0,
+    min: 0
+  },
+  perfectQuizzes: {
+    type: Number,
+    default: 0,
+    min: 0
+  }
 }, {
   timestamps: true
 });

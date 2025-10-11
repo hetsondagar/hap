@@ -11,6 +11,7 @@ export interface IPost extends Document {
   comments: {
     userId: mongoose.Types.ObjectId;
     username: string;
+    year?: string;
     text: string;
     createdAt: Date;
   }[];
@@ -60,6 +61,10 @@ const PostSchema = new Schema<IPost>(
       username: {
         type: String,
         required: true
+      },
+      year: {
+        type: String,
+        enum: ['1st-year', '2nd-year', '3rd-year', '4th-year']
       },
       text: {
         type: String,

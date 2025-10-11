@@ -27,7 +27,8 @@ const Login: React.FC = () => {
       // Store user info including department and year
       const userData = res?.data?.user || res?.user;
       if (userData) {
-        localStorage.setItem("userId", String(userData.id));
+        localStorage.setItem("userId", String(userData.id || userData._id));
+        localStorage.setItem("username", userData.username);
         localStorage.setItem(
           "userInfo",
           JSON.stringify({ department: userData.department, year: userData.year })

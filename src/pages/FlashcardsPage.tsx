@@ -183,7 +183,7 @@ const FlashcardsPage = () => {
         </p>
 
         {/* Enhanced Add Flashcard Form */}
-        <Card className="p-8 max-w-4xl mx-auto mb-12 glass-effect circuit-pattern feature-card-hover border-2 border-white/10">
+        <Card className="p-8 max-w-4xl mx-auto mb-12 glass-effect circuit-pattern feature-card-hover border-2 border-white/10 dark:border-white/20 bg-card dark:bg-card/90">
           <div className="flex items-center gap-3 mb-6">
             <div className="p-2 bg-primary/20 rounded-lg">
               <Sparkles className="h-6 w-6 text-primary" />
