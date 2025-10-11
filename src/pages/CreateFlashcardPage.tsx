@@ -192,7 +192,7 @@ const CreateFlashcardPage = () => {
         </div>
 
         {/* Form */}
-        <Card className="p-6 hero-card">
+        <Card className="p-6 glass-effect circuit-pattern feature-card-hover border-2 border-white/10">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Subject Selection */}
             <div className="space-y-2">
@@ -342,7 +342,7 @@ const CreateFlashcardPage = () => {
               {recentFlashcards.map((flashcard, index) => {
                 const subject = subjects.find(s => s.id === flashcard.subjectId);
                 return (
-                  <Card key={flashcard._id || index} className="p-4 hero-card hover:shadow-lg transition-shadow">
+                  <Card key={flashcard._id || index} className="p-4 glass-effect circuit-pattern feature-card-hover border-2 border-white/10">
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
@@ -395,7 +395,7 @@ const CreateFlashcardPage = () => {
               })}
             </div>
           ) : (
-            <Card className="p-8 text-center hero-card">
+            <Card className="p-8 text-center glass-effect circuit-pattern feature-card-hover border-2 border-white/10">
               <p className="text-muted-foreground">No flashcards created yet. Create your first flashcard above!</p>
             </Card>
           )}

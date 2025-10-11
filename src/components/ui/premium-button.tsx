@@ -11,9 +11,9 @@ const premiumButtonVariants = cva(
         default:
           "bg-gradient-to-r from-primary to-secondary text-primary-foreground shadow-lg hover:shadow-2xl hover:shadow-primary/50 hover:scale-105 active:scale-95 before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent before:translate-x-[-200%] hover:before:translate-x-[200%] before:transition-transform before:duration-700",
         premium:
-          "bg-gradient-to-br from-primary via-secondary to-primary bg-[length:200%_200%] text-white shadow-xl hover:shadow-2xl hover:shadow-secondary/60 hover:bg-[position:100%_100%] hover:scale-110 active:scale-95 animate-gradient-shift border-2 border-white/20",
+          "bg-gradient-to-r from-primary to-secondary text-white shadow-xl hover:shadow-2xl hover:shadow-secondary/60 hover:scale-110 active:scale-95 border-2 border-white/20",
         glass:
-          "bg-white/10 backdrop-blur-xl border border-white/20 text-foreground shadow-lg hover:bg-white/20 hover:shadow-primary/40 hover:scale-105 active:scale-95",
+          "bg-black/20 backdrop-blur-xl border border-white/10 text-foreground shadow-lg hover:bg-black/30 hover:shadow-primary/40 hover:scale-105 active:scale-95",
         glow:
           "bg-gradient-to-r from-primary to-secondary text-white shadow-lg shadow-primary/50 hover:shadow-2xl hover:shadow-secondary/70 hover:scale-110 active:scale-95 animate-glow-pulse",
         outline:

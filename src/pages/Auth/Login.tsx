@@ -3,7 +3,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import AuthLayout from "./AuthLayout";
-import HapLogo from "../../assets/hap-logo-3.png"; // 👈 add your logo here
+import hapLogo from "../../assets/hap-logo-3.png"; // 👈 add your logo here
+import HapLogo from '../../assets/hap-logo.png';
 import { authAPI } from "@/lib/api";
 
 const Login: React.FC = () => {
@@ -22,17 +23,17 @@ const Login: React.FC = () => {
       const token = res?.token || res?.data?.token;
       if (!token) throw new Error(res?.message || "Login failed");
       localStorage.setItem("token", token);
-      
+
       // Store user info including department and year
       const userData = res?.data?.user || res?.user;
       if (userData) {
-        localStorage.setItem('userId', String(userData.id));
-        localStorage.setItem("userInfo", JSON.stringify({ 
-          department: userData.department, 
-          year: userData.year 
-        }));
+        localStorage.setItem("userId", String(userData.id));
+        localStorage.setItem(
+          "userInfo",
+          JSON.stringify({ department: userData.department, year: userData.year })
+        );
       }
-      
+
       navigate("/");
     } catch (e: any) {
       setError(e?.message || "Login failed");
@@ -44,31 +45,48 @@ const Login: React.FC = () => {
   return (
     <AuthLayout
       title={
-        <div className="flex items-center gap-2">
-          <img src={HapLogo} alt="Hap Logo" className="h-20 w-20 object-contain" />
-          <span>Login</span>
+        <div className="flex flex-col items-center justify-center mb-6">
+          <div className="flex items-center justify-center">
+            <img
+              src={hapLogo}
+              alt="Hap Logo"
+              className="h-24 w-24 object-contain scale-90 -mt-4"
+              style={{ objectFit: "contain" }}
+            />
+            <img
+              src={HapLogo}
+              alt="Hap Logo 3"
+              className="h-20 w-20 object-contain"
+              style={{ objectFit: "contain", marginLeft: '-30px' }}
+            />
+          </div>
+          <span className="mt-4 font-bold text-2xl bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent drop-shadow">
+          Login
+        </span>
         </div>
       }
     >
       <form className="space-y-4" onSubmit={handleSubmit}>
-        {error && (
-          <p className="text-sm text-destructive">{error}</p>
-        )}
-        <Input 
-          type="email" 
-          placeholder="Email" 
-          className="bg-background text-foreground placeholder:text-muted-foreground" 
-          value={email} 
-          onChange={(e) => setEmail(e.target.value)} 
+        {error && <p className="text-sm text-destructive">{error}</p>}
+        <Input
+          type="email"
+          placeholder="Email"
+          className="bg-background text-foreground placeholder:text-muted-foreground"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
-        <Input 
-          type="password" 
-          placeholder="Password" 
-          className="bg-background text-foreground placeholder:text-muted-foreground" 
-          value={password} 
-          onChange={(e) => setPassword(e.target.value)} 
+        <Input
+          type="password"
+          placeholder="Password"
+          className="bg-background text-foreground placeholder:text-muted-foreground"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
         />
-        <Button disabled={loading} type="submit" className="w-full bg-gradient-primary hover:opacity-90 text-white font-semibold">
+        <Button
+          disabled={loading}
+          type="submit"
+          className="w-full bg-gradient-primary hover:opacity-90 text-white font-semibold"
+        >
           {loading ? "Logging in..." : "Login"}
         </Button>
       </form>

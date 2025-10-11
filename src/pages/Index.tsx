@@ -98,15 +98,16 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-subtle">
+    <div className="min-h-screen">
       <Header />
 
       {/* Hero Section */}
       <section className="pt-32 pb-16 relative overflow-hidden">
-        {/* Animated background elements */}
+        {/* Techy background elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-primary/20 rounded-full blur-3xl animate-float"></div>
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-secondary/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }}></div>
+          <div className="absolute top-20 left-10 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-float"></div>
+          <div className="absolute bottom-20 right-10 w-96 h-96 bg-secondary/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }}></div>
+          <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-accent/5 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }}></div>
         </div>
         
         <div className="container mx-auto px-4 relative z-10">
@@ -119,11 +120,13 @@ const Index = () => {
               </Badge>
               
               <h1 className="text-5xl md:text-7xl font-display font-bold leading-tight">
-                <span className="gradient-text animate-gradient-shift">Master Engineering</span>
+                <span className="text-foreground">Master</span>
+                <br />
+                <span className="gradient-text-engineering">engineering</span>
                 <br />
                 <span className="text-foreground">with Smart</span>
                 <br />
-                <span className="text-foreground">Flashcards</span>
+                <span className="text-foreground">flashcards</span>
               </h1>
               
               <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed max-w-lg">
@@ -188,7 +191,7 @@ const Index = () => {
       {/* Stats Section */}
       <section className="py-16">
         <div className="container mx-auto px-4">
-          <Card className="glass-effect p-12 hover-lift border-2 border-white/10 animate-scale-in">
+          <Card className="glass-effect circuit-pattern p-12 hover-lift border-2 border-white/10 animate-scale-in">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               {stats.map((stat, index) => (
                 <div 
@@ -233,7 +236,7 @@ const Index = () => {
                 className="block animate-scale-in"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <Card className="glass-effect p-8 group cursor-pointer hover-lift border-2 border-white/10 h-full">
+                <Card className="glass-effect circuit-pattern p-8 group cursor-pointer hover-lift border-2 border-white/10 h-full">
                   <div className="flex items-start space-x-6">
                     <div className={`w-20 h-20 bg-gradient-to-br ${feature.gradient} rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-2xl transition-all duration-300 group-hover:scale-110 group-hover:rotate-6`}>
                       <feature.icon className="w-10 h-10 text-white" />

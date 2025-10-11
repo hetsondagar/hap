@@ -67,7 +67,7 @@ const Gamification = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-subtle">
+    <div className="min-h-screen">
       <Header />
       
       {/* Hero Section */}
@@ -88,14 +88,7 @@ const Gamification = () => {
             </Button>
           </div>
 
-          {/* Gamification Preview Image */}
-          <div className="max-w-4xl mx-auto mt-16">
-            <img 
-              src={gamificationBadges} 
-              alt="Gamification badges and achievements"
-              className="w-full rounded-2xl shadow-intense"
-            />
-          </div>
+          
         </div>
       </section>
 
@@ -116,14 +109,14 @@ const Gamification = () => {
             {xpLevels.map((level, index) => (
               <Card 
                 key={level.level} 
-                className={`hero-card p-6 text-center ${
+                className={`glass-effect circuit-pattern feature-card-hover p-6 text-center group cursor-pointer border-2 border-white/10 ${
                   level.level === sampleProfile.level ? 'ring-2 ring-primary glow-effect' : ''
                 }`}
               >
                 <div className={`text-3xl font-bold mb-2 ${level.color}`}>
                   {level.level}
                 </div>
-                <h3 className="font-display font-bold mb-2">{level.title}</h3>
+                <h3 className="font-display font-bold mb-2 group-hover:gradient-text transition-all duration-300">{level.title}</h3>
                 <p className="text-sm text-muted-foreground mb-3">{level.xp}</p>
                 {level.level === sampleProfile.level && (
                   <Badge className="bg-primary/10 text-primary">Current Level</Badge>
@@ -146,14 +139,14 @@ const Gamification = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {achievements.map((achievement, index) => (
-              <Card key={index} className="hero-card p-6 group">
+              <Card key={index} className="glass-effect circuit-pattern feature-card-hover p-6 group cursor-pointer border-2 border-white/10">
                 <div className="flex items-start space-x-4">
-                  <div className={`w-16 h-16 ${achievement.color} rounded-xl flex items-center justify-center glow-effect`}>
+                  <div className={`w-16 h-16 ${achievement.color} rounded-xl flex items-center justify-center glow-effect group-hover:scale-110 group-hover:rotate-6 transition-all duration-300`}>
                     <achievement.icon className="w-8 h-8 text-white" />
                   </div>
                   <div className="flex-grow">
                     <div className="flex items-center justify-between mb-2">
-                      <h3 className="font-display font-bold group-hover:text-primary transition-colors">
+                      <h3 className="font-display font-bold group-hover:gradient-text transition-all duration-300">
                         {achievement.name}
                       </h3>
                       <Badge 
@@ -190,11 +183,11 @@ const Gamification = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {leaderboards.map((board, index) => (
-              <Card key={index} className="hero-card p-6 text-center group">
-                <div className="w-16 h-16 bg-gradient-primary rounded-xl flex items-center justify-center mx-auto mb-4 glow-effect">
+              <Card key={index} className="glass-effect circuit-pattern feature-card-hover p-6 text-center group cursor-pointer border-2 border-white/10">
+                <div className="w-16 h-16 bg-gradient-primary rounded-xl flex items-center justify-center mx-auto mb-4 glow-effect group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
                   <board.icon className="w-8 h-8 text-white" />
                 </div>
-                <h3 className="font-display font-bold text-xl mb-3 group-hover:text-primary transition-colors">
+                <h3 className="font-display font-bold text-xl mb-3 group-hover:gradient-text transition-all duration-300">
                   {board.category}
                 </h3>
                 <p className="text-muted-foreground mb-4">{board.description}</p>
@@ -224,7 +217,7 @@ const Gamification = () => {
       {/* CTA */}
       <section className="py-16">
         <div className="container mx-auto px-4">
-          <Card className="hero-card p-12 text-center">
+          <Card className="glass-effect circuit-pattern feature-card-hover p-12 text-center border-2 border-white/10">
             <h2 className="text-3xl font-display font-bold mb-4">
               Ready to Start Earning XP?
             </h2>

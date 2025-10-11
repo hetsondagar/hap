@@ -106,7 +106,7 @@ const Features = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-subtle">
+    <div className="min-h-screen">
       <Header />
 
       {/* Hero Section */}
@@ -149,15 +149,15 @@ const Features = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
             {coreFeatures.map((feature, index) => (
               <Link key={index} to={feature.route} className="block">
-                <Card className="hero-card p-8 group hover:shadow-xl transition-shadow">
+                <Card className="glass-effect circuit-pattern feature-card-hover p-8 group cursor-pointer border-2 border-white/10 h-full">
                   <div className="flex items-start space-x-6">
                     <div className="flex-shrink-0">
-                      <div className="w-16 h-16 bg-gradient-primary rounded-xl flex items-center justify-center glow-effect">
+                      <div className="w-16 h-16 bg-gradient-primary rounded-xl flex items-center justify-center glow-effect group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
                         <feature.icon className="w-8 h-8 text-white" />
                       </div>
                     </div>
                     <div className="flex-grow">
-                      <h3 className="text-2xl font-display font-bold mb-3 group-hover:text-primary transition-colors">
+                      <h3 className="text-2xl font-display font-bold mb-3 group-hover:gradient-text transition-all duration-300">
                         {feature.title}
                       </h3>
                       <p className="text-muted-foreground mb-4 leading-relaxed">
@@ -175,6 +175,10 @@ const Features = () => {
                             </span>
                           </div>
                         ))}
+                      </div>
+                      <div className="mt-4 flex items-center text-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <span className="text-sm font-semibold">Learn more</span>
+                        <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                       </div>
                     </div>
                   </div>
@@ -202,12 +206,12 @@ const Features = () => {
             {advancedFeatures.map((feature, index) => (
               <Card
                 key={index}
-                className="hero-card p-6 text-center group hover:shadow-xl transition-shadow"
+                className="glass-effect circuit-pattern feature-card-hover p-6 text-center group cursor-pointer border-2 border-white/10"
               >
-                <div className="w-12 h-12 bg-gradient-primary rounded-lg flex items-center justify-center mx-auto mb-4 glow-effect">
+                <div className="w-12 h-12 bg-gradient-primary rounded-lg flex items-center justify-center mx-auto mb-4 glow-effect group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
                   <feature.icon className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="text-xl font-display font-bold mb-3 group-hover:text-primary transition-colors">
+                <h3 className="text-xl font-display font-bold mb-3 group-hover:gradient-text transition-all duration-300">
                   {feature.title}
                 </h3>
                 <p className="text-muted-foreground leading-relaxed">
@@ -222,7 +226,7 @@ const Features = () => {
       {/* CTA Section */}
       <section className="py-16">
         <div className="container mx-auto px-4">
-          <Card className="hero-card p-12 text-center">
+          <Card className="glass-effect circuit-pattern feature-card-hover p-12 text-center border-2 border-white/10">
             <h2 className="text-3xl font-display font-bold mb-4">
               Ready to Experience These Features?
             </h2>

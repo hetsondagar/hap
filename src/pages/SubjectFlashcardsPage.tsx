@@ -133,13 +133,13 @@ const SubjectFlashcardsPage = () => {
           <h2 className="text-xl font-semibold mb-4">All Flashcards</h2>
           
           {loading ? (
-            <Card className="p-12 text-center hero-card">
+            <Card className="p-12 text-center glass-effect circuit-pattern feature-card-hover border-2 border-white/10">
               <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
               <p className="text-muted-foreground">Loading flashcards...</p>
             </Card>
           ) : flashcards.length > 0 ? (
             flashcards.map((flashcard: any) => (
-              <Card key={flashcard._id || flashcard.id} className="p-6 hero-card">
+              <Card key={flashcard._id || flashcard.id} className="p-6 glass-effect circuit-pattern feature-card-hover border-2 border-white/10">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
                     <h3 className="font-semibold text-lg mb-2">{flashcard.front}</h3>
@@ -168,7 +168,7 @@ const SubjectFlashcardsPage = () => {
               </Card>
             ))
           ) : (
-            <Card className="p-12 text-center hero-card">
+            <Card className="p-12 text-center glass-effect circuit-pattern feature-card-hover border-2 border-white/10">
               <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-semibold mb-2">No flashcards yet</h3>
               <p className="text-muted-foreground mb-4">
