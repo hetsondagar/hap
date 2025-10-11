@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { authenticateToken } from '../middleware/auth';
+import { authenticateToken } from '../middleware/authMiddleware';
 import { generateQuiz, submitQuiz } from '../controllers/quizController';
 
 const router = Router();

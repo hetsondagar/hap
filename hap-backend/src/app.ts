@@ -13,7 +13,6 @@ import analyticsRoutes from './routes/analyticsRoutes';
 import subjectRoutes from './routes/subjectRoutes';
 import dashboardRoutes from './routes/dashboardRoutes';
 import gamificationRoutes from './routes/gamificationRoutes';
-import quizRoutes from './routes/quizRoutes';
 
 // Load environment variables
 dotenv.config();
