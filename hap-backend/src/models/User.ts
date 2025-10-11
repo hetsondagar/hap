@@ -11,6 +11,8 @@ export interface IUser extends Document {
   followers: mongoose.Types.ObjectId[];
   following: mongoose.Types.ObjectId[];
   badges: string[];
+  likedFlashcards: mongoose.Types.ObjectId[];
+  likedDecks: mongoose.Types.ObjectId[];
   createdAt: Date;
   updatedAt: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
@@ -85,6 +87,14 @@ const userSchema = new Schema<IUser>({
       'flashcard_creator',
       'community_helper'
     ]
+  }],
+  likedFlashcards: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Flashcard'
+  }],
+  likedDecks: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Deck'
   }]
 }, {
   timestamps: true

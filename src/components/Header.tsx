@@ -96,15 +96,15 @@ const Header = () => {
       <div className="hidden md:flex items-center space-x-4">
         {isAuthenticated ? (
           <>
-            <span className="text-sm text-muted-foreground mr-2 hidden lg:inline">
-              {username ? `Hi, ${username}` : 'Signed in'}
-            </span>
-            <Link to="/">
-              <PremiumButton variant="glass" className="flex items-center gap-2">
-                <LayoutDashboard className="w-4 h-4" />
-                Dashboard
-              </PremiumButton>
-            </Link>
+              <span className="text-sm text-muted-foreground mr-2 hidden lg:inline">
+                {username ? `Hi, ${username}` : 'Signed in'}
+              </span>
+              <Link to="/dashboard">
+                <PremiumButton variant="glass" className="flex items-center gap-2">
+                  <LayoutDashboard className="w-4 h-4" />
+                  Dashboard
+                </PremiumButton>
+              </Link>
             <PremiumButton onClick={handleLogout} variant="glow">
               Logout
             </PremiumButton>
@@ -159,7 +159,7 @@ const Header = () => {
             <div className="pt-4 space-y-3">
               {isAuthenticated ? (
                 <>
-                  <Link to="/" onClick={() => setIsMenuOpen(false)}>
+                  <Link to="/dashboard" onClick={() => setIsMenuOpen(false)}>
                     <PremiumButton 
                       variant="glass" 
                       className="w-full flex items-center justify-center gap-2"

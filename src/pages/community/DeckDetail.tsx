@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import Header from '@/components/Header';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -108,17 +109,23 @@ const DeckDetail: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="p-6 flex items-center justify-center text-muted-foreground">
-        <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Loading…
+      <div className="min-h-screen">
+        <Header />
+        <div className="pt-32 pb-16 px-6 flex items-center justify-center text-muted-foreground">
+          <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Loading…
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="p-6">
-        <p className="text-sm text-destructive mb-3">{error}</p>
-        <Button variant="outline" onClick={() => navigate(-1)}>Back</Button>
+      <div className="min-h-screen">
+        <Header />
+        <div className="pt-32 pb-16 px-6">
+          <p className="text-sm text-destructive mb-3">{error}</p>
+          <Button variant="outline" onClick={() => navigate(-1)}>Back</Button>
+        </div>
       </div>
     );
   }
@@ -128,7 +135,9 @@ const DeckDetail: React.FC = () => {
   const likeCount = Array.isArray(deck.likes) ? deck.likes.length : 0;
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="min-h-screen">
+      <Header />
+      <div className="pt-32 pb-16 px-6 space-y-6">
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold">{deck.title || "Untitled Deck"}</h1>
@@ -204,6 +213,7 @@ const DeckDetail: React.FC = () => {
           </div>
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 };

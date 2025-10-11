@@ -49,6 +49,17 @@ export const API_ENDPOINTS = {
     WEEKLY_GOAL: (userId: string) => `${API_BASE_URL}/analytics/${userId}/weekly-goal`,
     PROGRESS: (userId: string) => `${API_BASE_URL}/analytics/${userId}/progress`,
   },
+  
+  // Dashboard
+  DASHBOARD: {
+    BASE: `${API_BASE_URL}/dashboard`,
+    CHANGE_PASSWORD: `${API_BASE_URL}/dashboard/change-password`,
+    CHANGE_USERNAME: `${API_BASE_URL}/dashboard/change-username`,
+    LIKE_FLASHCARD: (id: string) => `${API_BASE_URL}/dashboard/like/flashcard/${id}`,
+    LIKE_DECK: (id: string) => `${API_BASE_URL}/dashboard/like/deck/${id}`,
+    LIKED_FLASHCARDS: `${API_BASE_URL}/dashboard/liked/flashcards`,
+    LIKED_DECKS: `${API_BASE_URL}/dashboard/liked/decks`,
+  },
 };
 
 // API utility functions
@@ -528,6 +539,54 @@ export const analyticsAPI = {
   
   getProgressTracking: async (userId: string, period: 'week' | 'month' | 'year' = 'week') => {
     const response = await apiRequest(`${API_ENDPOINTS.ANALYTICS.PROGRESS(userId)}?period=${period}`);
+    return response.json();
+  },
+};
+
+// Dashboard API
+export const dashboardAPI = {
+  getDashboardData: async () => {
+    const response = await apiRequest(API_ENDPOINTS.DASHBOARD.BASE);
+    return response.json();
+  },
+  
+  changePassword: async (currentPassword: string, newPassword: string) => {
+    const response = await apiRequest(API_ENDPOINTS.DASHBOARD.CHANGE_PASSWORD, {
+      method: 'POST',
+      body: JSON.stringify({ currentPassword, newPassword }),
+    });
+    return response.json();
+  },
+  
+  changeUsername: async (newUsername: string) => {
+    const response = await apiRequest(API_ENDPOINTS.DASHBOARD.CHANGE_USERNAME, {
+      method: 'POST',
+      body: JSON.stringify({ newUsername }),
+    });
+    return response.json();
+  },
+  
+  toggleLikeFlashcard: async (flashcardId: string) => {
+    const response = await apiRequest(API_ENDPOINTS.DASHBOARD.LIKE_FLASHCARD(flashcardId), {
+      method: 'POST',
+    });
+    return response.json();
+  },
+  
+  toggleLikeDeck: async (deckId: string) => {
+    const response = await apiRequest(API_ENDPOINTS.DASHBOARD.LIKE_DECK(deckId), {
+      method: 'POST',
+    });
+    return response.json();
+  },
+  
+  getLikedFlashcards: async () => {
+    const response = await apiRequest(API_ENDPOINTS.DASHBOARD.LIKED_FLASHCARDS);
+    return response.json();
+  },
+  
+  getLikedDecks: async () => {
+    const response = await apiRequest(API_ENDPOINTS.DASHBOARD.LIKED_DECKS);
     return response.json();
   },
 };

@@ -1,6 +1,7 @@
 // src/pages/SubjectFlashcardsPage.tsx
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import Header from '@/components/Header';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -61,7 +62,8 @@ const SubjectFlashcardsPage = () => {
       } as any);
       
       console.log('Flashcards loaded:', response);
-      setFlashcards(response.flashcards || response.data || response || []);
+      const flashcardsData = response.data?.flashcards || response.flashcards || response.data || response || [];
+      setFlashcards(flashcardsData);
     } catch (error: any) {
       console.error("Error loading flashcards:", error);
       toast.error("Failed to load flashcards");
@@ -88,8 +90,10 @@ const SubjectFlashcardsPage = () => {
   }
 
   return (
-    <div className="min-h-screen p-8 bg-gradient-subtle">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-gradient-subtle">
+      <Header />
+      <div className="pt-32 pb-16 px-8">
+        <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-8">
           <Button 
@@ -181,6 +185,7 @@ const SubjectFlashcardsPage = () => {
               </Button>
             </Card>
           )}
+        </div>
         </div>
       </div>
     </div>

@@ -11,6 +11,7 @@ import quizRoutes from './routes/quizRoutes';
 import communityRoutes from './routes/communityRoutes';
 import analyticsRoutes from './routes/analyticsRoutes';
 import subjectRoutes from './routes/subjectRoutes';
+import dashboardRoutes from './routes/dashboardRoutes';
 
 // Load environment variables
 dotenv.config();
@@ -96,6 +97,7 @@ app.use('/api/quizzes', quizRoutes);
 app.use('/api/community', communityRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/subjects', subjectRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 // 404 handler
 app.use('*', (req: Request, res: Response) => {

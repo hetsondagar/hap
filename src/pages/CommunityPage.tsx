@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import Header from '@/components/Header';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -63,6 +64,9 @@ const CommunityPage: React.FC = () => {
   const [newPostTitle, setNewPostTitle] = useState("");
   const [newPostContent, setNewPostContent] = useState("");
   const [postComment, setPostComment] = useState<{[key: string]: string}>({});
+  const [currentUserId, setCurrentUserId] = useState<string>("");
+  const [currentUsername, setCurrentUsername] = useState<string>("");
+  const [editingComment, setEditingComment] = useState<{postId: string, commentIndex: number, text: string} | null>(null);
 
   const likeCount = (d: Deck | Post) => (Array.isArray(d.likes) ? d.likes.length : Number(d.likes || 0));
   const commentCount = (d: Deck | Post) => (Array.isArray(d.comments) ? d.comments.length : Number(d.comments || 0));
@@ -74,6 +78,27 @@ const CommunityPage: React.FC = () => {
       const user = JSON.parse(storedUserInfo);
       setUserInfo({ department: user.department, year: user.year });
     }
+    
+    // Get current user ID and username
+    const storedUserId = localStorage.getItem('userId');
+    if (storedUserId) {
+      setCurrentUserId(storedUserId);
+    }
+    
+    // Try to get username from auth
+    (async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (token) {
+          const { authAPI } = await import('@/lib/api');
+          const prof = await authAPI.getProfile();
+          const user = prof?.user || prof?.data || prof;
+          setCurrentUsername(user?.username || '');
+        }
+      } catch (e) {
+        console.error('Error fetching user profile:', e);
+      }
+    })();
   }, []);
 
   const loadDecks = async () => {
@@ -157,17 +182,21 @@ const CommunityPage: React.FC = () => {
     }
     
     try {
-      await communityAPI.createPost({
+      const response = await communityAPI.createPost({
         title: newPostTitle,
         content: newPostContent,
         department: userInfo?.department,
         year: userInfo?.year
       });
+      
+      // Add new post to state without reloading
+      const newPost = response?.data?.post || response?.post || response;
+      setPosts([newPost, ...posts]);
+      
       toast.success("Question posted successfully!");
       setNewPostTitle("");
       setNewPostContent("");
       setIsCreatePostOpen(false);
-      loadPosts();
     } catch (e: any) {
       // Handle validation errors from backend
       const errorMessage = e?.response?.data?.message || e?.message || "Failed to create post";
@@ -186,10 +215,27 @@ const CommunityPage: React.FC = () => {
 
   const handleLikePost = async (id: string) => {
     try {
-      await communityAPI.likePost(id);
-      loadPosts();
+      const response = await communityAPI.likePost(id);
+      
+      // Update post in state without reloading
+      setPosts(posts.map(post => {
+        if (post._id === id) {
+          const isLiked = response?.data?.isLiked;
+          const currentLikes = Array.isArray(post.likes) ? post.likes.length : Number(post.likes || 0);
+          return {
+            ...post,
+            likes: isLiked ? currentLikes + 1 : Math.max(0, currentLikes - 1)
+          };
+        }
+        return post;
+      }));
     } catch (e: any) {
-      toast.error("Failed to like post");
+      const msg = (e as any)?.message || '';
+      if (msg.includes('401') || msg.toLowerCase().includes('unauthorized')) {
+        navigate('/login');
+      } else {
+        toast.error("Failed to like post");
+      }
     }
   };
 
@@ -199,11 +245,76 @@ const CommunityPage: React.FC = () => {
     
     try {
       await communityAPI.commentPost(id, { text });
+      
+      // Update post comments in state without reloading
+      setPosts(posts.map(post => {
+        if (post._id === id) {
+          const newComment = {
+            userId: currentUserId,
+            username: currentUsername || 'You',
+            text: text,
+            createdAt: new Date().toISOString()
+          };
+          const comments = Array.isArray(post.comments) ? [...post.comments, newComment] : [newComment];
+          return { ...post, comments };
+        }
+        return post;
+      }));
+      
       setPostComment({ ...postComment, [id]: "" });
-      loadPosts();
       toast.success("Comment added!");
     } catch (e: any) {
-      toast.error("Failed to add comment");
+      const msg = (e as any)?.message || '';
+      if (msg.includes('401') || msg.toLowerCase().includes('unauthorized')) {
+        navigate('/login');
+      } else {
+        toast.error("Failed to add comment");
+      }
+    }
+  };
+  
+  const handleDeleteComment = async (postId: string, commentIndex: number) => {
+    if (!confirm('Delete this comment?')) return;
+    
+    try {
+      // Update state to remove comment
+      setPosts(posts.map(post => {
+        if (post._id === postId) {
+          const comments = Array.isArray(post.comments) 
+            ? post.comments.filter((_, idx) => idx !== commentIndex)
+            : [];
+          return { ...post, comments };
+        }
+        return post;
+      }));
+      
+      toast.success("Comment deleted!");
+    } catch (e: any) {
+      toast.error("Failed to delete comment");
+    }
+  };
+  
+  const handleEditComment = async (postId: string, commentIndex: number) => {
+    if (!editingComment || !editingComment.text.trim()) return;
+    
+    try {
+      // Update comment in state
+      setPosts(posts.map(post => {
+        if (post._id === postId && Array.isArray(post.comments)) {
+          const updatedComments = [...post.comments];
+          updatedComments[commentIndex] = {
+            ...updatedComments[commentIndex],
+            text: editingComment.text
+          };
+          return { ...post, comments: updatedComments };
+        }
+        return post;
+      }));
+      
+      setEditingComment(null);
+      toast.success("Comment updated!");
+    } catch (e: any) {
+      toast.error("Failed to update comment");
     }
   };
 
@@ -232,7 +343,9 @@ const CommunityPage: React.FC = () => {
   const visibleDecks = useMemo(() => decks.slice(0, 24), [decks]);
 
   return (
-    <div className="p-6 space-y-10">
+    <div className="min-h-screen">
+      <Header />
+      <div className="pt-32 pb-16 px-6 space-y-10">
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
@@ -597,7 +710,11 @@ const CommunityPage: React.FC = () => {
               </CardContent>
             </Card>
           )}
-          {!loading && !error && posts.map((post) => (
+          {!loading && !error && posts.map((post) => {
+            const postUsername = typeof post.userId === 'string' ? post.userId : post.userId?.username || 'Unknown';
+            const isPostAuthor = currentUsername && postUsername === currentUsername;
+            
+            return (
             <Card key={post._id} className="hover:shadow-md transition">
               <CardHeader>
                 <div className="flex items-start justify-between">
@@ -606,20 +723,23 @@ const CommunityPage: React.FC = () => {
                     <p className="text-sm text-muted-foreground line-clamp-3">{post.content}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 mt-2 text-xs text-muted-foreground">
-                  <span>by {typeof post.userId === 'string' ? post.userId : post.userId?.username || 'Unknown'}</span>
-                  <span>•</span>
-                  <span>{new Date(post.createdAt || '').toLocaleDateString()}</span>
+                <div className="flex items-center gap-2 mt-2 text-xs">
+                  <span className="text-muted-foreground">by</span>
+                  <span className={`font-semibold ${isPostAuthor ? 'text-primary' : 'text-blue-600 dark:text-blue-400'}`}>
+                    {postUsername}
+                  </span>
+                  <span className="text-muted-foreground">•</span>
+                  <span className="text-muted-foreground">{new Date(post.createdAt || '').toLocaleDateString()}</span>
                 </div>
               </CardHeader>
               <CardContent>
                 {/* Actions */}
                 <div className="flex items-center gap-4 mb-4">
                   <button
-                    className="flex items-center gap-1 text-sm hover:text-primary transition"
+                    className="flex items-center gap-1 text-sm hover:text-pink-600 transition group"
                     onClick={() => handleLikePost(post._id)}
                   >
-                    <Heart className="w-4 h-4" />
+                    <Heart className="w-4 h-4 group-hover:fill-pink-600 group-hover:text-pink-600 fill-pink-600 text-pink-600" />
                     <span>{likeCount(post)}</span>
                   </button>
                   <div className="flex items-center gap-1 text-sm text-muted-foreground">
@@ -630,13 +750,68 @@ const CommunityPage: React.FC = () => {
 
                 {/* Comments */}
                 {Array.isArray(post.comments) && post.comments.length > 0 && (
-                  <div className="space-y-2 mb-4 pl-4 border-l-2 border-muted">
-                    {post.comments.slice(0, 3).map((comment, idx) => (
-                      <div key={idx} className="text-sm">
-                        <span className="font-medium">{comment.username}: </span>
-                        <span className="text-muted-foreground">{comment.text}</span>
-                      </div>
-                    ))}
+                  <div className="space-y-3 mb-4 pl-4 border-l-2 border-muted">
+                    {post.comments.map((comment, idx) => {
+                      const isCommentAuthor = currentUsername && comment.username === currentUsername;
+                      const isEditing = editingComment?.postId === post._id && editingComment?.commentIndex === idx;
+                      
+                      return (
+                        <div key={idx} className="text-sm flex items-start justify-between gap-2 group">
+                          {isEditing ? (
+                            <div className="flex-1 flex gap-2">
+                              <Input
+                                value={editingComment.text}
+                                onChange={(e) => setEditingComment({...editingComment, text: e.target.value})}
+                                className="text-sm"
+                                autoFocus
+                              />
+                              <Button
+                                size="sm"
+                                onClick={() => handleEditComment(post._id, idx)}
+                              >
+                                Save
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => setEditingComment(null)}
+                              >
+                                Cancel
+                              </Button>
+                            </div>
+                          ) : (
+                            <>
+                              <div className="flex-1">
+                                <span className={`font-semibold ${isCommentAuthor ? 'text-primary' : 'text-blue-600 dark:text-blue-400'}`}>
+                                  {comment.username}:
+                                </span>{' '}
+                                <span className="text-muted-foreground">{comment.text}</span>
+                              </div>
+                              {isCommentAuthor && (
+                                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    className="h-6 px-2 text-xs"
+                                    onClick={() => setEditingComment({ postId: post._id, commentIndex: idx, text: comment.text })}
+                                  >
+                                    Edit
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    className="h-6 px-2 text-xs text-destructive hover:text-destructive"
+                                    onClick={() => handleDeleteComment(post._id, idx)}
+                                  >
+                                    Delete
+                                  </Button>
+                                </div>
+                              )}
+                            </>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
                 )}
 
@@ -662,11 +837,12 @@ const CommunityPage: React.FC = () => {
                 </div>
               </CardContent>
             </Card>
-          ))}
+            );
+          })}
         </div>
       </section>
       )}
-
+      </div>
     </div>
   );
 };

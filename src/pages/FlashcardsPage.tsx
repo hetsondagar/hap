@@ -11,24 +11,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
 import { useFlashcards } from "@/context/FlashcardsContext";
-import { departmentMap } from "@/utils/flashcardMapping"; // ✅ mapping
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Pencil, Plus, Sparkles } from "lucide-react";
+import { Plus, Sparkles } from "lucide-react";
 import { authAPI, flashcardAPI } from "@/lib/api";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import FlashcardGrid from "@/components/FlashcardGrid";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/components/ui/sonner";
-
-// Use the full department names from mapping
-const departments = Object.values(departmentMap);
+import { getSubjectsByDeptYear } from "@/data/subjects";
 
 const FlashcardsPage = () => {
   const { cards, addCard, deleteCard } = useFlashcards();
@@ -41,8 +31,9 @@ const FlashcardsPage = () => {
   const [difficulty, setDifficulty] = useState<"easy" | "medium" | "hard">("medium");
   const [creating, setCreating] = useState(false);
   const [favorites, setFavorites] = useState<Set<string | number>>(new Set());
-  const [searchParams] = useSearchParams();
   const [userInfo, setUserInfo] = useState<{ department: string; year: string } | null>(null);
+  const [subjects, setSubjects] = useState<any[]>([]);
+  const [selectedSubject, setSelectedSubject] = useState("");
 
 
   useEffect(() => {
@@ -57,7 +48,18 @@ const FlashcardsPage = () => {
         const storedUserInfo = localStorage.getItem("userInfo");
         if (storedUserInfo) {
           const user = JSON.parse(storedUserInfo);
-          setUserInfo({ department: user.department, year: user.year });
+          
+          // Normalize year format
+          let normalizedYear = user.year;
+          if (!normalizedYear.includes('-year')) {
+            normalizedYear = `${user.year}-year`;
+          }
+          
+          setUserInfo({ department: user.department, year: normalizedYear });
+          
+          // Load subjects for this department and year
+          const userSubjects = getSubjectsByDeptYear(user.department, normalizedYear);
+          setSubjects(userSubjects);
           
           // Map stored department/year to display format
           const deptMap: Record<string, string> = {
@@ -91,8 +93,8 @@ const FlashcardsPage = () => {
 
   const handleAddCard = () => {
     (async () => {
-      // Department and year are auto-filled from signup
-      if (front.trim() && back.trim() && userInfo) {
+      // Department, year, and subject are required
+      if (front.trim() && back.trim() && selectedSubject && userInfo) {
         try {
           setCreating(true);
           
@@ -103,6 +105,7 @@ const FlashcardsPage = () => {
             back: back.trim(),
             department: userInfo.department,
             year: userInfo.year,
+            subjectId: selectedSubject,
             difficulty,
             tags: tagArray,
             public: true
@@ -113,15 +116,17 @@ const FlashcardsPage = () => {
           const response = await flashcardAPI.create(flashcardData as any);
           console.log('Flashcard created:', response);
           
-          addCard({ front, back, department, year: userInfo.year, difficulty } as any);
+          const selectedSubjectData = subjects.find(s => s.id === selectedSubject);
+          
+          addCard({ front, back, department, year: userInfo.year, difficulty, subjectId: selectedSubject } as any);
           
           toast.success("Flashcard created successfully!", {
-            description: `${userInfo.department.toUpperCase()} • ${userInfo.year}`
+            description: `${selectedSubjectData?.name || 'Subject'} • ${userInfo.department.toUpperCase()}`
           });
           
           setFront("");
           setBack("");
-          // Don't reset department and year - they're auto-filled
+          setSelectedSubject("");
           setDifficulty("medium");
         } catch (error: any) {
           console.error("Error creating flashcard:", error);
@@ -139,6 +144,8 @@ const FlashcardsPage = () => {
         } finally {
           setCreating(false);
         }
+      } else {
+        toast.error("Please fill in all fields including subject");
       }
     })();
   };
@@ -212,6 +219,24 @@ const FlashcardsPage = () => {
             <div className="space-y-4">
               <div>
                 <label className="text-sm font-medium text-foreground mb-2 block">
+                  Subject *
+                </label>
+                <Select value={selectedSubject} onValueChange={setSelectedSubject}>
+                  <SelectTrigger className="h-12">
+                    <SelectValue placeholder="Select a subject" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {subjects.map((subject) => (
+                      <SelectItem key={subject.id} value={subject.id}>
+                        {subject.name} ({subject.code})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <label className="text-sm font-medium text-foreground mb-2 block">
                   Department {userInfo && <Badge variant="secondary" className="ml-2">Auto-filled</Badge>}
                 </label>
                 <Input
@@ -263,7 +288,7 @@ const FlashcardsPage = () => {
 
               <Button 
                 onClick={handleAddCard} 
-                disabled={creating || !front.trim() || !back.trim()} 
+                disabled={creating || !front.trim() || !back.trim() || !selectedSubject} 
                 className="w-full h-12 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold"
               >
                 {creating ? (

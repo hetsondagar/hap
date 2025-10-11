@@ -1,6 +1,7 @@
 // src/pages/CreateFlashcardPage.tsx
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import Header from '@/components/Header';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -77,7 +78,7 @@ const CreateFlashcardPage = () => {
       } as any);
       
       console.log('Recent flashcards loaded:', response);
-      const flashcards = response.flashcards || response.data || response || [];
+      const flashcards = response.data?.flashcards || response.flashcards || response.data || response || [];
       setRecentFlashcards(flashcards);
     } catch (error: any) {
       console.error("Error loading recent flashcards:", error);
@@ -172,8 +173,10 @@ const CreateFlashcardPage = () => {
   }
 
   return (
-    <div className="min-h-screen p-8 bg-gradient-subtle">
-      <div className="max-w-2xl mx-auto">
+    <div className="min-h-screen bg-gradient-subtle">
+      <Header />
+      <div className="pt-32 pb-16 px-8">
+        <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="mb-8">
           <Button 
@@ -399,6 +402,7 @@ const CreateFlashcardPage = () => {
               <p className="text-muted-foreground">No flashcards created yet. Create your first flashcard above!</p>
             </Card>
           )}
+        </div>
         </div>
       </div>
     </div>

@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import Header from '@/components/Header';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -150,8 +151,10 @@ export default function QuizPage() {
   };
 
   return (
-    <div className="p-6 min-h-screen">
-      <h1 className="text-4xl font-bold text-primary text-center">
+    <div className="min-h-screen">
+      <Header />
+      <div className="pt-32 pb-16 px-6">
+        <h1 className="text-4xl font-bold text-primary text-center">
         Interactive Quiz Mode
       </h1>
       <p className="mt-4 text-muted-foreground text-center max-w-2xl mx-auto">
@@ -371,6 +374,7 @@ export default function QuizPage() {
           </div>
         </Card>
       )}
+      </div>
     </div>
   );
 }

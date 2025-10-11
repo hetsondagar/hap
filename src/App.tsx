@@ -16,7 +16,7 @@ import FlashcardsPage from "./pages/FlashcardsPage"; // global flashcards
 import QuizPage from "./pages/QuizPage";
 import CommunityPage from "./pages/CommunityPage";
 import DeckDetail from "./pages/community/DeckDetail";
-import AnalyticsPage from "./pages/AnalyticsPage";
+import DashboardPage from "./pages/DashboardPage";
 
 import SubjectsPage from "./pages/SubjectsPage";
 import SubjectFlashcardsPage from "./pages/SubjectFlashcardsPage";
@@ -44,7 +44,7 @@ const App = () => (
             <Route path="/quiz" element={<QuizPage />} />
             <Route path="/community" element={<CommunityPage />} />
             <Route path="/community/:id" element={<DeckDetail />} />
-            <Route path="/analytics" element={<AnalyticsPage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
 
             {/* Subjects flow */}
             <Route path="/subjects" element={<SubjectsPage />} />
