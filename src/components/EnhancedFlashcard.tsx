@@ -91,16 +91,16 @@ const EnhancedFlashcard: React.FC<EnhancedFlashcardProps> = ({
             className={cn(
               "absolute inset-0 w-full h-full backface-hidden",
               "flex flex-col justify-between p-6",
-              "bg-gradient-to-br from-blue-100/90 via-indigo-100/90 to-blue-200/90",
-              "dark:from-blue-950/60 dark:via-indigo-950/60 dark:to-blue-900/60",
-              "border border-primary/30 dark:border-primary/40"
+              "bg-gradient-to-br from-slate-800 via-slate-700 to-slate-800",
+              "dark:from-slate-900 dark:via-slate-800 dark:to-slate-900",
+              "border border-slate-600 dark:border-slate-700"
             )}
           >
             {/* Header */}
             <div className="flex items-start justify-between">
               <div className="flex flex-wrap gap-2">
                 {department && (
-                  <Badge variant="secondary" className="text-xs bg-white/80 dark:bg-white/10 text-foreground dark:text-foreground border-white/40 dark:border-white/20">
+                  <Badge variant="secondary" className="text-xs bg-slate-600 dark:bg-slate-700 text-white dark:text-white border-slate-500 dark:border-slate-600">
                     {department}
                   </Badge>
                 )}
@@ -162,8 +162,7 @@ const EnhancedFlashcard: React.FC<EnhancedFlashcardProps> = ({
             {/* Question Content */}
             <div className="flex-1 flex items-center justify-center px-4">
               <div className="text-center">
-                <div className="text-5xl mb-4 drop-shadow-sm">❓</div>
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white leading-relaxed drop-shadow-sm">
+                <h3 className="text-lg font-bold text-white dark:text-white leading-relaxed">
                   {front}
                 </h3>
               </div>
@@ -171,11 +170,11 @@ const EnhancedFlashcard: React.FC<EnhancedFlashcardProps> = ({
 
             {/* Footer */}
             <div className="flex items-center justify-between">
-              <div className="text-xs text-gray-600 dark:text-gray-400 font-medium">
+              <div className="text-xs text-gray-300 dark:text-gray-400 font-medium">
                 {year && phase && `${year} • ${phase}`}
                 {year && !phase && year}
               </div>
-              <div className="flex items-center gap-2 text-sm text-blue-700 dark:text-blue-300 font-medium">
+              <div className="flex items-center gap-2 text-sm text-blue-400 dark:text-blue-300 font-medium">
                 <Eye className="h-4 w-4" />
                 <span>Click to reveal</span>
               </div>
@@ -187,15 +186,15 @@ const EnhancedFlashcard: React.FC<EnhancedFlashcardProps> = ({
             className={cn(
               "absolute inset-0 w-full h-full backface-hidden rotate-y-180",
               "flex flex-col justify-between p-6",
-              "bg-gradient-to-br from-emerald-100/90 via-green-100/90 to-emerald-200/90",
-              "dark:from-emerald-950/60 dark:via-green-950/60 dark:to-emerald-900/60",
-              "border border-emerald-400/40 dark:border-emerald-500/40"
+              "bg-gradient-to-br from-slate-800 via-slate-700 to-slate-800",
+              "dark:from-slate-900 dark:via-slate-800 dark:to-slate-900",
+              "border border-slate-600 dark:border-slate-700"
             )}
           >
             {/* Header */}
             <div className="flex items-start justify-between">
               <div className="flex flex-wrap gap-2">
-                <Badge variant="secondary" className="text-xs bg-emerald-200 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300 border-emerald-400/40 dark:border-emerald-500/40">
+                <Badge variant="secondary" className="text-xs bg-green-700 dark:bg-green-800 text-green-200 dark:text-green-300 border-green-600 dark:border-green-700">
                   Answer
                 </Badge>
                 <Badge 
@@ -256,8 +255,7 @@ const EnhancedFlashcard: React.FC<EnhancedFlashcardProps> = ({
             {/* Answer Content */}
             <div className="flex-1 flex items-center justify-center px-4">
               <div className="text-center">
-                <div className="text-5xl mb-4 drop-shadow-sm">💡</div>
-                <p className="text-lg font-bold text-gray-900 dark:text-white leading-relaxed drop-shadow-sm">
+                <p className="text-lg font-bold text-white dark:text-white leading-relaxed">
                   {back}
                 </p>
               </div>
@@ -265,11 +263,11 @@ const EnhancedFlashcard: React.FC<EnhancedFlashcardProps> = ({
 
             {/* Footer */}
             <div className="flex items-center justify-between">
-              <div className="text-xs text-gray-600 dark:text-gray-400 font-medium">
+              <div className="text-xs text-gray-300 dark:text-gray-400 font-medium">
                 {year && phase && `${year} • ${phase}`}
                 {year && !phase && year}
               </div>
-              <div className="flex items-center gap-2 text-sm text-emerald-700 dark:text-emerald-300 font-medium">
+              <div className="flex items-center gap-2 text-sm text-green-400 dark:text-green-300 font-medium">
                 <EyeOff className="h-4 w-4" />
                 <span>Click to hide</span>
               </div>

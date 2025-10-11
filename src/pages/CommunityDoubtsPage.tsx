@@ -64,7 +64,9 @@ const CommunityDoubtsPage: React.FC = () => {
     
     if (storedUserInfo) {
       const user = JSON.parse(storedUserInfo);
-      setCurrentUserYear(user.year || '');
+      const userYear = user.year || '';
+      setCurrentUserYear(userYear);
+      console.log('Setting user year from localStorage:', userYear);
     }
 
     // Load user profile to get liked posts
@@ -74,8 +76,10 @@ const CommunityDoubtsPage: React.FC = () => {
         const userData = prof?.data?.user || prof?.user || prof?.data || prof;
         if (userData) {
           setCurrentUsername(userData.username || storedUsername || '');
-          setCurrentUserYear(userData.year || '');
+          const year = userData.year || '';
+          setCurrentUserYear(year);
           setCurrentUserId(userData.id || userData._id || storedUserId || '');
+          console.log('Setting user year from profile:', year);
           
           // Get liked posts - handle both ObjectId strings and populated objects
           if (userData.likedPosts && Array.isArray(userData.likedPosts)) {
@@ -222,9 +226,12 @@ const CommunityDoubtsPage: React.FC = () => {
       }));
 
       setPostComment({ ...postComment, [id]: "" });
-      toast.success("Comment added!");
+      toast.success("Answer posted!");
+      
+      // Reload posts to get the updated comment with year from backend
+      await loadPosts();
     } catch (e: any) {
-      toast.error("Failed to add comment");
+      toast.error("Failed to post answer");
     }
   };
 

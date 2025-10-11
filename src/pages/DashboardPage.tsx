@@ -516,30 +516,16 @@ const DashboardPage = () => {
             </div>
             
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
-              {badges.earned.slice(0, 6).map((badge: any) => {
-                const Icon = getBadgeIcon(badge.key);
-                return (
-                  <div 
-                    key={badge.key}
-                    className="group relative"
-                  >
-                    <div className="flex flex-col items-center gap-2 p-4 rounded-xl bg-card dark:bg-card/50 border border-border/40 dark:border-border/30 hover:border-primary/50 dark:hover:border-primary/60 transition-all duration-300 cursor-pointer">
-                      <div className={`w-12 h-12 ${getBadgeColor(badge.key)} rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                        <Icon className="w-6 h-6 text-white" />
-                      </div>
-                      <div className="text-center">
-                        <p className="text-xs font-medium text-foreground line-clamp-1">{badge.name}</p>
-                        <p className="text-xs text-muted-foreground">+{badge.xp} XP</p>
-                      </div>
-                    </div>
-                    
-                    {/* Tooltip on hover */}
-                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-popover text-popover-foreground text-xs rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10 border border-border">
-                      {badge.description}
-                    </div>
-                  </div>
-                );
-              })}
+              {badges.earned.slice(0, 6).map((badge: any, index: number) => (
+                <AnimatedBadge
+                  key={badge.key}
+                  achievement={badge}
+                  isEarned={true}
+                  size="sm"
+                  className="animate-in"
+                  style={{ animationDelay: `${index * 50}ms` }}
+                />
+              ))}
             </div>
             
             {badges.earned.length > 6 && (

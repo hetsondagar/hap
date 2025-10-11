@@ -68,6 +68,11 @@ export const API_ENDPOINTS = {
     LEADERBOARD: (department: string) => `${API_BASE_URL}/gamification/leaderboard/${department}`,
     CHECK_BADGES: `${API_BASE_URL}/gamification/check-badges`,
   },
+  
+  QUIZ: {
+    GENERATE: (subjectId: string) => `${API_BASE_URL}/quiz/generate/${subjectId}`,
+    SUBMIT: `${API_BASE_URL}/quiz/submit`,
+  },
 };
 
 // API utility functions
@@ -575,6 +580,21 @@ export const gamificationAPI = {
   checkBadges: async () => {
     const response = await apiRequest(API_ENDPOINTS.GAMIFICATION.CHECK_BADGES, {
       method: 'POST',
+    });
+    return response.json();
+  },
+};
+
+export const quizAPI = {
+  generateQuiz: async (subjectId: string) => {
+    const response = await apiRequest(API_ENDPOINTS.QUIZ.GENERATE(subjectId));
+    return response.json();
+  },
+  
+  submitQuiz: async (data: { subjectId: string; answers: number[]; timeTaken: number }) => {
+    const response = await apiRequest(API_ENDPOINTS.QUIZ.SUBMIT, {
+      method: 'POST',
+      body: JSON.stringify(data),
     });
     return response.json();
   },

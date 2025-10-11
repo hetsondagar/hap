@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import AnimatedBadge from '@/components/AnimatedBadge';
 import { 
   Trophy, 
   Star, 
@@ -138,42 +139,40 @@ const Gamification = () => {
     <div className="min-h-screen">
       <Header />
       
-      {/* Hero Section with User Stats */}
-      <section className="pt-24 pb-16">
+      {/* Compact Hero Section */}
+      <section className="pt-24 pb-8">
         <div className="container mx-auto px-4">
-          <div className="text-center max-w-4xl mx-auto mb-12">
-            <h1 className="text-5xl md:text-6xl font-display font-bold mb-6">
-              <span className="gradient-text">Level Up</span>
-              <br />
-              Your Learning
+          <div className="text-center mb-8">
+            <h1 className="text-4xl md:text-5xl font-display font-bold mb-4">
+              <span className="gradient-text">Level Up</span> Your Learning
             </h1>
-            <p className="text-xl text-muted-foreground">
-              Track your progress, earn badges, and compete with fellow students!
+            <p className="text-lg text-muted-foreground">
+              Track progress, earn badges, and compete with fellow students!
             </p>
           </div>
 
-          {/* User Profile Card */}
-          <Card className="p-8 max-w-4xl mx-auto glass-effect circuit-pattern border-2 border-white/10 dark:border-white/20">
-            <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
-              <div className="w-24 h-24 bg-gradient-primary rounded-full flex items-center justify-center shadow-glow">
-                <Crown className="w-12 h-12 text-white" />
+          {/* Compact User Profile Card */}
+          <Card className="p-6 max-w-4xl mx-auto glass-effect circuit-pattern border-2 border-white/10 dark:border-white/20 mb-8">
+            <div className="flex flex-col md:flex-row items-center md:items-start gap-4">
+              <div className="w-16 h-16 bg-gradient-primary rounded-full flex items-center justify-center shadow-glow">
+                <Crown className="w-8 h-8 text-white" />
               </div>
               
               <div className="flex-1 text-center md:text-left">
                 <div className="flex items-center gap-3 justify-center md:justify-start mb-2">
-                  <h2 className="text-3xl font-bold">{user.username}</h2>
+                  <h2 className="text-2xl font-bold">{user.username}</h2>
                   <Badge variant="secondary" className="text-sm">
                     {user.department?.toUpperCase() || 'N/A'} • {user.year || 'N/A'}
                   </Badge>
                 </div>
                 
-                <div className="flex items-center gap-2 justify-center md:justify-start mb-4">
+                <div className="flex items-center gap-2 justify-center md:justify-start mb-3">
                   <p className={`text-lg font-semibold ${levelInfo.color}`}>
                     Level {user.level || 1} • {levelInfo.title}
                   </p>
                 </div>
 
-                {/* XP Progress */}
+                {/* Compact XP Progress */}
                 <div className="mb-4">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm text-muted-foreground">
@@ -183,43 +182,43 @@ const Gamification = () => {
                       {levelProgress?.xpToNextLevel || 100} XP to next level
                     </span>
                   </div>
-                  <Progress value={levelProgress?.progress || 0} className="h-3" />
+                  <Progress value={levelProgress?.progress || 0} className="h-2" />
                 </div>
 
-                {/* Quick Stats */}
-                <div className="grid grid-cols-3 md:grid-cols-5 gap-4 mt-6">
+                {/* Compact Stats Grid */}
+                <div className="grid grid-cols-5 gap-3">
                   <div className="text-center">
                     <div className="flex items-center justify-center gap-1 mb-1">
-                      <Flame className="h-4 w-4 text-orange-500" />
-                      <p className="text-2xl font-bold">{user.streak || 0}</p>
+                      <Flame className="h-3 w-3 text-orange-500" />
+                      <p className="text-lg font-bold">{user.streak || 0}</p>
                     </div>
-                    <p className="text-xs text-muted-foreground">Day Streak</p>
+                    <p className="text-xs text-muted-foreground">Streak</p>
                   </div>
                   <div className="text-center">
                     <div className="flex items-center justify-center gap-1 mb-1">
-                      <BookOpen className="h-4 w-4 text-blue-500" />
-                      <p className="text-2xl font-bold">{user.totalFlashcardsCreated || 0}</p>
+                      <BookOpen className="h-3 w-3 text-blue-500" />
+                      <p className="text-lg font-bold">{user.totalFlashcardsCreated || 0}</p>
                     </div>
-                    <p className="text-xs text-muted-foreground">Flashcards</p>
+                    <p className="text-xs text-muted-foreground">Cards</p>
                   </div>
                   <div className="text-center">
                     <div className="flex items-center justify-center gap-1 mb-1">
-                      <Layers className="h-4 w-4 text-purple-500" />
-                      <p className="text-2xl font-bold">{user.totalDecksCreated || 0}</p>
+                      <Layers className="h-3 w-3 text-purple-500" />
+                      <p className="text-lg font-bold">{user.totalDecksCreated || 0}</p>
                     </div>
                     <p className="text-xs text-muted-foreground">Decks</p>
                   </div>
                   <div className="text-center">
                     <div className="flex items-center justify-center gap-1 mb-1">
-                      <Target className="h-4 w-4 text-green-500" />
-                      <p className="text-2xl font-bold">{user.totalQuizzesTaken || 0}</p>
+                      <Target className="h-3 w-3 text-green-500" />
+                      <p className="text-lg font-bold">{user.totalQuizzesTaken || 0}</p>
                     </div>
                     <p className="text-xs text-muted-foreground">Quizzes</p>
                   </div>
                   <div className="text-center">
                     <div className="flex items-center justify-center gap-1 mb-1">
-                      <MessageSquare className="h-4 w-4 text-pink-500" />
-                      <p className="text-2xl font-bold">{user.totalCommentsPosted || 0}</p>
+                      <MessageSquare className="h-3 w-3 text-pink-500" />
+                      <p className="text-lg font-bold">{user.totalCommentsPosted || 0}</p>
                     </div>
                     <p className="text-xs text-muted-foreground">Comments</p>
                   </div>
@@ -230,355 +229,281 @@ const Gamification = () => {
         </div>
       </section>
 
-      {/* Achievements & Badges */}
-      <section className="py-16 bg-muted/20">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-display font-bold mb-4">Achievements & Badges</h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-6">
-              Unlock badges by completing challenges. {badges?.total || 0} / {badges?.totalPossible || 27} earned!
-            </p>
-            <Progress value={badges?.total && badges?.totalPossible ? (badges.total / badges.totalPossible) * 100 : 0} className="max-w-md mx-auto h-3" />
-          </div>
-
-          {/* Earned Badges */}
-          {badges?.earned && badges.earned.length > 0 && (
-            <div className="mb-12">
-              <h3 className="text-2xl font-bold mb-6 flex items-center gap-2">
-                <Sparkles className="h-6 w-6 text-yellow-500" />
-                Your Badges ({badges.earned.length})
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {badges.earned.map((achievement: any) => {
-                  const Icon = getBadgeIcon(achievement.key);
-                  return (
-                    <Card key={achievement.key} className="glass-effect circuit-pattern feature-card-hover p-6 border-2 border-white/10 dark:border-white/20 relative overflow-hidden">
-                      <div className="absolute top-2 right-2">
-                        <CheckCircle2 className="h-5 w-5 text-green-500" />
-                      </div>
-                      <div className="flex items-start space-x-4">
-                        <div className={`w-16 h-16 ${getBadgeColor(achievement.key, true)} rounded-xl flex items-center justify-center shadow-lg`}>
-                          <Icon className="w-8 h-8 text-white" />
-                        </div>
-                        <div className="flex-1">
-                          <h3 className="font-bold text-lg mb-1">{achievement.name}</h3>
-                          <p className="text-sm text-muted-foreground mb-3">{achievement.description}</p>
-                          {achievement.xp > 0 && (
-                            <div className="flex items-center gap-1">
-                              <Star className="h-4 w-4 text-yellow-500" />
-                              <span className="font-medium text-sm">+{achievement.xp} XP</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </Card>
-                  );
-                })}
+      {/* Main Content Grid */}
+      <div className="container mx-auto px-4 pb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          {/* Left Column: Achievements & Badges */}
+          <div className="lg:col-span-2 space-y-8">
+            
+            {/* Badges Overview */}
+            <Card className="p-6 glass-effect border-2 border-white/10 dark:border-white/20">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold mb-2">Achievements & Badges</h2>
+                  <p className="text-muted-foreground">
+                    {badges?.total || 0} / {badges?.totalPossible || 27} badges earned
+                  </p>
+                </div>
+                <div className="text-right">
+                  <div className="text-3xl font-bold text-primary">
+                    {Math.round((badges?.total / badges?.totalPossible) * 100) || 0}%
+                  </div>
+                  <p className="text-sm text-muted-foreground">Complete</p>
+                </div>
               </div>
-            </div>
-          )}
+              <Progress 
+                value={badges?.total && badges?.totalPossible ? (badges.total / badges.totalPossible) * 100 : 0} 
+                className="h-3 mb-6" 
+              />
 
-          {/* Available Badges */}
-          {badges?.available && badges.available.length > 0 && (
-            <div>
-              <h3 className="text-2xl font-bold mb-6 flex items-center gap-2">
-                <Lock className="h-6 w-6 text-muted-foreground" />
-                Available Badges ({badges.available.length})
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {badges.available.map((achievement: any) => {
-                  const Icon = getBadgeIcon(achievement.key);
-                  return (
-                    <Card key={achievement.key} className="glass-effect circuit-pattern p-6 border-2 border-white/10 dark:border-white/20 opacity-70 hover:opacity-100 transition-opacity">
-                      <div className="flex items-start space-x-4">
-                        <div className={`w-16 h-16 ${getBadgeColor(achievement.key, false)} rounded-xl flex items-center justify-center`}>
-                          <Icon className="w-8 h-8 text-white opacity-50" />
-                        </div>
-                        <div className="flex-1">
-                          <h3 className="font-bold text-lg mb-1 text-muted-foreground">{achievement.name}</h3>
-                          <p className="text-sm text-muted-foreground mb-3">{achievement.description}</p>
-                          {achievement.xp > 0 && (
-                            <div className="flex items-center gap-1">
-                              <Star className="h-4 w-4 text-muted-foreground" />
-                              <span className="text-sm text-muted-foreground">+{achievement.xp} XP</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </Card>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-        </div>
-      </section>
+              {/* Earned Badges - Compact Grid */}
+              {badges?.earned && badges.earned.length > 0 && (
+                <div className="mb-6">
+                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+                    <Sparkles className="h-5 w-5 text-yellow-500" />
+                    Your Badges ({badges.earned.length})
+                  </h3>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    {badges.earned.map((achievement: any, index: number) => (
+                      <AnimatedBadge
+                        key={achievement.key}
+                        achievement={achievement}
+                        isEarned={true}
+                        size="sm"
+                        className="animate-in"
+                        style={{ animationDelay: `${index * 50}ms` }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
 
-      {/* Department-wise Leaderboard */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-display font-bold mb-4">Department Leaderboard</h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              See who's leading in your department and across all departments
-            </p>
-          </div>
-
-          {/* Department Selector */}
-          <div className="flex justify-center gap-2 mb-8 flex-wrap">
-            <Button
-              variant={selectedDepartment === 'all' ? 'default' : 'outline'}
-              onClick={() => loadLeaderboard('all')}
-            >
-              All Departments
-            </Button>
-            <Button
-              variant={selectedDepartment === 'cse' ? 'default' : 'outline'}
-              onClick={() => loadLeaderboard('cse')}
-            >
-              CSE
-            </Button>
-            <Button
-              variant={selectedDepartment === 'mechanical' ? 'default' : 'outline'}
-              onClick={() => loadLeaderboard('mechanical')}
-            >
-              Mechanical
-            </Button>
-            <Button
-              variant={selectedDepartment === 'electrical' ? 'default' : 'outline'}
-              onClick={() => loadLeaderboard('electrical')}
-            >
-              Electrical
-            </Button>
-            <Button
-              variant={selectedDepartment === 'chemical' ? 'default' : 'outline'}
-              onClick={() => loadLeaderboard('chemical')}
-            >
-              Chemical
-            </Button>
-            <Button
-              variant={selectedDepartment === 'civil' ? 'default' : 'outline'}
-              onClick={() => loadLeaderboard('civil')}
-            >
-              Civil
-            </Button>
-          </div>
-
-          {/* Leaderboard Table */}
-          <Card className="glass-effect circuit-pattern border-2 border-white/10 dark:border-white/20 overflow-hidden max-w-4xl mx-auto">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="border-b border-border">
-                  <tr className="bg-muted/50">
-                    <th className="text-left p-4 font-semibold">Rank</th>
-                    <th className="text-left p-4 font-semibold">Player</th>
-                    <th className="text-left p-4 font-semibold">Department</th>
-                    <th className="text-center p-4 font-semibold">Level</th>
-                    <th className="text-center p-4 font-semibold">XP</th>
-                    <th className="text-center p-4 font-semibold">Streak</th>
-                    <th className="text-center p-4 font-semibold">Badges</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {leaderboard.length === 0 ? (
-                    <tr>
-                      <td colSpan={7} className="text-center py-12 text-muted-foreground">
-                        No players found for this department yet
-                      </td>
-                    </tr>
-                  ) : (
-                    leaderboard.map((player: any, index: number) => {
-                      const isCurrentUser = player.username === user.username;
-                      const rankIcon = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '';
-                      
-                      return (
-                        <tr 
-                          key={player._id} 
-                          className={`border-b border-border/50 hover:bg-muted/30 transition ${
-                            isCurrentUser ? 'bg-primary/5 border-primary/20' : ''
-                          }`}
-                        >
-                          <td className="p-4">
-                            <div className="flex items-center gap-2">
-                              <span className="text-2xl">{rankIcon}</span>
-                              <span className="font-semibold text-lg">{index + 1}</span>
-                            </div>
-                          </td>
-                          <td className="p-4">
-                            <div className="flex items-center gap-2">
-                              <span className={`font-semibold ${isCurrentUser ? 'text-primary' : ''}`}>
-                                {player.username}
-                              </span>
-                              {isCurrentUser && (
-                                <Badge variant="default" className="text-xs">You</Badge>
-                              )}
-                            </div>
-                          </td>
-                          <td className="p-4">
-                            <Badge variant="secondary" className="text-xs">
-                              {player.department?.toUpperCase() || 'N/A'}
-                            </Badge>
-                          </td>
-                          <td className="p-4 text-center">
-                            <Badge variant="outline" className="font-bold">
-                              {player.level || 1}
-                            </Badge>
-                          </td>
-                          <td className="p-4 text-center">
-                            <div className="flex items-center justify-center gap-1">
-                              <Zap className="h-4 w-4 text-yellow-500" />
-                              <span className="font-semibold">{player.xp || 0}</span>
-                            </div>
-                          </td>
-                          <td className="p-4 text-center">
-                            <div className="flex items-center justify-center gap-1">
-                              <Flame className="h-4 w-4 text-orange-500" />
-                              <span className="font-semibold">{player.streak || 0}</span>
-                            </div>
-                          </td>
-                          <td className="p-4 text-center">
-                            <Badge variant="secondary">{player.badges?.length || 0}</Badge>
-                          </td>
-                        </tr>
-                      );
-                    })
+              {/* Available Badges - Compact Grid */}
+              {badges?.available && badges.available.length > 0 && (
+                <div>
+                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+                    <Lock className="h-5 w-5 text-muted-foreground" />
+                    Available Badges ({badges.available.length})
+                  </h3>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    {badges.available.slice(0, 6).map((achievement: any, index: number) => (
+                      <AnimatedBadge
+                        key={achievement.key}
+                        achievement={achievement}
+                        isEarned={false}
+                        progress={achievement.progress || 0}
+                        showProgress={true}
+                        size="sm"
+                        className="animate-in"
+                        style={{ animationDelay: `${(index + badges.earned.length) * 50}ms` }}
+                      />
+                    ))}
+                  </div>
+                  {badges.available.length > 6 && (
+                    <div className="mt-4 text-center">
+                      <Button variant="outline" size="sm">
+                        View All {badges.available.length} Available Badges
+                      </Button>
+                    </div>
                   )}
-                </tbody>
-              </table>
-            </div>
-          </Card>
-        </div>
-      </section>
-
-      {/* How to Earn XP */}
-      <section className="py-16 bg-muted/20">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-display font-bold mb-4">How to Earn XP</h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Every action you take contributes to your progress!
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            <Card className="p-6 glass-effect border-2 border-white/10 dark:border-white/20">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="p-3 bg-blue-500/20 rounded-lg">
-                  <BookOpen className="h-6 w-6 text-blue-500" />
                 </div>
-                <div>
-                  <p className="font-bold text-lg">+10 XP</p>
-                  <p className="text-sm text-muted-foreground">per flashcard</p>
-                </div>
-              </div>
-              <p className="text-sm">Create flashcards to help you and others study</p>
+              )}
             </Card>
 
+            {/* How to Earn XP - Compact */}
             <Card className="p-6 glass-effect border-2 border-white/10 dark:border-white/20">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="p-3 bg-purple-500/20 rounded-lg">
-                  <Layers className="h-6 w-6 text-purple-500" />
+              <h2 className="text-2xl font-bold mb-6">How to Earn XP</h2>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
+                  <BookOpen className="h-5 w-5 text-blue-500" />
+                  <div>
+                    <p className="font-bold">+10 XP</p>
+                    <p className="text-xs text-muted-foreground">per flashcard</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="font-bold text-lg">+25 XP</p>
-                  <p className="text-sm text-muted-foreground">per deck</p>
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
+                  <Layers className="h-5 w-5 text-purple-500" />
+                  <div>
+                    <p className="font-bold">+25 XP</p>
+                    <p className="text-xs text-muted-foreground">per deck</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
+                  <Target className="h-5 w-5 text-green-500" />
+                  <div>
+                    <p className="font-bold">+30 XP</p>
+                    <p className="text-xs text-muted-foreground">perfect quiz</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
+                  <MessageSquare className="h-5 w-5 text-pink-500" />
+                  <div>
+                    <p className="font-bold">+5 XP</p>
+                    <p className="text-xs text-muted-foreground">per comment</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
+                  <Flame className="h-5 w-5 text-orange-500" />
+                  <div>
+                    <p className="font-bold">+5 XP</p>
+                    <p className="text-xs text-muted-foreground">daily streak</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
+                  <TrendingUp className="h-5 w-5 text-indigo-500" />
+                  <div>
+                    <p className="font-bold">+15 XP</p>
+                    <p className="text-xs text-muted-foreground">per post</p>
+                  </div>
                 </div>
               </div>
-              <p className="text-sm">Organize flashcards into study decks</p>
-            </Card>
-
-            <Card className="p-6 glass-effect border-2 border-white/10 dark:border-white/20">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="p-3 bg-green-500/20 rounded-lg">
-                  <Target className="h-6 w-6 text-green-500" />
-                </div>
-                <div>
-                  <p className="font-bold text-lg">Up to +30 XP</p>
-                  <p className="text-sm text-muted-foreground">per quiz</p>
-                </div>
-              </div>
-              <p className="text-sm">Based on your quiz performance (100% = 30 XP)</p>
-            </Card>
-
-            <Card className="p-6 glass-effect border-2 border-white/10 dark:border-white/20">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="p-3 bg-yellow-500/20 rounded-lg">
-                  <Star className="h-6 w-6 text-yellow-500" />
-                </div>
-                <div>
-                  <p className="font-bold text-lg">+50 XP</p>
-                  <p className="text-sm text-muted-foreground">perfect quiz</p>
-                </div>
-              </div>
-              <p className="text-sm">Bonus for scoring 100% on a quiz</p>
-            </Card>
-
-            <Card className="p-6 glass-effect border-2 border-white/10 dark:border-white/20">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="p-3 bg-pink-500/20 rounded-lg">
-                  <MessageSquare className="h-6 w-6 text-pink-500" />
-                </div>
-                <div>
-                  <p className="font-bold text-lg">+5 XP</p>
-                  <p className="text-sm text-muted-foreground">per comment</p>
-                </div>
-              </div>
-              <p className="text-sm">Help others by commenting on decks and posts</p>
-            </Card>
-
-            <Card className="p-6 glass-effect border-2 border-white/10 dark:border-white/20">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="p-3 bg-orange-500/20 rounded-lg">
-                  <Flame className="h-6 w-6 text-orange-500" />
-                </div>
-                <div>
-                  <p className="font-bold text-lg">+5 XP</p>
-                  <p className="text-sm text-muted-foreground">daily streak</p>
-                </div>
-              </div>
-              <p className="text-sm">Study every day to maintain your streak</p>
-            </Card>
-
-            <Card className="p-6 glass-effect border-2 border-white/10 dark:border-white/20">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="p-3 bg-indigo-500/20 rounded-lg">
-                  <TrendingUp className="h-6 w-6 text-indigo-500" />
-                </div>
-                <div>
-                  <p className="font-bold text-lg">+15 XP</p>
-                  <p className="text-sm text-muted-foreground">per post</p>
-                </div>
-              </div>
-              <p className="text-sm">Ask questions or start discussions</p>
             </Card>
           </div>
-        </div>
-      </section>
 
-      {/* CTA */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <Card className="glass-effect circuit-pattern feature-card-hover p-12 text-center border-2 border-white/10 dark:border-white/20 max-w-3xl mx-auto">
-            <Trophy className="h-16 w-16 text-primary mx-auto mb-6" />
-            <h2 className="text-3xl font-display font-bold mb-4">
-              Keep Learning, Keep Earning!
-            </h2>
-            <p className="text-lg text-muted-foreground mb-8">
-              Every flashcard you create, every quiz you take, and every comment you post brings you closer to the top of the leaderboard.
-            </p>
-            <div className="flex gap-4 justify-center">
-              <Button size="lg" onClick={() => navigate('/flashcards')} className="bg-gradient-primary">
-                <BookOpen className="w-5 h-5 mr-2" />
-                Create Flashcards
-              </Button>
-              <Button size="lg" variant="outline" onClick={() => navigate('/quiz')}>
-                <Target className="w-5 h-5 mr-2" />
-                Take a Quiz
-              </Button>
-            </div>
-          </Card>
+          {/* Right Column: Leaderboard */}
+          <div className="space-y-6">
+            <Card className="p-6 glass-effect border-2 border-white/10 dark:border-white/20">
+              <h2 className="text-2xl font-bold mb-4">Leaderboard</h2>
+              
+              {/* Department Selector */}
+              <div className="grid grid-cols-2 gap-2 mb-6">
+                <Button
+                  variant={selectedDepartment === 'all' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => loadLeaderboard('all')}
+                >
+                  All
+                </Button>
+                <Button
+                  variant={selectedDepartment === 'cse' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => loadLeaderboard('cse')}
+                >
+                  CSE
+                </Button>
+                <Button
+                  variant={selectedDepartment === 'mechanical' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => loadLeaderboard('mechanical')}
+                >
+                  Mech
+                </Button>
+                <Button
+                  variant={selectedDepartment === 'electrical' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => loadLeaderboard('electrical')}
+                >
+                  Elec
+                </Button>
+                <Button
+                  variant={selectedDepartment === 'chemical' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => loadLeaderboard('chemical')}
+                >
+                  Chem
+                </Button>
+                <Button
+                  variant={selectedDepartment === 'civil' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => loadLeaderboard('civil')}
+                >
+                  Civil
+                </Button>
+              </div>
+
+              {/* Compact Leaderboard */}
+              <div className="space-y-3">
+                {leaderboard.length === 0 ? (
+                  <p className="text-center py-8 text-muted-foreground text-sm">
+                    No players found
+                  </p>
+                ) : (
+                  leaderboard.slice(0, 10).map((player: any, index: number) => {
+                    const isCurrentUser = player.username === user.username;
+                    const rankIcon = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '';
+                    
+                    return (
+                      <div 
+                        key={player._id}
+                        className={`flex items-center justify-between p-3 rounded-lg transition ${
+                          isCurrentUser ? 'bg-primary/10 border border-primary/20' : 'bg-muted/30 hover:bg-muted/50'
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-1">
+                            <span className="text-lg">{rankIcon}</span>
+                            <span className="font-bold text-sm w-6">{index + 1}</span>
+                          </div>
+                          <div>
+                            <p className={`font-semibold text-sm ${isCurrentUser ? 'text-primary' : ''}`}>
+                              {player.username}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {player.department?.toUpperCase() || 'N/A'}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="flex items-center gap-1">
+                            <Zap className="h-3 w-3 text-yellow-500" />
+                            <span className="font-bold text-sm">{player.xp || 0}</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Flame className="h-3 w-3 text-orange-500" />
+                            <span className="text-xs text-muted-foreground">{player.streak || 0}</span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+
+              {leaderboard.length > 10 && (
+                <div className="mt-4 text-center">
+                  <Button variant="outline" size="sm">
+                    View Full Leaderboard
+                  </Button>
+                </div>
+              )}
+            </Card>
+
+            {/* Quick Actions */}
+            <Card className="p-6 glass-effect border-2 border-white/10 dark:border-white/20">
+              <h2 className="text-2xl font-bold mb-4">Quick Actions</h2>
+              <div className="space-y-3">
+                <Button 
+                  size="lg" 
+                  onClick={() => navigate('/flashcards')} 
+                  className="w-full bg-gradient-primary"
+                >
+                  <BookOpen className="w-4 h-4 mr-2" />
+                  Create Flashcards
+                </Button>
+                <Button 
+                  size="lg" 
+                  variant="outline" 
+                  onClick={() => navigate('/quiz')}
+                  className="w-full"
+                >
+                  <Target className="w-4 h-4 mr-2" />
+                  Take a Quiz
+                </Button>
+                <Button 
+                  size="lg" 
+                  variant="outline" 
+                  onClick={() => navigate('/community')}
+                  className="w-full"
+                >
+                  <MessageSquare className="w-4 h-4 mr-2" />
+                  Join Community
+                </Button>
+              </div>
+            </Card>
+          </div>
         </div>
-      </section>
+      </div>
     </div>
   );
 };

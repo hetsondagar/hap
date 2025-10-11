@@ -1,380 +1,421 @@
-"use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Progress } from "@/components/ui/progress";
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import { 
+  Clock, 
+  Target, 
+  Award, 
+  BookOpen, 
+  Users, 
+  TrendingUp,
+  Play,
+  Timer,
+  CheckCircle,
+  XCircle
+} from 'lucide-react';
+import { quizAPI } from '@/lib/api';
+import { toast } from '@/components/ui/sonner';
+import { SUBJECTS_BY_DEPT_YEAR } from '@/data/subjects';
 
-// Flashcard Interface
-interface Flashcard {
-  id: number;
-  department: string;
-  front: string;
-  back: string;
+interface QuizResult {
+  score: number;
+  correctAnswers: number;
+  totalQuestions: number;
+  xpEarned: number;
+  timeTaken: number;
+  results: Array<{
+    questionId: number;
+    userAnswer: number;
+    correctAnswer: number;
+    isCorrect: boolean;
+    explanation: string;
+  }>;
+  performance: string;
 }
 
-type QuizType = "flashcard" | "multipleChoice" | "trueFalse";
+const QuizPage = () => {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [quizStarted, setQuizStarted] = useState(false);
+  const [currentSubject, setCurrentSubject] = useState<string | null>(null);
+  const [questions, setQuestions] = useState<any[]>([]);
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [answers, setAnswers] = useState<number[]>([]);
+  const [timeLeft, setTimeLeft] = useState(20 * 60); // 20 minutes in seconds
+  const [quizResult, setQuizResult] = useState<QuizResult | null>(null);
 
-// Mock Flashcards (replace later with DB data)
-const mockFlashcards: Flashcard[] = [
-  { id: 1, department: "Computer Science", front: "What is Big O of binary search?", back: "O(log n)" },
-  { id: 2, department: "Mechanical", front: "What is Bernoulli’s principle used for?", back: "Fluid dynamics" },
-  { id: 3, department: "Electrical", front: "What does Ohm’s law state?", back: "V = IR" },
-  { id: 4, department: "Chemical", front: "What is Avogadro’s number?", back: "6.022 × 10²³" },
-  { id: 5, department: "Civil", front: "What does RCC stand for?", back: "Reinforced Cement Concrete" },
-  { id: 6, department: "Other", front: "What is the SI unit of force?", back: "Newton" },
-  // ✅ More multiple-choice style flashcards
-  { id: 7, department: "Computer Science", front: "Which data structure uses FIFO?", back: "Queue" },
-  { id: 8, department: "Computer Science", front: "Which protocol is used for web communication?", back: "HTTP" },
-  { id: 9, department: "Mechanical", front: "Which engine cycle is used in cars?", back: "Otto cycle" },
-  { id: 10, department: "Electrical", front: "Which component stores charge?", back: "Capacitor" },
-  { id: 11, department: "Civil", front: "What is the strongest shape in construction?", back: "Triangle" },
-  { id: 12, department: "Chemical", front: "pH < 7 means?", back: "Acidic" },
-];
+  // Get all CSE subjects with year information
+  const cseSubjects = [
+    ...SUBJECTS_BY_DEPT_YEAR.cse['1st-year'].map(subject => ({ ...subject, year: '1st Year' })),
+    ...SUBJECTS_BY_DEPT_YEAR.cse['2nd-year'].map(subject => ({ ...subject, year: '2nd Year' })),
+    ...SUBJECTS_BY_DEPT_YEAR.cse['3rd-year'].map(subject => ({ ...subject, year: '3rd Year' })),
+    ...SUBJECTS_BY_DEPT_YEAR.cse['4th-year'].map(subject => ({ ...subject, year: '4th Year' }))
+  ];
 
-// Shuffle helper
-function shuffle<T>(array: T[]): T[] {
-  return [...array].sort(() => Math.random() - 0.5);
-}
-
-// Generate options for multiple choice
-const getOptions = (card: Flashcard): string[] => {
-  const wrongs = shuffle(
-    mockFlashcards.filter((c) => c.id !== card.id).map((c) => c.back)
-  ).slice(0, 3);
-  return shuffle([card.back, ...wrongs]);
-};
-
-export default function QuizPage() {
-  // Setup state
-  const [department, setDepartment] = useState("All");
-  const [numQuestions, setNumQuestions] = useState(5);
-  const [quizType, setQuizType] = useState<QuizType>("flashcard");
-
-  // Quiz state
-  const [quizCards, setQuizCards] = useState<Flashcard[]>([]);
-  const [currentQ, setCurrentQ] = useState(0);
-  const [showAnswer, setShowAnswer] = useState(false);
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  const [score, setScore] = useState(0);
-  const [streak, setStreak] = useState(0);
-  const [timer, setTimer] = useState(0);
-  const [isActive, setIsActive] = useState(false);
-  const [finished, setFinished] = useState(false);
-  const [wrongAnswers, setWrongAnswers] = useState<Flashcard[]>([]);
-  const [tfStatement, setTfStatement] = useState<string>(""); // stable true/false statement
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/login');
+      return;
+    }
+  }, [navigate]);
 
   // Timer effect
   useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
-    if (isActive && !finished) {
-      interval = setInterval(() => setTimer((t) => t + 1), 1000);
+    let interval: NodeJS.Timeout;
+    
+    if (quizStarted && timeLeft > 0) {
+      interval = setInterval(() => {
+        setTimeLeft(prev => {
+          if (prev <= 1) {
+            handleSubmitQuiz();
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
     }
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [isActive, finished]);
 
-  // Start Quiz
-  const startQuiz = () => {
-    let cards =
-      department === "All"
-        ? mockFlashcards
-        : mockFlashcards.filter((c) => c.department === department);
-    cards = shuffle(cards).slice(0, numQuestions);
-    setQuizCards(cards);
-    setCurrentQ(0);
-    setShowAnswer(false);
-    setSelectedOption(null);
-    setScore(0);
-    setStreak(0);
-    setTimer(0);
-    setIsActive(true);
-    setFinished(false);
-    setWrongAnswers([]);
-    generateTrueFalse(cards[0]); // generate for first question
+    return () => clearInterval(interval);
+  }, [quizStarted, timeLeft]);
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  // Generate stable true/false statement
-  const generateTrueFalse = (card: Flashcard) => {
-    const isTrue = Math.random() > 0.5;
-    if (isTrue) {
-      setTfStatement(card.back);
-    } else {
-      const wrong = shuffle(
-        mockFlashcards.filter((c) => c.id !== card.id).map((c) => c.back)
-      )[0];
-      setTfStatement(wrong);
-    }
-  };
-
-  // Handle Answer
-  const handleAnswer = (isCorrect: boolean) => {
-    if (isCorrect) {
-      setScore(score + 1);
-      setStreak(streak + 1);
-    } else {
-      setStreak(0);
-      setWrongAnswers([...wrongAnswers, quizCards[currentQ]]);
-    }
-
-    setTimeout(() => {
-      if (currentQ + 1 < quizCards.length) {
-        setCurrentQ(currentQ + 1);
-        setShowAnswer(false);
-        setSelectedOption(null);
-        if (quizType === "trueFalse") {
-          generateTrueFalse(quizCards[currentQ + 1]);
-        }
+  const startQuiz = async (subjectId: string) => {
+    try {
+      setLoading(true);
+      const response = await quizAPI.generateQuiz(subjectId);
+      
+      if (response.success) {
+        setCurrentSubject(subjectId);
+        setQuestions(response.data.questions);
+        setQuizStarted(true);
+        setCurrentQuestion(0);
+        setAnswers(new Array(response.data.questions.length).fill(-1));
+        setTimeLeft(20 * 60);
+        toast.success(`Quiz started for ${cseSubjects.find(s => s.id === subjectId)?.name}!`);
       } else {
-        setFinished(true);
-        setIsActive(false);
+        toast.error('Failed to generate quiz');
       }
-    }, 800); // short delay
+    } catch (error) {
+      console.error('Error starting quiz:', error);
+      toast.error('Failed to start quiz');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Restart Quiz
-  const restartQuiz = () => {
-    setDepartment("All");
-    setNumQuestions(5);
-    setQuizType("flashcard");
-    setQuizCards([]);
-    setFinished(false);
+  const handleAnswerSelect = (answerIndex: number) => {
+    const newAnswers = [...answers];
+    newAnswers[currentQuestion] = answerIndex;
+    setAnswers(newAnswers);
   };
+
+  const nextQuestion = () => {
+    if (currentQuestion < questions.length - 1) {
+      setCurrentQuestion(currentQuestion + 1);
+    }
+  };
+
+  const prevQuestion = () => {
+    if (currentQuestion > 0) {
+      setCurrentQuestion(currentQuestion - 1);
+    }
+  };
+
+  const handleSubmitQuiz = async () => {
+    try {
+      setLoading(true);
+      const timeTaken = 20 * 60 - timeLeft; // Time taken in seconds
+      
+      const response = await quizAPI.submitQuiz({
+        subjectId: currentSubject!,
+        answers,
+        timeTaken
+      });
+
+      if (response.success) {
+        setQuizResult(response.data);
+        setQuizStarted(false);
+        toast.success(`Quiz completed! Score: ${response.data.score}%`);
+      } else {
+        toast.error('Failed to submit quiz');
+      }
+    } catch (error) {
+      console.error('Error submitting quiz:', error);
+      toast.error('Failed to submit quiz');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const resetQuiz = () => {
+    setQuizStarted(false);
+    setCurrentSubject(null);
+    setQuestions([]);
+    setCurrentQuestion(0);
+    setAnswers([]);
+    setTimeLeft(20 * 60);
+    setQuizResult(null);
+  };
+
+  if (quizResult) {
+    return (
+      <div className="min-h-screen">
+        <Header />
+        <div className="pt-24 pb-16">
+          <div className="container mx-auto px-4">
+            <Card className="max-w-4xl mx-auto p-8 glass-effect circuit-pattern border-2 border-white/10 dark:border-white/20">
+              <div className="text-center mb-8">
+                <div className="w-24 h-24 mx-auto mb-4 rounded-full flex items-center justify-center bg-gradient-primary">
+                  {quizResult.score >= 80 ? (
+                    <Award className="w-12 h-12 text-white" />
+                  ) : (
+                    <Target className="w-12 h-12 text-white" />
+                  )}
+                </div>
+                <h1 className="text-4xl font-bold mb-2">Quiz Complete!</h1>
+                <p className="text-xl text-muted-foreground">
+                  {cseSubjects.find(s => s.id === currentSubject)?.name}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <Card className="p-6 text-center">
+                  <div className="text-3xl font-bold text-primary mb-2">{quizResult.score}%</div>
+                  <div className="text-sm text-muted-foreground">Final Score</div>
+                </Card>
+                <Card className="p-6 text-center">
+                  <div className="text-3xl font-bold text-green-500 mb-2">{quizResult.correctAnswers}/{quizResult.totalQuestions}</div>
+                  <div className="text-sm text-muted-foreground">Correct Answers</div>
+                </Card>
+                <Card className="p-6 text-center">
+                  <div className="text-3xl font-bold text-blue-500 mb-2">+{quizResult.xpEarned}</div>
+                  <div className="text-sm text-muted-foreground">XP Earned</div>
+                </Card>
+              </div>
+
+              <div className="mb-8">
+                <h3 className="text-xl font-bold mb-4">Performance Analysis</h3>
+                <div className="space-y-4">
+                  {quizResult.results.map((result, index) => (
+                    <div key={index} className="flex items-center justify-between p-4 rounded-lg bg-muted/30">
+                      <div className="flex items-center gap-3">
+                        {result.isCorrect ? (
+                          <CheckCircle className="w-5 h-5 text-green-500" />
+                        ) : (
+                          <XCircle className="w-5 h-5 text-red-500" />
+                        )}
+                        <span className="font-medium">Question {result.questionId}</span>
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        {result.isCorrect ? 'Correct' : `Incorrect (Answer: ${result.correctAnswer + 1})`}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex gap-4 justify-center">
+                <Button onClick={resetQuiz} variant="outline">
+                  Take Another Quiz
+                </Button>
+                <Button onClick={() => navigate('/dashboard')} className="bg-gradient-primary">
+                  Go to Dashboard
+                </Button>
+              </div>
+            </Card>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (quizStarted) {
+    const question = questions[currentQuestion];
+    const progress = ((currentQuestion + 1) / questions.length) * 100;
+
+    return (
+      <div className="min-h-screen">
+        <Header />
+        <div className="pt-24 pb-16">
+          <div className="container mx-auto px-4">
+            {/* Quiz Header */}
+            <Card className="mb-8 p-6 glass-effect circuit-pattern border-2 border-white/10 dark:border-white/20">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h1 className="text-2xl font-bold">
+                    {cseSubjects.find(s => s.id === currentSubject)?.name}
+                  </h1>
+                  <p className="text-muted-foreground">Question {currentQuestion + 1} of {questions.length}</p>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <Timer className="w-5 h-5 text-red-500" />
+                    <span className="text-xl font-bold text-red-500">{formatTime(timeLeft)}</span>
+                  </div>
+                </div>
+              </div>
+              <Progress value={progress} className="h-2" />
+            </Card>
+
+            {/* Question */}
+            <Card className="mb-8 p-8 glass-effect circuit-pattern border-2 border-white/10 dark:border-white/20">
+              <h2 className="text-xl font-bold mb-6">{question?.question}</h2>
+              <div className="space-y-4">
+                {question?.options.map((option: string, index: number) => (
+                  <button
+                    key={index}
+                    onClick={() => handleAnswerSelect(index)}
+                    className={`w-full p-4 text-left rounded-lg border-2 transition-all ${
+                      answers[currentQuestion] === index
+                        ? 'border-primary bg-primary/10 text-primary'
+                        : 'border-border hover:border-primary/50'
+                    }`}
+                  >
+                    <span className="font-medium mr-3">{String.fromCharCode(65 + index)}.</span>
+                    {option}
+                  </button>
+                ))}
+              </div>
+            </Card>
+
+            {/* Navigation */}
+            <div className="flex justify-between">
+              <Button
+                onClick={prevQuestion}
+                disabled={currentQuestion === 0}
+                variant="outline"
+              >
+                Previous
+              </Button>
+              
+              <div className="flex gap-2">
+                {questions.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentQuestion(index)}
+                    className={`w-8 h-8 rounded-full text-sm font-medium transition-all ${
+                      index === currentQuestion
+                        ? 'bg-primary text-white'
+                        : answers[index] !== -1
+                        ? 'bg-green-500 text-white'
+                        : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                    }`}
+                  >
+                    {index + 1}
+                  </button>
+                ))}
+              </div>
+
+              {currentQuestion === questions.length - 1 ? (
+                <Button onClick={handleSubmitQuiz} className="bg-gradient-primary">
+                  Submit Quiz
+                </Button>
+              ) : (
+                <Button onClick={nextQuestion}>
+                  Next
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen">
       <Header />
-      <div className="pt-24 pb-16 px-6">
-        <h1 className="text-4xl font-bold text-primary text-center">
-        Interactive Quiz Mode
-      </h1>
-      <p className="mt-4 text-muted-foreground text-center max-w-2xl mx-auto">
-        Test your knowledge with self-assessment quizzes, streaks, and progress tracking.
-      </p>
-
-      {/* Setup Form */}
-      {!isActive && !finished && (
-        <Card className="p-6 max-w-xl mx-auto mt-10 glass-effect circuit-pattern feature-card-hover border-2 border-white/10">
-          <h2 className="text-2xl font-semibold mb-4">Setup Quiz</h2>
-          <div className="space-y-4">
-            {/* Department */}
-            <Select onValueChange={(v) => setDepartment(v)} defaultValue="All">
-              <SelectTrigger>
-                <SelectValue placeholder="Select Department" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="All">All Departments</SelectItem>
-                <SelectItem value="Computer Science">Computer Science</SelectItem>
-                <SelectItem value="Mechanical">Mechanical</SelectItem>
-                <SelectItem value="Electrical">Electrical</SelectItem>
-                <SelectItem value="Chemical">Chemical</SelectItem>
-                <SelectItem value="Civil">Civil</SelectItem>
-                <SelectItem value="Other">Other</SelectItem>
-              </SelectContent>
-            </Select>
-
-            {/* Number of Questions */}
-            <Input
-              type="number"
-              placeholder="Number of Questions"
-              value={numQuestions}
-              onChange={(e) => setNumQuestions(Number(e.target.value))}
-              min={1}
-              max={20}
-            />
-
-            {/* Quiz Type */}
-            <Select
-              onValueChange={(v) => setQuizType(v as QuizType)}
-              defaultValue="flashcard"
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select Quiz Type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="flashcard">Flashcard Flip</SelectItem>
-                <SelectItem value="multipleChoice">Multiple Choice</SelectItem>
-                <SelectItem value="trueFalse">True / False</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Button
-              onClick={startQuiz}
-              className="w-full bg-gradient-primary text-white"
-            >
-              Start Quiz
-            </Button>
-          </div>
-        </Card>
-      )}
-
-      {/* Quiz Section */}
-      {isActive && !finished && quizCards.length > 0 && (
-        <div className="max-w-2xl mx-auto mt-10">
-          <Card className="p-6 glass-effect circuit-pattern feature-card-hover border-2 border-white/10">
-            <div className="flex justify-between items-center mb-4">
-              <span className="text-sm">
-                Question {currentQ + 1} of {quizCards.length}
-              </span>
-              <span className="text-sm text-muted-foreground">⏱ {timer}s</span>
-            </div>
-
-            {/* Progress Bar */}
-            <Progress
-              value={((currentQ + 1) / quizCards.length) * 100}
-              className="mb-4"
-            />
-
-            {/* Question */}
-            <h2 className="text-xl font-bold mb-4">{quizCards[currentQ].front}</h2>
-
-            {/* Flashcard Flip Mode */}
-            {quizType === "flashcard" && (
-              <>
-                {showAnswer && (
-                  <p className="text-muted-foreground mb-4">
-                    {quizCards[currentQ].back}
-                  </p>
-                )}
-                <Button
-                  onClick={() => setShowAnswer(!showAnswer)}
-                  variant="outline"
-                  className="mb-4"
-                >
-                  {showAnswer ? "Hide Answer" : "Show Answer"}
-                </Button>
-                <div className="flex gap-4">
-                  <Button
-                    onClick={() => handleAnswer(true)}
-                    className="flex-1 bg-green-500 text-white"
-                  >
-                    I was Correct
-                  </Button>
-                  <Button
-                    onClick={() => handleAnswer(false)}
-                    className="flex-1 bg-destructive text-destructive-foreground"
-                  >
-                    I was Wrong
-                  </Button>
-                </div>
-              </>
-            )}
-
-            {/* Multiple Choice Mode */}
-            {quizType === "multipleChoice" && (
-              <div className="space-y-3">
-                {getOptions(quizCards[currentQ]).map((opt, idx) => {
-                  const isCorrect = opt === quizCards[currentQ].back;
-                  const isSelected = selectedOption === opt;
-
-                  return (
-                    <Button
-                      key={idx}
-                      variant="outline"
-                      disabled={!!selectedOption}
-                      className={`w-full justify-start ${
-                        isSelected
-                          ? isCorrect
-                            ? "bg-green-500 text-white"
-                            : "bg-destructive text-destructive-foreground"
-                          : ""
-                      }`}
-                      onClick={() => {
-                        if (!selectedOption) {
-                          setSelectedOption(opt);
-                          handleAnswer(isCorrect);
-                        }
-                      }}
-                    >
-                      {opt}
-                    </Button>
-                  );
-                })}
-              </div>
-            )}
-
-            {/* True / False Mode */}
-            {quizType === "trueFalse" && (
-              <div className="space-y-3">
-                <p className="text-muted-foreground mb-4">{tfStatement}</p>
-                <div className="flex gap-4">
-                  <Button
-                    onClick={() =>
-                      handleAnswer(tfStatement === quizCards[currentQ].back)
-                    }
-                    className="flex-1 bg-green-500 text-white"
-                  >
-                    True
-                  </Button>
-                  <Button
-                    onClick={() =>
-                      handleAnswer(tfStatement !== quizCards[currentQ].back)
-                    }
-                    className="flex-1 bg-destructive text-destructive-foreground"
-                  >
-                    False
-                  </Button>
-                </div>
-              </div>
-            )}
-          </Card>
-
-          <div className="mt-4 text-center">
-            <p className="text-sm text-muted-foreground">
-              Score: {score} | Streak: {streak}
+      <div className="pt-24 pb-16">
+        <div className="container mx-auto px-4">
+          {/* Header */}
+          <div className="text-center mb-12">
+            <h1 className="text-5xl font-display font-bold mb-6">
+              <span className="gradient-text">CSE Quiz</span> Challenge
+            </h1>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Test your knowledge with challenging MCQ quizzes for all CSE subjects across all years. 
+              Each quiz has 30 unique questions with a 20-minute time limit.
             </p>
           </div>
-        </div>
-      )}
 
-      {/* Results Section */}
-      {finished && (
-        <Card className="p-6 max-w-2xl mx-auto mt-10 text-center glass-effect circuit-pattern feature-card-hover border-2 border-white/10">
-          <h2 className="text-2xl font-bold mb-4">Quiz Finished 🎉</h2>
-          <p className="mb-2">
-            Final Score: {score} / {quizCards.length}
-          </p>
-          <p className="mb-2">
-            Accuracy: {((score / quizCards.length) * 100).toFixed(1)}%
-          </p>
-          <p className="mb-4">Time Taken: {timer} seconds</p>
-
-          {wrongAnswers.length > 0 && (
-            <div className="text-left mb-6">
-              <h3 className="font-semibold mb-2">Review Mistakes:</h3>
-              <ul className="list-disc list-inside text-sm text-muted-foreground">
-                {wrongAnswers.map((card) => (
-                  <li key={card.id}>
-                    <strong>{card.front}</strong> → {card.back}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          <div className="flex gap-4 justify-center">
-            <Button
-              onClick={startQuiz}
-              className="bg-gradient-primary text-white"
-            >
-              Retry Same Quiz
-            </Button>
-            <Button onClick={restartQuiz} variant="outline">
-              New Quiz Setup
-            </Button>
+          {/* Quiz Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+            <Card className="p-6 text-center glass-effect border-2 border-white/10 dark:border-white/20">
+              <Target className="w-8 h-8 text-primary mx-auto mb-3" />
+              <div className="text-2xl font-bold mb-1">30</div>
+              <div className="text-sm text-muted-foreground">Questions per Quiz</div>
+            </Card>
+            <Card className="p-6 text-center glass-effect border-2 border-white/10 dark:border-white/20">
+              <Clock className="w-8 h-8 text-blue-500 mx-auto mb-3" />
+              <div className="text-2xl font-bold mb-1">20</div>
+              <div className="text-sm text-muted-foreground">Minutes Time Limit</div>
+            </Card>
+            <Card className="p-6 text-center glass-effect border-2 border-white/10 dark:border-white/20">
+              <Award className="w-8 h-8 text-yellow-500 mx-auto mb-3" />
+              <div className="text-2xl font-bold mb-1">30</div>
+              <div className="text-sm text-muted-foreground">Max XP per Quiz</div>
+            </Card>
+            <Card className="p-6 text-center glass-effect border-2 border-white/10 dark:border-white/20">
+              <BookOpen className="w-8 h-8 text-green-500 mx-auto mb-3" />
+              <div className="text-2xl font-bold mb-1">{cseSubjects.length}</div>
+              <div className="text-sm text-muted-foreground">Subjects Available</div>
+            </Card>
           </div>
-        </Card>
-      )}
+
+          {/* Subject Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {cseSubjects.map((subject, index) => (
+              <Card
+                key={subject.id}
+                className="group p-6 glass-effect circuit-pattern border-2 border-white/10 dark:border-white/20 hover:border-primary/50 transition-all duration-300 hover:scale-105"
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div className="w-12 h-12 bg-gradient-primary rounded-lg flex items-center justify-center">
+                    <BookOpen className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <Badge variant="secondary" className="text-xs">
+                      {subject.code}
+                    </Badge>
+                    <Badge variant="outline" className="text-xs border-primary/30 text-primary">
+                      {subject.year}
+                    </Badge>
+                  </div>
+                </div>
+                
+                <h3 className="text-lg font-bold mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+                  {subject.name}
+                </h3>
+                
+                <p className="text-sm text-muted-foreground mb-4">
+                  30 hard MCQ questions • 20 minutes
+                </p>
+                
+                <Button
+                  onClick={() => startQuiz(subject.id)}
+                  disabled={loading}
+                  className="w-full bg-gradient-primary hover:opacity-90"
+                >
+                  <Play className="w-4 h-4 mr-2" />
+                  Start Quiz
+                </Button>
+              </Card>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
-}
+};
+
+export default QuizPage;

@@ -377,7 +377,7 @@ export const addComment = async (req: Request, res: Response): Promise<void> => 
     }
 
     // Get user info
-    const user = await User.findById(userId).select('username');
+    const user = await User.findById(userId).select('username year');
 
     if (!user) {
       res.status(404).json({
@@ -888,7 +888,7 @@ export const addPostComment = async (req: Request, res: Response): Promise<void>
     }
 
     // Get user info
-    const user = await User.findById(userId).select('username');
+    const user = await User.findById(userId).select('username year');
 
     if (!user) {
       res.status(404).json({
