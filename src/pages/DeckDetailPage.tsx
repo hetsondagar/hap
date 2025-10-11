@@ -263,17 +263,17 @@ const DeckDetailPage: React.FC = () => {
                           ) : (
                             <div className="flex justify-between items-start gap-2">
                               <div className="flex-1">
-                                <div className="flex items-center gap-2 mb-2">
-                                  <span className={`font-semibold text-sm ${isCommentAuthor ? 'text-primary' : 'text-blue-600 dark:text-blue-400'}`}>
-                                    {c.username || 'Unknown'}
-                                  </span>
-                                  {c.year && (
-                                    <Badge variant="secondary" className="text-xs">{c.year}</Badge>
-                                  )}
-                                  <span className="text-xs text-muted-foreground">
-                                    {new Date(c.createdAt || '').toLocaleDateString()}
-                                  </span>
-                                </div>
+                                    <div className="flex items-center gap-2 mb-2">
+                                      <span className={`font-semibold text-sm ${isCommentAuthor ? 'text-primary' : 'text-blue-600 dark:text-blue-400'}`}>
+                                        {c.username || 'Unknown'}
+                                      </span>
+                                      <Badge variant="secondary" className="text-xs font-semibold">
+                                        {c.year || 'Year N/A'}
+                                      </Badge>
+                                      <span className="text-xs text-muted-foreground">
+                                        {new Date(c.createdAt || '').toLocaleDateString()}
+                                      </span>
+                                    </div>
                                 <p className="text-sm">{c.text}</p>
                               </div>
                               {isCommentAuthor && (

@@ -3,6 +3,7 @@ import mongoose, { Document, Schema } from 'mongoose';
 export interface IComment {
   userId: mongoose.Types.ObjectId;
   username: string;
+  year?: string;
   text: string;
   createdAt: Date;
 }
@@ -33,6 +34,10 @@ const commentSchema = new Schema<IComment>({
   username: {
     type: String,
     required: true
+  },
+  year: {
+    type: String,
+    enum: ['1st-year', '2nd-year', '3rd-year', '4th-year']
   },
   text: {
     type: String,

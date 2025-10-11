@@ -121,7 +121,7 @@ const FlashcardsPage = () => {
           addCard({ front, back, department, year: userInfo.year, difficulty, subjectId: selectedSubject } as any);
           
           toast.success("Flashcard created successfully!", {
-            description: `${selectedSubjectData?.name || 'Subject'} • ${userInfo.department.toUpperCase()}`
+            description: `${selectedSubjectData?.name || 'Subject'} • ${userInfo.department?.toUpperCase() || 'N/A'}`
           });
           
           setFront("");

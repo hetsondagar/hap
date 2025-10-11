@@ -85,7 +85,7 @@ const SubjectsPage = () => {
               Your Subjects
             </h1>
             <p className="text-xl text-muted-foreground">
-              {userInfo.department.toUpperCase()} • {userInfo.year}
+              {userInfo.department?.toUpperCase() || 'N/A'} • {userInfo.year || 'N/A'}
             </p>
           </div>
 

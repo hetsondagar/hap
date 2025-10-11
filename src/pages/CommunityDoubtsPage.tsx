@@ -120,11 +120,23 @@ const CommunityDoubtsPage: React.FC = () => {
         title: newPostTitle,
         content: newPostContent,
         department: 'cse', // Always CSE
+        year: currentUserYear, // Include user's year
         tags: []
       });
 
       const newPost = response?.data?.post || response?.post || response;
-      setPosts([newPost, ...posts]);
+      
+      // Ensure the post has proper user data with year
+      const postWithUserData = {
+        ...newPost,
+        userId: {
+          _id: currentUserId,
+          username: currentUsername,
+          year: currentUserYear
+        }
+      };
+      
+      setPosts([postWithUserData, ...posts]);
 
       toast.success("Question posted successfully!");
       setNewPostTitle("");
@@ -271,43 +283,44 @@ const CommunityDoubtsPage: React.FC = () => {
               </div>
               <Dialog open={isCreatePostOpen} onOpenChange={setIsCreatePostOpen}>
                 <DialogTrigger asChild>
-                  <Button className="flex items-center gap-2 bg-gradient-primary">
+                  <Button className="flex items-center gap-2 bg-gradient-primary hover:opacity-90">
                     <Plus className="h-4 w-4" />
                     Ask a Question
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-2xl">
+                <DialogContent className="max-w-2xl bg-card dark:bg-card/95 border-border dark:border-border/60">
                   <DialogHeader>
                     <DialogTitle>Post a Question or Doubt</DialogTitle>
                   </DialogHeader>
                   <div className="space-y-4 py-4">
                     <div className="space-y-2">
-                      <Label htmlFor="title">Title *</Label>
+                      <Label htmlFor="title" className="text-foreground">Title *</Label>
                       <Input
                         id="title"
                         placeholder="Brief title for your question..."
                         value={newPostTitle}
                         onChange={(e) => setNewPostTitle(e.target.value)}
                         maxLength={200}
+                        className="bg-background dark:bg-background/50 border-border dark:border-border/60 text-foreground placeholder:text-muted-foreground"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="content">Question Details *</Label>
+                      <Label htmlFor="content" className="text-foreground">Question Details *</Label>
                       <Textarea
                         id="content"
                         placeholder="Describe your question or doubt in detail..."
                         value={newPostContent}
                         onChange={(e) => setNewPostContent(e.target.value)}
-                        className="min-h-[150px]"
+                        className="min-h-[150px] bg-background dark:bg-background/50 border-border dark:border-border/60 text-foreground placeholder:text-muted-foreground"
                         maxLength={2000}
                       />
                     </div>
                   </div>
                   <DialogFooter>
-                    <Button variant="outline" onClick={() => setIsCreatePostOpen(false)}>
+                    <Button variant="outline" onClick={() => setIsCreatePostOpen(false)} className="border-border dark:border-border/60 hover:bg-muted dark:hover:bg-muted/50">
                       Cancel
                     </Button>
-                    <Button onClick={handleCreatePost} className="bg-gradient-primary">
+                    <Button onClick={handleCreatePost} className="bg-gradient-primary hover:opacity-90">
                       <Send className="h-4 w-4 mr-2" />
                       Post Question
                     </Button>
@@ -326,15 +339,15 @@ const CommunityDoubtsPage: React.FC = () => {
             )}
             
             {error && (
-              <Card className="border-destructive">
-                <CardContent className="py-6 text-center text-destructive">
+              <Card className="border-destructive dark:border-destructive/60 bg-card dark:bg-card/80">
+                <CardContent className="py-6 text-center text-destructive dark:text-destructive/90">
                   {error}
                 </CardContent>
               </Card>
             )}
             
             {!loading && !error && posts.length === 0 && (
-              <Card className="glass-effect circuit-pattern border-2 border-white/10 dark:border-white/20">
+              <Card className="glass-effect circuit-pattern border-2 border-white/10 dark:border-white/20 bg-card dark:bg-card/80">
                 <CardContent className="py-12 text-center">
                   <MessageSquare className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
                   <p className="text-muted-foreground">No questions posted yet. Be the first to ask!</p>
@@ -350,34 +363,35 @@ const CommunityDoubtsPage: React.FC = () => {
               const isLiked = userLikedPosts.has(post._id);
               
               return (
-                <Card key={post._id} className="glass-effect circuit-pattern border-2 border-white/10 dark:border-white/20 hover:border-primary/30 transition-all">
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
+                <Card key={post._id} className="overflow-hidden border-2 border-border/50 dark:border-border/40 hover:border-primary/50 dark:hover:border-primary/60 transition-all duration-300 bg-card dark:bg-card/90 backdrop-blur-sm relative">
+                  {/* Subtle background animation */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 dark:from-primary/10 dark:via-transparent dark:to-secondary/10 opacity-0 hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                  
+                  <CardHeader className="relative z-10">
+                    <div className="flex items-start justify-between gap-4">
                       <div className="flex-1">
-                        <CardTitle className="text-xl mb-2">{post.title}</CardTitle>
-                        <p className="text-muted-foreground">{post.content}</p>
+                        <CardTitle className="text-2xl mb-3 font-bold text-foreground">{post.title}</CardTitle>
+                        <p className="text-base leading-relaxed text-foreground/90">{post.content}</p>
                       </div>
                       {isPostAuthor && (
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="text-destructive hover:text-destructive"
+                          className="text-destructive hover:text-destructive hover:bg-destructive/10 dark:hover:bg-destructive/20"
                           onClick={() => handleDeletePost(post._id)}
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       )}
                     </div>
-                    <div className="flex items-center gap-2 mt-3 text-sm">
-                      <span className="text-muted-foreground">Asked by</span>
-                      <span className={`font-semibold ${isPostAuthor ? 'text-primary' : 'text-blue-600 dark:text-blue-400'}`}>
+                    <div className="flex items-center gap-2 mt-4 pt-3 border-t border-border/30 dark:border-border/20">
+                      <span className="text-sm text-muted-foreground">Asked by</span>
+                      <span className={`font-bold text-sm ${isPostAuthor ? 'text-primary' : 'text-blue-600 dark:text-blue-400'}`}>
                         {postUsername}
                       </span>
-                      {postUserYear && (
-                        <Badge variant="outline" className="text-xs">
-                          {postUserYear}
-                        </Badge>
-                      )}
+                      <Badge variant="default" className="text-xs bg-primary/20 dark:bg-primary/30 text-primary dark:text-primary-foreground border-primary/30 dark:border-primary/50">
+                        {postUserYear || post.year || 'Year N/A'}
+                      </Badge>
                       <span className="text-muted-foreground">•</span>
                       <span className="text-muted-foreground text-xs">
                         {new Date(post.createdAt || '').toLocaleDateString()}
@@ -385,102 +399,113 @@ const CommunityDoubtsPage: React.FC = () => {
                     </div>
                   </CardHeader>
                   
-                  <CardContent>
+                  <CardContent className="relative z-10">
                     {/* Actions */}
-                    <div className="flex items-center gap-6 mb-4 pb-4 border-b border-border">
+                    <div className="flex items-center gap-6 mb-6 pb-4 border-b border-border/50 dark:border-border/30">
                       <button
-                        className="flex items-center gap-2 text-sm hover:text-pink-600 transition group"
+                        className="flex items-center gap-2 text-base font-medium hover:text-pink-600 dark:hover:text-pink-400 transition-all duration-200 group"
                         onClick={() => handleLikePost(post._id)}
                       >
                         <Heart 
-                          className={`h-5 w-5 transition-all ${
+                          className={`h-6 w-6 transition-all duration-200 ${
                             isLiked 
-                              ? 'fill-pink-600 text-pink-600' 
-                              : 'text-muted-foreground group-hover:text-pink-600'
+                              ? 'fill-pink-600 text-pink-600 dark:fill-pink-500 dark:text-pink-500 scale-110' 
+                              : 'text-muted-foreground group-hover:text-pink-600 dark:group-hover:text-pink-400 group-hover:scale-105'
                           }`} 
                         />
-                        <span className={isLiked ? 'text-pink-600 font-semibold' : ''}>
+                        <span className={isLiked ? 'text-pink-600 dark:text-pink-500 font-bold' : 'text-muted-foreground'}>
                           {likeCount(post)} {likeCount(post) === 1 ? 'like' : 'likes'}
                         </span>
                       </button>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <div className="flex items-center gap-2 text-base text-muted-foreground">
                         <MessageSquare className="h-5 w-5" />
-                        <span>{commentCount(post)} {commentCount(post) === 1 ? 'answer' : 'answers'}</span>
+                        <span className="font-medium">{commentCount(post)} {commentCount(post) === 1 ? 'answer' : 'answers'}</span>
                       </div>
                     </div>
 
                     {/* Comments/Answers */}
                     {Array.isArray(post.comments) && post.comments.length > 0 && (
-                      <div className="space-y-4 mb-4">
-                        <h4 className="font-semibold text-sm text-muted-foreground">Answers:</h4>
+                      <div className="space-y-3 mb-6">
+                        <h4 className="font-bold text-base flex items-center gap-2">
+                          <MessageSquare className="h-5 w-5 text-primary" />
+                          Answers
+                        </h4>
                         {post.comments.map((comment, idx) => {
                           const isCommentAuthor = currentUsername && comment.username === currentUsername;
                           const isEditing = editingComment?.postId === post._id && editingComment?.commentIndex === idx;
 
                           return (
-                            <div key={idx} className="bg-muted/30 p-4 rounded-lg group">
-                              {isEditing ? (
-                                <div className="flex gap-2">
-                                  <Input
-                                    value={editingComment.text}
-                                    onChange={(e) => setEditingComment({...editingComment, text: e.target.value})}
-                                    className="flex-1"
-                                    autoFocus
-                                  />
-                                  <Button
-                                    size="sm"
-                                    onClick={() => handleEditComment(post._id, idx)}
-                                  >
-                                    Save
-                                  </Button>
-                                  <Button
-                                    size="sm"
-                                    variant="ghost"
-                                    onClick={() => setEditingComment(null)}
-                                  >
-                                    Cancel
-                                  </Button>
-                                </div>
-                              ) : (
-                                <div className="flex justify-between items-start gap-2">
-                                  <div className="flex-1">
-                                    <div className="flex items-center gap-2 mb-2">
-                                      <span className={`font-semibold ${isCommentAuthor ? 'text-primary' : 'text-blue-600 dark:text-blue-400'}`}>
-                                        {comment.username}
-                                      </span>
-                                      {comment.year && (
-                                        <Badge variant="secondary" className="text-xs">
-                                          {comment.year}
-                                        </Badge>
-                                      )}
-                                      <span className="text-xs text-muted-foreground">
-                                        {new Date(comment.createdAt).toLocaleDateString()}
-                                      </span>
-                                    </div>
-                                    <p className="text-sm">{comment.text}</p>
+                            <div key={idx} className="relative group">
+                              {/* Subtle animated background */}
+                              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-pink-500/5 dark:from-blue-400/10 dark:via-purple-400/10 dark:to-pink-400/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                              
+                              {/* Comment content */}
+                              <div className="relative bg-card dark:bg-card/80 border border-border/40 dark:border-border/30 rounded-xl p-4 hover:border-primary/30 dark:hover:border-primary/50 transition-all duration-200">
+                                {isEditing ? (
+                                  <div className="flex gap-2">
+                                    <Input
+                                      value={editingComment.text}
+                                      onChange={(e) => setEditingComment({...editingComment, text: e.target.value})}
+                                      className="flex-1 bg-background dark:bg-background/50 border-border dark:border-border/60"
+                                      autoFocus
+                                    />
+                                    <Button
+                                      size="sm"
+                                      onClick={() => handleEditComment(post._id, idx)}
+                                      className="bg-primary hover:bg-primary/90 dark:bg-primary dark:hover:bg-primary/80"
+                                    >
+                                      Save
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      variant="ghost"
+                                      onClick={() => setEditingComment(null)}
+                                      className="hover:bg-muted dark:hover:bg-muted/50"
+                                    >
+                                      Cancel
+                                    </Button>
                                   </div>
-                                  {isCommentAuthor && (
-                                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                      <Button
-                                        size="sm"
-                                        variant="ghost"
-                                        className="h-7 px-2 text-xs"
-                                        onClick={() => setEditingComment({ postId: post._id, commentIndex: idx, text: comment.text })}
-                                      >
-                                        <Edit className="h-3 w-3" />
-                                      </Button>
-                                      <Button
-                                        size="sm"
-                                        variant="ghost"
-                                        className="h-7 px-2 text-xs text-destructive hover:text-destructive"
-                                        onClick={() => handleDeleteComment(post._id, idx)}
-                                      >
-                                        <Trash2 className="h-3 w-3" />
-                                      </Button>
+                                ) : (
+                                  <div className="flex justify-between items-start gap-3">
+                                    <div className="flex-1">
+                                      <div className="flex items-center gap-2 mb-3">
+                                        <span className={`font-bold text-base ${isCommentAuthor ? 'text-primary' : 'text-blue-600 dark:text-blue-400'}`}>
+                                          {comment.username}
+                                        </span>
+                                        <Badge variant="default" className="text-xs bg-emerald-500/20 dark:bg-emerald-500/30 text-emerald-700 dark:text-emerald-300 border-emerald-500/30 dark:border-emerald-500/50">
+                                          {comment.year || 'Year N/A'}
+                                        </Badge>
+                                        <span className="text-xs text-muted-foreground">
+                                          {new Date(comment.createdAt).toLocaleDateString()}
+                                        </span>
+                                      </div>
+                                      <p className="text-base leading-relaxed text-foreground dark:text-foreground/95">{comment.text}</p>
                                     </div>
-                                  )}
-                                </div>
-                              )}
+                                    {isCommentAuthor && (
+                                      <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                        <Button
+                                          size="sm"
+                                          variant="ghost"
+                                          className="h-8 px-3 text-xs hover:bg-primary/10 dark:hover:bg-primary/20 hover:text-primary"
+                                          onClick={() => setEditingComment({ postId: post._id, commentIndex: idx, text: comment.text })}
+                                        >
+                                          <Edit className="h-3 w-3 mr-1" />
+                                          Edit
+                                        </Button>
+                                        <Button
+                                          size="sm"
+                                          variant="ghost"
+                                          className="h-8 px-3 text-xs text-destructive hover:text-destructive hover:bg-destructive/10 dark:hover:bg-destructive/20"
+                                          onClick={() => handleDeleteComment(post._id, idx)}
+                                        >
+                                          <Trash2 className="h-3 w-3 mr-1" />
+                                          Delete
+                                        </Button>
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
                             </div>
                           );
                         })}
@@ -488,7 +513,7 @@ const CommunityDoubtsPage: React.FC = () => {
                     )}
 
                     {/* Add Answer */}
-                    <div className="flex gap-2 mt-4">
+                    <div className="flex gap-3 mt-4 pt-4 border-t border-border/30 dark:border-border/20">
                       <Input
                         placeholder="Write your answer..."
                         value={postComment[post._id] || ""}
@@ -499,14 +524,16 @@ const CommunityDoubtsPage: React.FC = () => {
                             handleCommentPost(post._id);
                           }
                         }}
+                        className="flex-1 h-11 bg-background dark:bg-background/50 border-border/60 dark:border-border/40 focus:border-primary/60 dark:focus:border-primary/70 text-foreground placeholder:text-muted-foreground"
                       />
                       <Button
-                        size="sm"
+                        size="default"
                         onClick={() => handleCommentPost(post._id)}
                         disabled={!postComment[post._id]?.trim()}
-                        className="bg-gradient-primary"
+                        className="bg-gradient-primary hover:opacity-90 dark:hover:opacity-80 px-6 disabled:opacity-50"
                       >
-                        <Send className="h-4 w-4" />
+                        <Send className="h-4 w-4 mr-2" />
+                        Answer
                       </Button>
                     </div>
                   </CardContent>

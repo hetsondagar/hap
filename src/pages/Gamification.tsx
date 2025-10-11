@@ -163,13 +163,13 @@ const Gamification = () => {
                 <div className="flex items-center gap-3 justify-center md:justify-start mb-2">
                   <h2 className="text-3xl font-bold">{user.username}</h2>
                   <Badge variant="secondary" className="text-sm">
-                    {user.department.toUpperCase()} • {user.year}
+                    {user.department?.toUpperCase() || 'N/A'} • {user.year || 'N/A'}
                   </Badge>
                 </div>
                 
                 <div className="flex items-center gap-2 justify-center md:justify-start mb-4">
                   <p className={`text-lg font-semibold ${levelInfo.color}`}>
-                    Level {user.level} • {levelInfo.title}
+                    Level {user.level || 1} • {levelInfo.title}
                   </p>
                 </div>
 
@@ -177,13 +177,13 @@ const Gamification = () => {
                 <div className="mb-4">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm text-muted-foreground">
-                      {user.xp} / {levelProgress.nextLevelXP} XP
+                      {user.xp || 0} / {levelProgress?.nextLevelXP || 100} XP
                     </span>
                     <span className="text-sm font-semibold text-primary">
-                      {levelProgress.xpToNextLevel} XP to next level
+                      {levelProgress?.xpToNextLevel || 100} XP to next level
                     </span>
                   </div>
-                  <Progress value={levelProgress.progress} className="h-3" />
+                  <Progress value={levelProgress?.progress || 0} className="h-3" />
                 </div>
 
                 {/* Quick Stats */}
@@ -191,35 +191,35 @@ const Gamification = () => {
                   <div className="text-center">
                     <div className="flex items-center justify-center gap-1 mb-1">
                       <Flame className="h-4 w-4 text-orange-500" />
-                      <p className="text-2xl font-bold">{user.streak}</p>
+                      <p className="text-2xl font-bold">{user.streak || 0}</p>
                     </div>
                     <p className="text-xs text-muted-foreground">Day Streak</p>
                   </div>
                   <div className="text-center">
                     <div className="flex items-center justify-center gap-1 mb-1">
                       <BookOpen className="h-4 w-4 text-blue-500" />
-                      <p className="text-2xl font-bold">{user.totalFlashcardsCreated}</p>
+                      <p className="text-2xl font-bold">{user.totalFlashcardsCreated || 0}</p>
                     </div>
                     <p className="text-xs text-muted-foreground">Flashcards</p>
                   </div>
                   <div className="text-center">
                     <div className="flex items-center justify-center gap-1 mb-1">
                       <Layers className="h-4 w-4 text-purple-500" />
-                      <p className="text-2xl font-bold">{user.totalDecksCreated}</p>
+                      <p className="text-2xl font-bold">{user.totalDecksCreated || 0}</p>
                     </div>
                     <p className="text-xs text-muted-foreground">Decks</p>
                   </div>
                   <div className="text-center">
                     <div className="flex items-center justify-center gap-1 mb-1">
                       <Target className="h-4 w-4 text-green-500" />
-                      <p className="text-2xl font-bold">{user.totalQuizzesTaken}</p>
+                      <p className="text-2xl font-bold">{user.totalQuizzesTaken || 0}</p>
                     </div>
                     <p className="text-xs text-muted-foreground">Quizzes</p>
                   </div>
                   <div className="text-center">
                     <div className="flex items-center justify-center gap-1 mb-1">
                       <MessageSquare className="h-4 w-4 text-pink-500" />
-                      <p className="text-2xl font-bold">{user.totalCommentsPosted}</p>
+                      <p className="text-2xl font-bold">{user.totalCommentsPosted || 0}</p>
                     </div>
                     <p className="text-xs text-muted-foreground">Comments</p>
                   </div>
@@ -236,13 +236,13 @@ const Gamification = () => {
           <div className="text-center mb-12">
             <h2 className="text-4xl font-display font-bold mb-4">Achievements & Badges</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-6">
-              Unlock badges by completing challenges. {badges.total} / {badges.totalPossible} earned!
+              Unlock badges by completing challenges. {badges?.total || 0} / {badges?.totalPossible || 27} earned!
             </p>
-            <Progress value={(badges.total / badges.totalPossible) * 100} className="max-w-md mx-auto h-3" />
+            <Progress value={badges?.total && badges?.totalPossible ? (badges.total / badges.totalPossible) * 100 : 0} className="max-w-md mx-auto h-3" />
           </div>
 
           {/* Earned Badges */}
-          {badges.earned.length > 0 && (
+          {badges?.earned && badges.earned.length > 0 && (
             <div className="mb-12">
               <h3 className="text-2xl font-bold mb-6 flex items-center gap-2">
                 <Sparkles className="h-6 w-6 text-yellow-500" />
@@ -279,7 +279,7 @@ const Gamification = () => {
           )}
 
           {/* Available Badges */}
-          {badges.available.length > 0 && (
+          {badges?.available && badges.available.length > 0 && (
             <div>
               <h3 className="text-2xl font-bold mb-6 flex items-center gap-2">
                 <Lock className="h-6 w-6 text-muted-foreground" />
@@ -416,24 +416,24 @@ const Gamification = () => {
                           </td>
                           <td className="p-4">
                             <Badge variant="secondary" className="text-xs">
-                              {player.department.toUpperCase()}
+                              {player.department?.toUpperCase() || 'N/A'}
                             </Badge>
                           </td>
                           <td className="p-4 text-center">
                             <Badge variant="outline" className="font-bold">
-                              {player.level}
+                              {player.level || 1}
                             </Badge>
                           </td>
                           <td className="p-4 text-center">
                             <div className="flex items-center justify-center gap-1">
                               <Zap className="h-4 w-4 text-yellow-500" />
-                              <span className="font-semibold">{player.xp}</span>
+                              <span className="font-semibold">{player.xp || 0}</span>
                             </div>
                           </td>
                           <td className="p-4 text-center">
                             <div className="flex items-center justify-center gap-1">
                               <Flame className="h-4 w-4 text-orange-500" />
-                              <span className="font-semibold">{player.streak}</span>
+                              <span className="font-semibold">{player.streak || 0}</span>
                             </div>
                           </td>
                           <td className="p-4 text-center">

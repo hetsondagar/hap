@@ -4,7 +4,6 @@ import Deck from '../models/Deck';
 import User from '../models/User';
 import Flashcard from '../models/Flashcard';
 import Post from '../models/Post';
-import { awardXP } from './gamificationController';
 
 // Validation rules
 export const validateCreateDeck = [
@@ -202,10 +201,33 @@ export const createDeck = async (req: Request, res: Response): Promise<void> => 
       const user = await User.findById(creatorId);
       if (user) {
         user.totalDecksCreated += 1;
-        await user.save();
         
         // Award XP for deck creation
-        await awardXP(creatorId, 25, 'deck creation');
+        user.xp = (user.xp || 0) + 25;
+        
+        // Simple level calculation
+        if (user.xp >= 23000) user.level = 20;
+        else if (user.xp >= 19500) user.level = 19;
+        else if (user.xp >= 16500) user.level = 18;
+        else if (user.xp >= 14000) user.level = 17;
+        else if (user.xp >= 12000) user.level = 16;
+        else if (user.xp >= 10200) user.level = 15;
+        else if (user.xp >= 8600) user.level = 14;
+        else if (user.xp >= 7200) user.level = 13;
+        else if (user.xp >= 6000) user.level = 12;
+        else if (user.xp >= 5000) user.level = 11;
+        else if (user.xp >= 4100) user.level = 10;
+        else if (user.xp >= 3250) user.level = 9;
+        else if (user.xp >= 2500) user.level = 8;
+        else if (user.xp >= 1850) user.level = 7;
+        else if (user.xp >= 1300) user.level = 6;
+        else if (user.xp >= 850) user.level = 5;
+        else if (user.xp >= 500) user.level = 4;
+        else if (user.xp >= 250) user.level = 3;
+        else if (user.xp >= 100) user.level = 2;
+        else user.level = 1;
+        
+        await user.save();
       }
     }
 
@@ -353,6 +375,7 @@ export const addComment = async (req: Request, res: Response): Promise<void> => 
     const comment = {
       userId: userId as any,
       username: user.username,
+      year: user.year,
       text,
       createdAt: new Date()
     };
@@ -365,10 +388,8 @@ export const addComment = async (req: Request, res: Response): Promise<void> => 
       const commenter = await User.findById(userId);
       if (commenter) {
         commenter.totalCommentsPosted += 1;
+        commenter.xp = (commenter.xp || 0) + 5;
         await commenter.save();
-        
-        // Award XP for commenting
-        await awardXP(userId.toString(), 5, 'deck comment');
       }
     }
 
@@ -659,11 +680,15 @@ export const createPost = async (req: Request, res: Response): Promise<void> => 
 
     // Award XP for creating post
     if (userId) {
-      await awardXP(userId.toString(), 15, 'post creation');
+      const user = await User.findById(userId);
+      if (user) {
+        user.xp = (user.xp || 0) + 15;
+        await user.save();
+      }
     }
 
     const populatedPost = await Post.findById(post._id)
-      .populate('userId', 'username');
+      .populate('userId', 'username year');
 
     res.status(201).json({
       success: true,
@@ -706,7 +731,7 @@ export const getPosts = async (req: Request, res: Response): Promise<void> => {
     sortOptions[sortBy as string] = sortOrder === 'desc' ? -1 : 1;
 
     const posts = await Post.find(filter)
-      .populate('userId', 'username')
+      .populate('userId', 'username year')
       .sort(sortOptions)
       .skip(skip)
       .limit(Number(limit));
@@ -739,9 +764,9 @@ export const getPost = async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
 
     const post = await Post.findById(id)
-      .populate('userId', 'username')
+      .populate('userId', 'username year')
       .populate('likes', 'username')
-      .populate('comments.userId', 'username');
+      .populate('comments.userId', 'username year');
 
     if (!post) {
       res.status(404).json({
@@ -874,10 +899,8 @@ export const addPostComment = async (req: Request, res: Response): Promise<void>
       const commenter = await User.findById(userId);
       if (commenter) {
         commenter.totalCommentsPosted += 1;
+        commenter.xp = (commenter.xp || 0) + 5;
         await commenter.save();
-        
-        // Award XP for commenting
-        await awardXP(userId.toString(), 5, 'post comment');
       }
     }
 
@@ -957,7 +980,7 @@ export const searchPosts = async (req: Request, res: Response): Promise<void> =>
     const skip = (Number(page) - 1) * Number(limit);
 
     const posts = await Post.find(filter)
-      .populate('userId', 'username')
+      .populate('userId', 'username year')
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(Number(limit));

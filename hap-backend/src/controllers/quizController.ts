@@ -5,7 +5,6 @@ import Flashcard from '../models/Flashcard';
 import Deck from '../models/Deck';
 import Analytics from '../models/Analytics';
 import User from '../models/User';
-import { awardXP, updateStreak } from './gamificationController';
 
 // Validation rules
 export const validateSubmitQuiz = [
@@ -197,18 +196,16 @@ export const submitQuiz = async (req: Request, res: Response): Promise<void> => 
       if (user) {
         user.totalQuizzesTaken += 1;
         
-        // Check for perfect score
+        // Award XP based on performance
         if (percentage === 100) {
           user.perfectQuizzes += 1;
-          await awardXP(userId.toString(), 50, 'perfect quiz score');
+          user.xp = (user.xp || 0) + 50; // Perfect score bonus
         } else {
-          // Award XP based on performance
-          const xpAmount = Math.floor((percentage / 100) * 30); // Up to 30 XP
-          await awardXP(userId.toString(), xpAmount, 'quiz completion');
+          const xpAmount = Math.floor((percentage / 100) * 30);
+          user.xp = (user.xp || 0) + xpAmount;
         }
         
         await user.save();
-        await updateStreak(userId.toString());
       }
     }
 

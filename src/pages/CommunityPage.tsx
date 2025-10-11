@@ -358,7 +358,7 @@ const CommunityPage: React.FC = () => {
             <div className="flex items-center gap-2 text-sm">
               <Users className="h-4 w-4 text-primary" />
               <Badge variant="secondary" className="text-sm px-3 py-1">
-                {userInfo.department.toUpperCase()} - {userInfo.year.replace('-', ' ').toUpperCase()}
+                {userInfo.department?.toUpperCase() || 'N/A'} - {userInfo.year?.replace('-', ' ')?.toUpperCase() || 'N/A'}
               </Badge>
             </div>
           )}

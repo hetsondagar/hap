@@ -190,7 +190,7 @@ const CreateFlashcardPage = () => {
           
           <h1 className="text-3xl font-bold mb-2 text-foreground">Create Flashcard</h1>
           <p className="text-muted-foreground">
-            {userInfo.department.toUpperCase()} - {userInfo.year} Year
+            {userInfo.department?.toUpperCase() || 'N/A'} - {userInfo.year || 'N/A'} Year
           </p>
         </div>
 

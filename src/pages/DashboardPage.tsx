@@ -187,10 +187,10 @@ const DashboardPage = () => {
             </div>
             <div className="flex items-center gap-2">
               <Badge variant="secondary" className="text-sm">
-                {user.department.toUpperCase()}
+                {user.department?.toUpperCase() || 'N/A'}
               </Badge>
               <Badge variant="outline" className="text-sm">
-                {user.year}
+                {user.year || 'N/A'}
               </Badge>
             </div>
           </div>

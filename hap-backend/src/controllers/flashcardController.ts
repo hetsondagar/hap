@@ -3,7 +3,6 @@ import { body, validationResult, param, query } from 'express-validator';
 import Flashcard from '../models/Flashcard';
 import Deck from '../models/Deck';
 import User from '../models/User';
-import { awardXP, updateStreak } from './gamificationController';
 
 // Validation rules
 export const validateCreateFlashcard = [
@@ -84,11 +83,33 @@ export const createFlashcard = async (req: Request, res: Response): Promise<void
       const user = await User.findById(ownerId);
       if (user) {
         user.totalFlashcardsCreated += 1;
-        await user.save();
         
-        // Award XP and check badges
-        await awardXP(ownerId, 10, 'flashcard creation');
-        await updateStreak(ownerId);
+        // Award XP for flashcard creation
+        user.xp = (user.xp || 0) + 10;
+        
+        // Simple level calculation
+        if (user.xp >= 23000) user.level = 20;
+        else if (user.xp >= 19500) user.level = 19;
+        else if (user.xp >= 16500) user.level = 18;
+        else if (user.xp >= 14000) user.level = 17;
+        else if (user.xp >= 12000) user.level = 16;
+        else if (user.xp >= 10200) user.level = 15;
+        else if (user.xp >= 8600) user.level = 14;
+        else if (user.xp >= 7200) user.level = 13;
+        else if (user.xp >= 6000) user.level = 12;
+        else if (user.xp >= 5000) user.level = 11;
+        else if (user.xp >= 4100) user.level = 10;
+        else if (user.xp >= 3250) user.level = 9;
+        else if (user.xp >= 2500) user.level = 8;
+        else if (user.xp >= 1850) user.level = 7;
+        else if (user.xp >= 1300) user.level = 6;
+        else if (user.xp >= 850) user.level = 5;
+        else if (user.xp >= 500) user.level = 4;
+        else if (user.xp >= 250) user.level = 3;
+        else if (user.xp >= 100) user.level = 2;
+        else user.level = 1;
+        
+        await user.save();
       }
     }
 
