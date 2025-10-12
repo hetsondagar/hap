@@ -82,19 +82,19 @@ const Header = () => {
   ];
 
   return (
-    <header className="w-full flex items-center justify-between px-8 py-2 glass-effect circuit-pattern fixed top-0 left-0 z-50">
-      {/* Logo section - left aligned, compact and centered */}
+    <header className="w-full flex items-center justify-between px-8 py-1 glass-effect circuit-pattern fixed top-0 left-0 z-50">
+      {/* Logo section - left aligned, logos centered and close together */}
       <div className="flex items-center">
         <img
           src={hapLogo}
           alt="Hap Logo"
-          className="h-14 w-14 object-contain"
+          className="h-16 w-16 object-contain "
           style={{ objectFit: "contain" }}
         />
         <img
           src={HapLogo}
           alt="Hap Logo Text"
-          className="h-12 w-auto object-contain -ml-3"
+          className="h-12 w-auto object-contain -ml-3 -mb-2"
           style={{ objectFit: "contain", marginLeft: '-12px' }}
         />
       </div>
@@ -105,7 +105,7 @@ const Header = () => {
           <Link
             key={item.name}
             to={item.path}
-            className={`flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all duration-300 ${
+            className={`flex items-center space-x-2 px-3 py-1 rounded-lg transition-all duration-300 ${
               location.pathname === item.path
                 ? 'text-primary bg-primary/10 glow-effect'
                 : 'text-muted-foreground hover:text-primary hover:bg-primary/5'
@@ -113,6 +113,8 @@ const Header = () => {
           >
             <item.icon className="w-4 h-4" />
             <span className="font-medium text-sm">{item.name}</span>
+            {/* Place the HapLogo text image exactly right and center to the BookOpen icon (Features) */}
+            {/* (Old/original: no extra logo in nav) */}
           </Link>
         ))}
       </div>

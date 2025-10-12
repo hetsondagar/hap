@@ -94,9 +94,10 @@ const DeckDetailPage: React.FC = () => {
       // Update like count locally
       if (deck) {
         const currentLikes = Array.isArray(deck.likes) ? deck.likes.length : 0;
+        const newLikesCount = isLiked ? currentLikes - 1 : currentLikes + 1;
         setDeck({
           ...deck,
-          likes: isLiked ? currentLikes - 1 : currentLikes + 1
+          likes: Array(newLikesCount).fill({}) // keep likes as an array
         });
       }
     } catch (e: any) {

@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import SignupValidationGuide from "@/components/SignupValidationGuide";
 import { DEPARTMENTS, YEARS } from "@/data/subjects";
 import HapLogo from '../../assets/hap-logo.png';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface ValidationErrors {
   username?: string;
@@ -440,52 +441,35 @@ const Signup: React.FC = () => {
         {/* Department Field */}
         <div className="space-y-2">
           <label className="text-sm font-medium text-foreground">Department</label>
-          <div className="relative">
-            <select
+          <Select
+            value={department}
+            onValueChange={value => handleFieldChange('department', value)}
+          >
+            <SelectTrigger
+              onBlur={() => handleFieldBlur('department')}
               className={cn(
-                "w-full px-4 py-2 pr-10 text-base rounded-lg transition appearance-none",
+                "w-full px-4 py-2 pr-10 text-base rounded-lg transition",
                 "bg-[#18181b] text-foreground border border-[#27272a] shadow-sm",
                 "focus:ring-2 focus:ring-primary/50 focus:border-primary/70",
-                "hover:bg-[#232329] hover:border-primary/70"
+                "hover:bg-[#232329] hover:border-primary/70",
+                touched.department && validationErrors.department && "border-destructive focus:border-destructive",
+                touched.department && !validationErrors.department && "border-success focus:border-success"
               )}
-              value={department}
-              onChange={e => handleFieldChange('department', e.target.value)}
-              onBlur={() => handleFieldBlur('department')}
-              style={{
-                WebkitAppearance: "none",
-                MozAppearance: "none",
-                appearance: "none",
-                backgroundColor: "#18181b",
-                color: "#f4f4f5",
-                borderColor: "#27272a",
-                borderRadius: "0.75rem",
-                fontSize: "1rem",
-                boxShadow: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
-              }}
             >
-              <option value="" disabled>
-                Select your department
-              </option>
+              <SelectValue placeholder="Select your department" />
+            </SelectTrigger>
+            <SelectContent className="bg-[#18181b] text-foreground border border-[#27272a]">
               {DEPARTMENTS.map(dept => (
-                <option
+                <SelectItem
                   key={dept.id}
                   value={dept.id}
-                  style={{
-                    backgroundColor: "#18181b",
-                    color: "#f4f4f5"
-                  }}
+                  className="bg-[#18181b] text-foreground hover:bg-[#232329]"
                 >
                   {dept.label}
-                </option>
+                </SelectItem>
               ))}
-            </select>
-            {/* Custom SVG arrow */}
-            <span className="pointer-events-none absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
-              <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
-                <path d="M6 8L10 12L14 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-              </svg>
-            </span>
-          </div>
+            </SelectContent>
+          </Select>
           {touched.department && validationErrors.department && (
             <p className="text-sm text-destructive flex items-center gap-1">
               <AlertCircle className="h-3 w-3" />
@@ -495,47 +479,45 @@ const Signup: React.FC = () => {
         </div>
 
         {/* Year Field */}
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-foreground">Year</label>
-          <div className="relative">
-            <select
-              className={cn(
-                "dark-select w-full px-4 py-2 pr-10 text-base rounded-lg transition focus:ring-2 focus:ring-primary/50 appearance-none",
-                "bg-[#18181b] text-foreground border border-[#27272a] hover:bg-[#232329] focus:bg-[#232329] focus:border-primary/70",
-                touched.year && validationErrors.year && "border-destructive focus:border-destructive",
-                touched.year && !validationErrors.year && "border-success focus:border-success"
-              )}
-              value={year}
-              onChange={e => handleFieldChange('year', e.target.value)}
-              onBlur={() => handleFieldBlur('year')}
-            >
-              <option value="" disabled>
-                Select your year
-              </option>
-              {YEARS.map(yr => (
-                <option
-                  key={yr.id}
-                  value={yr.id}
-                  className="bg-[#18181b] text-foreground"
-                >
-                  {yr.label}
-                </option>
-              ))}
-            </select>
-            {/* Custom SVG arrow */}
-            <span className="pointer-events-none absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
-              <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
-                <path d="M6 8L10 12L14 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-              </svg>
-            </span>
-          </div>
-          {touched.year && validationErrors.year && (
-            <p className="text-sm text-destructive flex items-center gap-1">
-              <AlertCircle className="h-3 w-3" />
-              {validationErrors.year}
-            </p>
-          )}
-        </div>
+       <div className="space-y-2">
+  <label className="text-sm font-medium text-foreground">Year</label>
+  <Select
+    value={year}
+    onValueChange={value => handleFieldChange('year', value)}
+  >
+    <SelectTrigger
+      onBlur={() => handleFieldBlur('year')}
+      className={cn(
+        "w-full px-4 py-2 pr-10 text-base rounded-lg transition",
+        "bg-[#18181b] text-foreground border border-[#27272a] shadow-sm",
+        "focus:ring-2 focus:ring-primary/50 focus:border-primary/70",
+        "hover:bg-[#232329] hover:border-primary/70",
+        touched.year && validationErrors.year && "border-destructive focus:border-destructive",
+        touched.year && !validationErrors.year && "border-success focus:border-success"
+      )}
+    >
+      <SelectValue placeholder="Select your year" />
+    </SelectTrigger>
+    <SelectContent className="bg-[#18181b] text-foreground border border-[#27272a]">
+      {YEARS.map(yr => (
+        <SelectItem
+          key={yr.id}
+          value={yr.id}
+          className="bg-[#18181b] text-foreground hover:bg-[#232329]"
+        >
+          {yr.label}
+        </SelectItem>
+      ))}
+    </SelectContent>
+  </Select>
+
+  {touched.year && validationErrors.year && (
+    <p className="text-sm text-destructive flex items-center gap-1">
+      <AlertCircle className="h-3 w-3" />
+      {validationErrors.year}
+    </p>
+  )}
+</div>
 
         <Button 
           disabled={loading || !isFormValid()} 

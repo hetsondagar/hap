@@ -122,9 +122,10 @@ const FlashcardDecksPage: React.FC = () => {
         if (deck._id === id) {
           const currentLikes = Array.isArray(deck.likes) ? deck.likes.length : Number(deck.likes || 0);
           const isNowLiked = !userLikedDecks.has(id);
+          const newLikesCount = isNowLiked ? currentLikes + 1 : Math.max(0, currentLikes - 1);
           return {
             ...deck,
-            likes: isNowLiked ? currentLikes + 1 : Math.max(0, currentLikes - 1)
+            likes: Array(newLikesCount).fill({}) // keep likes as an array
           };
         }
         return deck;
