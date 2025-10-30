@@ -151,8 +151,8 @@ const Gamification = () => {
   }
 
   const { user, levelProgress } = stats;
-  // Prefer backend achievements list if provided
-  const computedBadges = React.useMemo(() => {
+  // Prefer backend achievements list if provided (no hooks to avoid conditional hook ordering issues)
+  const computedBadges = ((): any => {
     if (achievements && achievements.length) {
       const earned = achievements.filter((a: any) => a.earned);
       const available = achievements.filter((a: any) => !a.earned);
@@ -164,7 +164,7 @@ const Gamification = () => {
       };
     }
     return stats.badges || { total: 0, totalPossible: 0, earned: [], available: [] };
-  }, [achievements, stats]);
+  })();
   const levelInfo = getLevelInfo(user.level);
 
   return (
