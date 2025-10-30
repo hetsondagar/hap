@@ -33,6 +33,20 @@ export const flipSpring = (flipped: boolean): Variants => ({
   initial: { rotateY: flipped ? 180 : 0, transformStyle: "preserve-3d" },
 });
 
+export const flipSpringSlow = (flipped: boolean): Variants => ({
+  animate: {
+    rotateY: flipped ? 180 : 0,
+    transition: {
+      type: "spring",
+      stiffness: 220,
+      damping: 24,
+      mass: 1.1,
+    },
+    transformStyle: "preserve-3d",
+  },
+  initial: { rotateY: flipped ? 180 : 0, transformStyle: "preserve-3d" },
+});
+
 export const hoverFloat: Variants = {
   rest: { y: 0, rotateX: 0, rotateY: 0, transition: { duration: 0.2, ease: easing } },
   hover: { y: -4, transition: { duration: 0.2, ease: easing } },

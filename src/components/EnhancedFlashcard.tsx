@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { flipSpring, hoverFloat } from '@/lib/motionConfig';
+import { flipSpringSlow, hoverFloat } from '@/lib/motionConfig';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -75,18 +75,17 @@ const EnhancedFlashcard: React.FC<EnhancedFlashcardProps> = ({
       <Card
         className={cn(
           "relative w-full h-64 cursor-pointer transition-all duration-500 transform-gpu",
-          "glass-effect circuit-pattern feature-card-hover",
-          "border-2 border-border/50 dark:border-border/40",
-          "hover:border-primary/40 dark:hover:border-primary/60",
-          "bg-card dark:bg-card/80 backdrop-blur-sm",
-          "shadow-lg hover:shadow-xl dark:shadow-2xl",
+          "glass-effect gradient-border hover-glow",
+          "border-2 border-[hsl(var(--border))]/40",
+          "bg-card/50 backdrop-blur-xl",
+          "shadow-lg hover:shadow-xl",
           "overflow-hidden"
         )}
         onClick={() => onFlip?.(id)}
       >
         {/* 3D Flip Effect via framer-motion */}
         <motion.div
-          variants={flipSpring(Boolean(isFlipped))}
+          variants={flipSpringSlow(Boolean(isFlipped))}
           animate="animate"
           initial="initial"
           className={cn(
@@ -98,7 +97,7 @@ const EnhancedFlashcard: React.FC<EnhancedFlashcardProps> = ({
           <div
             className={cn(
               "absolute inset-0 w-full h-full backface-hidden",
-              "flex flex-col justify-between p-6",
+              "flex flex-col justify-between p-6 gap-2",
               "bg-gradient-card",
               "border border-[hsl(var(--border))]/40"
             )}
@@ -167,9 +166,9 @@ const EnhancedFlashcard: React.FC<EnhancedFlashcardProps> = ({
             </div>
 
             {/* Question Content */}
-            <div className="flex-1 flex items-center justify-center px-4">
+              <div className="flex-1 flex items-center justify-center px-4">
               <div className="text-center">
-                <h3 className="text-lg font-bold text-white dark:text-white leading-relaxed">
+                <h3 className="text-xl md:text-2xl font-bold text-white leading-relaxed drop-shadow">
                   {front}
                 </h3>
               </div>
@@ -192,7 +191,7 @@ const EnhancedFlashcard: React.FC<EnhancedFlashcardProps> = ({
           <div
             className={cn(
               "absolute inset-0 w-full h-full backface-hidden rotate-y-180",
-              "flex flex-col justify-between p-6",
+              "flex flex-col justify-between p-6 gap-2",
               "bg-gradient-card",
               "border border-[hsl(var(--border))]/40"
             )}
@@ -261,7 +260,7 @@ const EnhancedFlashcard: React.FC<EnhancedFlashcardProps> = ({
             {/* Answer Content */}
             <div className="flex-1 flex items-center justify-center px-4">
               <div className="text-center">
-                <p className="text-lg font-bold text-white dark:text-white leading-relaxed">
+                <p className="text-xl md:text-2xl font-bold text-white leading-relaxed drop-shadow">
                   {back}
                 </p>
               </div>

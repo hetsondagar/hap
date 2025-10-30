@@ -835,11 +835,13 @@ const CommunityPage: React.FC = () => {
                     onChange={(e) => setPostComment({ ...postComment, [post._id]: e.target.value })}
                     onKeyPress={(e) => {
                       if (e.key === 'Enter') {
+                        e.preventDefault();
                         handleCommentPost(post._id);
                       }
                     }}
                   />
                   <Button
+                    type="button"
                     size="sm"
                     onClick={() => handleCommentPost(post._id)}
                     disabled={!postComment[post._id]?.trim()}

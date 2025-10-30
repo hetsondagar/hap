@@ -81,21 +81,7 @@ This document summarizes all currently implemented animations and motion utiliti
   - Flow speed increases as value grows; quick pulse on completion can be added with particles.
 
 ### Particles & Rank Flares
-- Particle system (`src/lib/particles.tsx`):
-  - `ParticleLayer` mounts globally in `src/main.tsx` and listens for `hap:particles` events.
-  - `emitParticles({ x, y, count, colors, lifetimeMs })` helper dispatches a burst.
-  - CSS keyframes: `particle-pop` uses CSS vars `--dx`, `--dy` for trajectory; colors match theme (violet, magenta, cyan).
-  - Usage example:
-    ```ts
-    import { emitParticles } from '@/lib/particles';
-    const onSuccess = (e: React.MouseEvent) => {
-      emitParticles({ x: e.clientX, y: e.clientY, count: 18 });
-    };
-    ```
-
-- Leaderboard rank flare:
-  - Utility `.rank-flare` triggers a 600ms neon bloom around an item.
-  - Apply when a rank improves to draw attention.
+Currently disabled by request (no moving particle effects in components or navbar).
 
 ### Background/Ornament Animations
 - Body before/after layers animate subtle radial orbs and circuit lines (`circuit-float`, `circuit-pulse`).

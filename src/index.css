@@ -282,7 +282,7 @@ All colors MUST be HSL. Dark theme with aqua-blue to purple gradient.
     border: 1px solid hsl(var(--border));
   }
 
-  .glow-effect { box-shadow: var(--shadow-glow); }
+  .glow-effect { box-shadow: 0 0 42px rgba(255,106,213,0.45), 0 0 64px rgba(160,32,240,0.35); }
 
   .hero-card {
     background: var(--gradient-card);
@@ -442,9 +442,10 @@ All colors MUST be HSL. Dark theme with aqua-blue to purple gradient.
   /* Premium glassmorphism effect */
   .glass-effect {
     background: var(--gradient-glass);
-    backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: var(--shadow-glass);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(255, 106, 213, 0.18);
+    box-shadow: 0 16px 48px rgba(10, 0, 24, 0.6), 0 0 36px rgba(160,32,240,0.28);
     position: relative;
     overflow: hidden;
   }
@@ -532,7 +533,7 @@ All colors MUST be HSL. Dark theme with aqua-blue to purple gradient.
     transition: all 0.3s ease;
   }
 
-  .hover-glow:hover { box-shadow: 0 0 48px rgba(255,106,213,0.6), 0 0 72px rgba(160,32,240,0.45); transform: scale(1.05); }
+  .hover-glow:hover { box-shadow: 0 0 58px rgba(255,106,213,0.7), 0 0 88px rgba(160,32,240,0.55); transform: scale(1.03); }
   
   /* Enhanced hover glow for feature cards */
   .feature-card-hover {
@@ -780,20 +781,4 @@ All colors MUST be HSL. Dark theme with aqua-blue to purple gradient.
   }
 }
 
-/* Particle burst for success/confetti */
-@keyframes particle-pop {
-  0% { transform: translate(-50%, -50%) translate(0, 0) scale(1); opacity: 1; }
-  100% { transform: translate(-50%, -50%) translate(var(--dx), var(--dy)) scale(0.9); opacity: 0; }
-}
-
-/* Leaderboard rank flare */
-@keyframes rank-flare {
-  0% { box-shadow: 0 0 0 rgba(255,106,213,0); }
-  50% { box-shadow: 0 0 32px rgba(255,106,213,0.45), 0 0 48px rgba(160,32,240,0.35); }
-  100% { box-shadow: 0 0 0 rgba(255,106,213,0); }
-}
-
-.rank-flare {
-  position: relative;
-  animation: rank-flare 600ms ease-out;
-}
+/* (particles removed) */
