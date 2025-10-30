@@ -169,14 +169,15 @@ const Gamification = () => {
     setTimeout(() => document.body.removeChild(container), 1700);
   };
 
-  // Fire a light confetti once on initial page open
+  // Fire a light confetti once when badges section is ready (not for whole page)
   const didIntroConfetti = useRef(false);
   useEffect(() => {
-    if (!didIntroConfetti.current) {
+    const hasBadges = (computedBadges?.earned?.length || 0) + (computedBadges?.available?.length || 0) > 0;
+    if (!didIntroConfetti.current && hasBadges) {
       didIntroConfetti.current = true;
       setTimeout(() => fireConfetti(), 250);
     }
-  }, []);
+  }, [computedBadges]);
 
   if (loading) {
     return (
