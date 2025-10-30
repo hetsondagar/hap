@@ -32,6 +32,7 @@ const Gamification = () => {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<any>(null);
   const [leaderboard, setLeaderboard] = useState<any[]>([]);
+  const [achievements, setAchievements] = useState<any[]>([]);
   const [selectedDepartment, setSelectedDepartment] = useState('all');
 
   useEffect(() => {
@@ -47,15 +48,19 @@ const Gamification = () => {
   const loadData = async () => {
     try {
       setLoading(true);
-      const [statsRes, leaderboardRes] = await Promise.all([
+      // Trigger badge recalculation on backend first
+      await gamificationAPI.checkBadges();
+      const [statsRes, leaderboardRes, achievementsRes] = await Promise.all([
         gamificationAPI.getStats(),
-        gamificationAPI.getLeaderboard('all')
+        gamificationAPI.getLeaderboard('all'),
+        gamificationAPI.getAllAchievements(),
       ]);
       
       console.log('Gamification stats:', statsRes);
       console.log('Leaderboard:', leaderboardRes);
       
       setStats(statsRes.data);
+      setAchievements(achievementsRes.data?.achievements || achievementsRes.achievements || []);
       setLeaderboard(leaderboardRes.data?.leaderboard || []);
       
       // Set user's department as default
@@ -101,18 +106,18 @@ const Gamification = () => {
     
     // Tier-based colors
     if (badgeKey.includes('100') || badgeKey.includes('level_20')) return 'bg-gradient-to-br from-orange-500 to-amber-500';
-    if (badgeKey.includes('50') || badgeKey.includes('level_10')) return 'bg-gradient-to-br from-yellow-500 to-orange-500';
-    if (badgeKey.includes('25') || badgeKey.includes('30') || badgeKey.includes('level_5')) return 'bg-gradient-to-br from-blue-500 to-cyan-500';
-    if (badgeKey.includes('10') || badgeKey.includes('7')) return 'bg-gradient-to-br from-green-500 to-emerald-500';
+    if (badgeKey.includes('50') || badgeKey.includes('level_10')) return 'bg-gradient-to-br from-amber-400 to-orange-600';
+    if (badgeKey.includes('25') || badgeKey.includes('30') || badgeKey.includes('level_5')) return 'bg-gradient-to-br from-orange-400 to-amber-500';
+    if (badgeKey.includes('10') || badgeKey.includes('7')) return 'bg-gradient-to-br from-yellow-500 to-amber-600';
     return 'bg-gradient-to-br from-gray-500 to-slate-500';
   };
 
   const getLevelInfo = (level: number) => {
     if (level >= 20) return { title: 'Legendary Scholar', color: 'text-primary' };
-    if (level >= 15) return { title: 'Elite Learner', color: 'text-yellow-500' };
-    if (level >= 10) return { title: 'Expert Student', color: 'text-blue-500' };
-    if (level >= 5) return { title: 'Advanced Learner', color: 'text-green-500' };
-    if (level >= 3) return { title: 'Dedicated Student', color: 'text-cyan-500' };
+    if (level >= 15) return { title: 'Elite Learner', color: 'text-amber-400' };
+    if (level >= 10) return { title: 'Expert Student', color: 'text-primary' };
+    if (level >= 5) return { title: 'Advanced Learner', color: 'text-amber-500' };
+    if (level >= 3) return { title: 'Dedicated Student', color: 'text-amber-300' };
     return { title: 'Beginner Learner', color: 'text-muted-foreground' };
   };
 
@@ -132,7 +137,21 @@ const Gamification = () => {
     );
   }
 
-  const { user, levelProgress, badges } = stats;
+  const { user, levelProgress } = stats;
+  // Prefer backend achievements list if provided
+  const computedBadges = React.useMemo(() => {
+    if (achievements && achievements.length) {
+      const earned = achievements.filter((a: any) => a.earned);
+      const available = achievements.filter((a: any) => !a.earned);
+      return {
+        total: earned.length,
+        totalPossible: achievements.length,
+        earned,
+        available,
+      };
+    }
+    return stats.badges || { total: 0, totalPossible: 0, earned: [], available: [] };
+  }, [achievements, stats]);
   const levelInfo = getLevelInfo(user.level);
 
   return (
@@ -242,30 +261,30 @@ const Gamification = () => {
                 <div>
                   <h2 className="text-2xl font-bold mb-2">Achievements & Badges</h2>
                   <p className="text-muted-foreground">
-                    {badges?.total || 0} / {badges?.totalPossible || 27} badges earned
+                    {computedBadges?.total || 0} / {computedBadges?.totalPossible || 27} badges earned
                   </p>
                 </div>
                 <div className="text-right">
                   <div className="text-3xl font-bold text-primary">
-                    {Math.round((badges?.total / badges?.totalPossible) * 100) || 0}%
+                    {Math.round(((computedBadges?.total || 0) / (computedBadges?.totalPossible || 1)) * 100)}%
                   </div>
                   <p className="text-sm text-muted-foreground">Complete</p>
                 </div>
               </div>
               <Progress 
-                value={badges?.total && badges?.totalPossible ? (badges.total / badges.totalPossible) * 100 : 0} 
+                value={computedBadges?.total && computedBadges?.totalPossible ? (computedBadges.total / computedBadges.totalPossible) * 100 : 0} 
                 className="h-3 mb-6" 
               />
 
               {/* Earned Badges - Compact Grid */}
-              {badges?.earned && badges.earned.length > 0 && (
+              {computedBadges?.earned && computedBadges.earned.length > 0 && (
                 <div className="mb-6">
                   <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
                     <Sparkles className="h-5 w-5 text-yellow-500" />
-                    Your Badges ({badges.earned.length})
+                    Your Badges ({computedBadges.earned.length})
                   </h3>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    {badges.earned.map((achievement: any, index: number) => (
+                    {computedBadges.earned.map((achievement: any, index: number) => (
                       <AnimatedBadge
                         key={achievement.key}
                         achievement={achievement}
@@ -280,14 +299,14 @@ const Gamification = () => {
               )}
 
               {/* Available Badges - Compact Grid */}
-              {badges?.available && badges.available.length > 0 && (
+              {computedBadges?.available && computedBadges.available.length > 0 && (
                 <div>
                   <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
                     <Lock className="h-5 w-5 text-muted-foreground" />
-                    Available Badges ({badges.available.length})
+                    Available Badges ({computedBadges.available.length})
                   </h3>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    {badges.available.slice(0, 6).map((achievement: any, index: number) => (
+                    {computedBadges.available.slice(0, 6).map((achievement: any, index: number) => (
                       <AnimatedBadge
                         key={achievement.key}
                         achievement={achievement}
@@ -296,14 +315,14 @@ const Gamification = () => {
                         showProgress={true}
                         size="sm"
                         className="animate-in"
-                        style={{ animationDelay: `${(index + badges.earned.length) * 50}ms` }}
+                        style={{ animationDelay: `${(index + (computedBadges.earned?.length || 0)) * 50}ms` }}
                       />
                     ))}
                   </div>
-                  {badges.available.length > 6 && (
+                  {computedBadges.available.length > 6 && (
                     <div className="mt-4 text-center">
                       <Button variant="outline" size="sm">
-                        View All {badges.available.length} Available Badges
+                        View All {computedBadges.available.length} Available Badges
                       </Button>
                     </div>
                   )}
@@ -509,3 +528,4 @@ const Gamification = () => {
 };
 
 export default Gamification;
+

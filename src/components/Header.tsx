@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { PremiumButton } from '@/components/ui/premium-button';
 import { Menu, X, Trophy, BookOpen, Users, Home, BarChart3, LayoutDashboard, Sparkles, MessageSquare } from 'lucide-react';
-const MAIN_LOGO = '/assets/logo.png';
+const MAIN_LOGO = '/logo1.png';
 import { authAPI } from '@/lib/api';
 
 const Header = () => {

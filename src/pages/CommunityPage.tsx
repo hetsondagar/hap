@@ -742,7 +742,7 @@ const CommunityPage: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-2 mt-2 text-xs">
                   <span className="text-muted-foreground">by</span>
-                  <span className={`font-semibold ${isPostAuthor ? 'text-primary' : 'text-blue-600 dark:text-blue-400'}`}>
+                  <span className={`font-semibold ${isPostAuthor ? 'text-primary' : 'text-primary'}`}>
                     {postUsername}
                   </span>
                   <span className="text-muted-foreground">•</span>
@@ -799,7 +799,7 @@ const CommunityPage: React.FC = () => {
                           ) : (
                             <>
                               <div className="flex-1">
-                                <span className={`font-semibold ${isCommentAuthor ? 'text-primary' : 'text-blue-600 dark:text-blue-400'}`}>
+                                <span className={`font-semibold ${isCommentAuthor ? 'text-primary' : 'text-primary'}`}>
                                   {comment.username}:
                                 </span>{' '}
                                 <span className="text-muted-foreground">{comment.text}</span>

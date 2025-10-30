@@ -24,7 +24,7 @@ import { motion } from 'framer-motion';
 import { fadeIn, popIn } from '@/lib/motionConfig';
 import { useEffect, useState } from 'react';
 import { authAPI } from '@/lib/api';
-const heroImagePath = '/assets/hero.png';
+const heroImagePath = '/hero.png';
 
 const Index = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -64,7 +64,7 @@ const Index = () => {
       icon: Shuffle,
       title: "Interactive Quiz Mode",
       description: "Test yourself with dynamic quizzes that track your progress and accuracy automatically.",
-      gradient: "from-green-500 to-blue-600",
+      gradient: "from-orange-500 to-amber-500",
       link: "/quiz", // ✅ direct page
     },
     {

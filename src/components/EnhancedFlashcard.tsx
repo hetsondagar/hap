@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { flipSpringSlow } from '@/lib/motionConfig';
 // Animations removed per request; keep static UI only
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -79,12 +81,13 @@ const EnhancedFlashcard: React.FC<EnhancedFlashcardProps> = ({
         )}
         onClick={() => onFlip?.(id)}
       >
-        {/* 3D Flip - instantaneous (no animation) */}
-        <div
-          className={cn(
-            "relative w-full h-full transform-gpu",
-          )}
-          style={{ transformStyle: 'preserve-3d', transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)' }}
+        {/* 3D Flip with smooth animation */}
+        <motion.div
+          className={cn("relative w-full h-full transform-gpu")}
+          style={{ transformStyle: 'preserve-3d' }}
+          variants={flipSpringSlow(Boolean(isFlipped))}
+          initial="initial"
+          animate="animate"
         >
           {/* Front Side */}
           <div
@@ -271,7 +274,7 @@ const EnhancedFlashcard: React.FC<EnhancedFlashcardProps> = ({
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Flip Animation Overlay */}
         {isHovered && (

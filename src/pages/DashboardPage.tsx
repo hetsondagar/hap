@@ -211,8 +211,8 @@ const DashboardPage = () => {
 
   const getBadgeColor = (badgeKey: string) => {
     if (badgeKey.includes('streak')) return 'bg-gradient-to-br from-orange-500 to-red-600';
-    if (badgeKey.includes('quiz') || badgeKey.includes('perfect')) return 'bg-gradient-to-br from-purple-500 to-indigo-600';
-    if (badgeKey.includes('flashcard')) return 'bg-gradient-to-br from-blue-500 to-cyan-600';
+    if (badgeKey.includes('quiz') || badgeKey.includes('perfect')) return 'bg-gradient-to-br from-orange-500 to-amber-500';
+    if (badgeKey.includes('flashcard')) return 'bg-gradient-to-br from-orange-500 to-amber-500';
     if (badgeKey.includes('deck')) return 'bg-gradient-to-br from-green-500 to-emerald-600';
     if (badgeKey.includes('community') || badgeKey.includes('social') || badgeKey.includes('discussion')) return 'bg-gradient-to-br from-pink-500 to-rose-600';
     if (badgeKey.includes('level')) return 'bg-gradient-to-br from-yellow-500 to-amber-600';

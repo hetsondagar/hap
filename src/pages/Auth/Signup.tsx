@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import AuthLayout from "./AuthLayout";
-const MAIN_LOGO = '/assets/logo.png';
+const MAIN_LOGO = '/logo1.png';
 import { authAPI } from "@/lib/api";
 import { Eye, EyeOff, Check, X, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -231,7 +231,7 @@ const Signup: React.FC = () => {
               style={{ objectFit: "contain" }}
             />
           </div>
-          <span className="mt-4 font-bold text-2xl bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent drop-shadow">
+          <span className="mt-4 font-bold text-2xl bg-[linear-gradient(90deg,var(--accent-primary),var(--accent-secondary))] bg-clip-text text-transparent drop-shadow">
             Signup
         </span>
         </div>

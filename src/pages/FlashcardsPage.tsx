@@ -289,7 +289,7 @@ const FlashcardsPage = () => {
               <Button 
                 onClick={handleAddCard} 
                 disabled={creating || !front.trim() || !back.trim() || !selectedSubject} 
-                className="w-full h-12 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold"
+                className="w-full h-12 bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white font-semibold"
               >
                 {creating ? (
                   <div className="flex items-center gap-2">
