@@ -442,8 +442,8 @@ const DashboardPage = () => {
         <div className="grid md:grid-cols-4 gap-4 mb-8">
           <Card className="p-6 glass-effect border border-[hsl(var(--border))]/40 animate-ember-fade">
             <div className="flex items-center gap-3">
-              <div className="p-3 bg-blue-500/20 rounded-lg">
-                <BookOpen className="h-6 w-6 text-blue-500" />
+              <div className="p-3 bg-[rgba(255,106,0,0.12)] rounded-lg">
+                <BookOpen className="h-6 w-6 text-primary" />
               </div>
               <div>
                 <p className="text-2xl font-bold">{myFlashcards.length}</p>
@@ -454,8 +454,8 @@ const DashboardPage = () => {
 
           <Card className="p-6 glass-effect border border-[hsl(var(--border))]/40 animate-ember-fade">
             <div className="flex items-center gap-3">
-              <div className="p-3 bg-purple-500/20 rounded-lg">
-                <Layers className="h-6 w-6 text-purple-500" />
+              <div className="p-3 bg-[rgba(255,106,0,0.12)] rounded-lg">
+                <Layers className="h-6 w-6 text-primary" />
               </div>
               <div>
                 <p className="text-2xl font-bold">{myDecks.length}</p>

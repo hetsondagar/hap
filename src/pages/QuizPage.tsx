@@ -198,7 +198,7 @@ const QuizPage = () => {
                   <div className="text-sm text-muted-foreground">Correct Answers</div>
                 </Card>
                 <Card className="p-6 text-center">
-                  <div className="text-3xl font-bold text-blue-500 mb-2">+{quizResult.xpEarned}</div>
+                  <div className="text-3xl font-bold text-primary mb-2">+{quizResult.xpEarned}</div>
                   <div className="text-sm text-muted-foreground">XP Earned</div>
                 </Card>
               </div>
@@ -356,7 +356,7 @@ const QuizPage = () => {
               <div className="text-sm text-muted-foreground">Questions per Quiz</div>
             </Card>
             <Card className="p-6 text-center glass-effect border-2 border-white/10 dark:border-white/20">
-              <Clock className="w-8 h-8 text-blue-500 mx-auto mb-3" />
+              <Clock className="w-8 h-8 text-primary mx-auto mb-3" />
               <div className="text-2xl font-bold mb-1">20</div>
               <div className="text-sm text-muted-foreground">Minutes Time Limit</div>
             </Card>

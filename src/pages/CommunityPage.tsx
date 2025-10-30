@@ -64,6 +64,7 @@ const CommunityPage: React.FC = () => {
   const [newPostTitle, setNewPostTitle] = useState("");
   const [newPostContent, setNewPostContent] = useState("");
   const [postComment, setPostComment] = useState<{[key: string]: string}>({});
+  const [postingComment, setPostingComment] = useState<{[key: string]: boolean}>({});
   const [currentUserId, setCurrentUserId] = useState<string>("");
   const [currentUsername, setCurrentUsername] = useState<string>("");
   const [editingComment, setEditingComment] = useState<{postId: string, commentIndex: number, text: string} | null>(null);
@@ -240,10 +241,12 @@ const CommunityPage: React.FC = () => {
   };
 
   const handleCommentPost = async (id: string) => {
+    if (postingComment[id]) return;
     const text = postComment[id]?.trim();
     if (!text) return;
     
     try {
+      setPostingComment(prev => ({ ...prev, [id]: true }));
       await communityAPI.commentPost(id, { text });
       
       // Update post comments in state without reloading
@@ -270,6 +273,8 @@ const CommunityPage: React.FC = () => {
       } else {
         toast.error("Failed to add comment");
       }
+    } finally {
+      setPostingComment(prev => ({ ...prev, [id]: false }));
     }
   };
   
@@ -491,7 +496,7 @@ const CommunityPage: React.FC = () => {
                     </p>
                     <div className="flex items-center justify-between">
                       <div className="text-xs text-muted-foreground">
-                        by {typeof deck.creator === 'string' ? deck.creator : deck.creator?.username || 'Unknown'}
+                        by <span className="text-primary font-semibold">{typeof deck.creator === 'string' ? deck.creator : deck.creator?.username || 'Unknown'}</span>
                       </div>
                       <div className="flex items-center gap-4 text-xs">
                         <button className="flex items-center gap-1 hover:text-primary" onClick={() => handleLike(deck._id)}>
@@ -833,18 +838,15 @@ const CommunityPage: React.FC = () => {
                     placeholder="Add a comment..."
                     value={postComment[post._id] || ""}
                     onChange={(e) => setPostComment({ ...postComment, [post._id]: e.target.value })}
-                    onKeyPress={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                        handleCommentPost(post._id);
-                      }
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') { e.preventDefault(); handleCommentPost(post._id); }
                     }}
                   />
                   <Button
                     type="button"
                     size="sm"
                     onClick={() => handleCommentPost(post._id)}
-                    disabled={!postComment[post._id]?.trim()}
+                    disabled={postingComment[post._id] || !postComment[post._id]?.trim()}
                   >
                     <Send className="h-4 w-4" />
                   </Button>

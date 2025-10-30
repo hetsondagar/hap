@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { flipSpringSlow, hoverFloat } from '@/lib/motionConfig';
+// Animations removed per request; keep static UI only
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -61,43 +60,37 @@ const EnhancedFlashcard: React.FC<EnhancedFlashcardProps> = ({
   };
 
   return (
-    <motion.div
+    <div
       className={cn(
         "group relative perspective-1000",
         className
       )}
-      variants={hoverFloat}
-      initial="rest"
-      whileHover="hover"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       <Card
         className={cn(
-          "relative w-full h-64 cursor-pointer transition-all duration-500 transform-gpu",
-          "glass-effect gradient-border hover-glow",
+          "relative w-full h-64 cursor-pointer transform-gpu",
+          "glass-effect gradient-border",
           "border-2 border-[hsl(var(--border))]/40",
           "bg-card/50 backdrop-blur-xl",
-          "shadow-lg hover:shadow-xl",
+          "shadow-lg",
           "overflow-hidden"
         )}
         onClick={() => onFlip?.(id)}
       >
-        {/* 3D Flip Effect via framer-motion */}
-        <motion.div
-          variants={flipSpringSlow(Boolean(isFlipped))}
-          animate="animate"
-          initial="initial"
+        {/* 3D Flip - instantaneous (no animation) */}
+        <div
           className={cn(
             "relative w-full h-full transform-gpu",
           )}
-          style={{ transformStyle: 'preserve-3d' }}
+          style={{ transformStyle: 'preserve-3d', transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)' }}
         >
           {/* Front Side */}
           <div
             className={cn(
               "absolute inset-0 w-full h-full backface-hidden",
-              "flex flex-col justify-between p-6 gap-2",
+              "flex flex-col justify-between p-4 gap-2",
               "bg-gradient-card",
               "border border-[hsl(var(--border))]/40"
             )}
@@ -122,7 +115,7 @@ const EnhancedFlashcard: React.FC<EnhancedFlashcardProps> = ({
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-7 w-7 p-0 bg-white/80 dark:bg-black/30 hover:bg-white dark:hover:bg-black/50 rounded-full backdrop-blur-sm"
+                    className="h-6 w-6 p-0 bg-white/70 dark:bg-black/30 hover:bg-white/80 dark:hover:bg-black/50 rounded-full backdrop-blur-sm"
                     onClick={(e) => {
                       e.stopPropagation();
                       onToggleFavorite(id);
@@ -130,7 +123,7 @@ const EnhancedFlashcard: React.FC<EnhancedFlashcardProps> = ({
                   >
                     <Star 
                       className={cn(
-                        "h-4 w-4",
+                        "h-3.5 w-3.5",
                         isFavorite ? "fill-yellow-500 text-yellow-500 dark:fill-yellow-400 dark:text-yellow-400" : "text-muted-foreground dark:text-foreground/60"
                       )} 
                     />
@@ -140,35 +133,35 @@ const EnhancedFlashcard: React.FC<EnhancedFlashcardProps> = ({
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-7 w-7 p-0 bg-white/80 dark:bg-black/30 hover:bg-white dark:hover:bg-black/50 rounded-full backdrop-blur-sm"
+                    className="h-6 w-6 p-0 bg-white/70 dark:bg-black/30 hover:bg-white/80 dark:hover:bg-black/50 rounded-full backdrop-blur-sm"
                     onClick={(e) => {
                       e.stopPropagation();
                       onEdit(id);
                     }}
                   >
-                    <Edit3 className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                    <Edit3 className="h-3.5 w-3.5 text-primary" />
                   </Button>
                 )}
                 {onDelete && (
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-7 w-7 p-0 bg-white/80 dark:bg-black/30 hover:bg-white dark:hover:bg-black/50 hover:text-destructive dark:hover:text-red-400 rounded-full backdrop-blur-sm"
+                    className="h-6 w-6 p-0 bg-white/70 dark:bg-black/30 hover:bg-white/80 dark:hover:bg-black/50 hover:text-destructive dark:hover:text-red-400 rounded-full backdrop-blur-sm"
                     onClick={(e) => {
                       e.stopPropagation();
                       onDelete(id);
                     }}
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 className="h-3.5 w-3.5" />
                   </Button>
                 )}
               </div>
             </div>
 
             {/* Question Content */}
-              <div className="flex-1 flex items-center justify-center px-4">
+            <div className="flex-1 flex items-center justify-center px-3">
               <div className="text-center">
-                <h3 className="text-xl md:text-2xl font-bold text-white leading-relaxed drop-shadow">
+                <h3 className="text-lg md:text-xl font-semibold text-white leading-relaxed drop-shadow line-clamp-6">
                   {front}
                 </h3>
               </div>
@@ -176,12 +169,12 @@ const EnhancedFlashcard: React.FC<EnhancedFlashcardProps> = ({
 
             {/* Footer */}
             <div className="flex items-center justify-between">
-              <div className="text-xs text-gray-300 dark:text-gray-400 font-medium">
+              <div className="text-[10px] text-gray-300 dark:text-gray-400 font-medium">
                 {year && phase && `${year} • ${phase}`}
                 {year && !phase && year}
               </div>
-              <div className="flex items-center gap-2 text-sm text-blue-400 dark:text-blue-300 font-medium">
-                <Eye className="h-4 w-4" />
+              <div className="flex items-center gap-2 text-xs text-primary font-medium">
+                <Eye className="h-3.5 w-3.5" />
                 <span>Click to reveal</span>
               </div>
             </div>
@@ -191,7 +184,7 @@ const EnhancedFlashcard: React.FC<EnhancedFlashcardProps> = ({
           <div
             className={cn(
               "absolute inset-0 w-full h-full backface-hidden rotate-y-180",
-              "flex flex-col justify-between p-6 gap-2 animate-ember-glow",
+              "flex flex-col justify-between p-4 gap-2",
               "bg-gradient-card",
               "border border-[hsl(var(--border))]/40"
             )}
@@ -268,17 +261,17 @@ const EnhancedFlashcard: React.FC<EnhancedFlashcardProps> = ({
 
             {/* Footer */}
             <div className="flex items-center justify-between">
-              <div className="text-xs text-gray-300 dark:text-gray-400 font-medium">
+              <div className="text-[10px] text-gray-300 dark:text-gray-400 font-medium">
                 {year && phase && `${year} • ${phase}`}
                 {year && !phase && year}
               </div>
-              <div className="flex items-center gap-2 text-sm text-green-400 dark:text-green-300 font-medium">
-                <EyeOff className="h-4 w-4" />
+              <div className="flex items-center gap-2 text-xs text-green-400 dark:text-green-300 font-medium">
+                <EyeOff className="h-3.5 w-3.5" />
                 <span>Click to hide</span>
               </div>
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Flip Animation Overlay */}
         {isHovered && (
@@ -302,7 +295,7 @@ const EnhancedFlashcard: React.FC<EnhancedFlashcardProps> = ({
           </Button>
         </div>
       )}
-    </motion.div>
+    </div>
   );
 };
 

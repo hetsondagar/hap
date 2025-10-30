@@ -50,14 +50,14 @@ const Index = () => {
       icon: Brain,
       title: "Smart Flashcard Creation",
       description: "Create interactive Q&A flashcards with rich formatting for maximum learning efficiency.",
-      gradient: "from-blue-500 to-purple-600",
+      gradient: "from-orange-500 to-amber-500",
       link: "/flashcards", // ✅ direct page
     },
     {
       icon: Users,
       title: "Community Sharing",
       description: "Share your decks publicly or keep them private. Follow creators and discover trending content.",
-      gradient: "from-purple-500 to-pink-600",
+      gradient: "from-orange-500 to-amber-500",
       link: "/community", // ✅ direct page
     },
     {
@@ -139,7 +139,7 @@ const Index = () => {
               
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
                 {isAuthenticated ? (
-                  <Link to="/analytics">
+                  <Link to="/dashboard">
                     <PremiumButton size="xl" variant="premium" className="group">
                       Go to Dashboard
                       <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
@@ -219,9 +219,9 @@ const Index = () => {
                   <Users className="w-4 h-4 text-primary" /> Community
                 </span>
               </Link>
-              <Link to="/analytics" className="group">
+              <Link to="/dashboard" className="group">
                 <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[rgba(21,21,21,0.7)] border border-[hsl(var(--border))]/40 text-sm text-white hover-glow">
-                  <BarChart3 className="w-4 h-4 text-primary" /> Analytics
+                  <BarChart3 className="w-4 h-4 text-primary" /> Dashboard
                 </span>
               </Link>
             </div>
@@ -298,30 +298,113 @@ const Index = () => {
             <p className="text-muted-foreground mt-2">Only what exists in hap today</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card className="glass-effect p-6 border-2 border-white/10">
-              <h3 className="text-xl font-semibold mb-2">1) Sign up and set profile</h3>
-              <p className="text-muted-foreground">Choose your department and year. This personalizes subjects and content.</p>
-            </Card>
-            <Card className="glass-effect p-6 border-2 border-white/10">
-              <h3 className="text-xl font-semibold mb-2">2) Create flashcards</h3>
-              <p className="text-muted-foreground">Add question/answer cards by subject with difficulty. Auto-fills dept/year.</p>
-            </Card>
-            <Card className="glass-effect p-6 border-2 border-white/10">
-              <h3 className="text-xl font-semibold mb-2">3) Take quizzes</h3>
-              <p className="text-muted-foreground">Timed MCQ quizzes per subject with instant results and XP.</p>
-            </Card>
-            <Card className="glass-effect p-6 border-2 border-white/10">
-              <h3 className="text-xl font-semibold mb-2">4) Track analytics</h3>
-              <p className="text-muted-foreground">Weekly study hours, streaks, quiz scores, and topic coverage.</p>
-            </Card>
-            <Card className="glass-effect p-6 border-2 border-white/10">
-              <h3 className="text-xl font-semibold mb-2">5) Earn achievements</h3>
-              <p className="text-muted-foreground">Badges, levels, and leaderboards to keep you motivated.</p>
-            </Card>
-            <Card className="glass-effect p-6 border-2 border-white/10">
-              <h3 className="text-xl font-semibold mb-2">6) Share & discuss</h3>
-              <p className="text-muted-foreground">Publish decks, like/comment, and ask questions in the community.</p>
-            </Card>
+            <motion.div variants={fadeIn} initial="initial" whileInView="animate" viewport={{ once: true }}>
+              <Card className="glass-effect p-6 border border-[hsl(var(--border))]/40 hover-glow">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-primary flex items-center justify-center shadow-[0_0_16px_var(--glow)]">
+                    <Users className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold mb-1">1) Sign up & set profile</h3>
+                    <p className="text-muted-foreground">Choose your department and year to personalize subjects and content.</p>
+                    <ul className="mt-3 text-sm text-muted-foreground space-y-1">
+                      <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-primary" /> Quick onboarding</li>
+                      <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-primary" /> Subject catalog auto-filtered</li>
+                    </ul>
+                  </div>
+                </div>
+              </Card>
+            </motion.div>
+
+            <motion.div variants={fadeIn} initial="initial" whileInView="animate" viewport={{ once: true }} transition={{ delay: 0.08 }}>
+              <Card className="glass-effect p-6 border border-[hsl(var(--border))]/40 hover-glow">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-primary flex items-center justify-center shadow-[0_0_16px_var(--glow)]">
+                    <Brain className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold mb-1">2) Create flashcards</h3>
+                    <p className="text-muted-foreground">Add question/answer cards by subject with an optional difficulty.</p>
+                    <ul className="mt-3 text-sm text-muted-foreground space-y-1">
+                      <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-primary" /> Auto-fills dept/year</li>
+                      <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-primary" /> Organize by subject</li>
+                    </ul>
+                  </div>
+                </div>
+              </Card>
+            </motion.div>
+
+            <motion.div variants={fadeIn} initial="initial" whileInView="animate" viewport={{ once: true }} transition={{ delay: 0.16 }}>
+              <Card className="glass-effect p-6 border border-[hsl(var(--border))]/40 hover-glow">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-primary flex items-center justify-center shadow-[0_0_16px_var(--glow)]">
+                    <Target className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold mb-1">3) Take quizzes</h3>
+                    <p className="text-muted-foreground">Timed MCQ quizzes per subject with instant results and XP.</p>
+                    <ul className="mt-3 text-sm text-muted-foreground space-y-1">
+                      <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-primary" /> 20m timer • 30 questions</li>
+                      <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-primary" /> XP awarded on completion</li>
+                    </ul>
+                  </div>
+                </div>
+              </Card>
+            </motion.div>
+
+            <motion.div variants={fadeIn} initial="initial" whileInView="animate" viewport={{ once: true }}>
+              <Card className="glass-effect p-6 border border-[hsl(var(--border))]/40 hover-glow">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-primary flex items-center justify-center shadow-[0_0_16px_var(--glow)]">
+                    <BarChart3 className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold mb-1">4) Dashboard insights</h3>
+                    <p className="text-muted-foreground">Your weekly activity, streaks, quiz scores, and goal progress in one place.</p>
+                    <ul className="mt-3 text-sm text-muted-foreground space-y-1">
+                      <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-primary" /> Trends & mastery</li>
+                      <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-primary" /> Goal progress</li>
+                    </ul>
+                  </div>
+                </div>
+              </Card>
+            </motion.div>
+
+            <motion.div variants={fadeIn} initial="initial" whileInView="animate" viewport={{ once: true }} transition={{ delay: 0.08 }}>
+              <Card className="glass-effect p-6 border border-[hsl(var(--border))]/40 hover-glow">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-primary flex items-center justify-center shadow-[0_0_16px_var(--glow)]">
+                    <Trophy className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold mb-1">5) Earn achievements</h3>
+                    <p className="text-muted-foreground">Badges, levels, and leaderboards keep you motivated.</p>
+                    <ul className="mt-3 text-sm text-muted-foreground space-y-1">
+                      <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-primary" /> 27+ badges to collect</li>
+                      <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-primary" /> Department leaderboards</li>
+                    </ul>
+                  </div>
+                </div>
+              </Card>
+            </motion.div>
+
+            <motion.div variants={fadeIn} initial="initial" whileInView="animate" viewport={{ once: true }} transition={{ delay: 0.16 }}>
+              <Card className="glass-effect p-6 border border-[hsl(var(--border))]/40 hover-glow">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-primary flex items-center justify-center shadow-[0_0_16px_var(--glow)]">
+                    <Users className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold mb-1">6) Share & discuss</h3>
+                    <p className="text-muted-foreground">Publish decks, like/comment, and ask questions in the community.</p>
+                    <ul className="mt-3 text-sm text-muted-foreground space-y-1">
+                      <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-primary" /> Collaborative deck sharing</li>
+                      <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-primary" /> Discussion & doubts</li>
+                    </ul>
+                  </div>
+                </div>
+              </Card>
+            </motion.div>
           </div>
         </div>
       </section>

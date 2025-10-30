@@ -31,7 +31,7 @@ const BadgeNotification: React.FC<BadgeNotificationProps> = ({
   };
 
   const getBadgeColor = (badgeKey: string) => {
-    if (badgeKey.includes('100') || badgeKey.includes('level_20')) return 'from-purple-500 to-pink-500';
+    if (badgeKey.includes('100') || badgeKey.includes('level_20')) return 'from-orange-500 to-amber-500';
     if (badgeKey.includes('50') || badgeKey.includes('level_10')) return 'from-yellow-500 to-orange-500';
     if (badgeKey.includes('25') || badgeKey.includes('30') || badgeKey.includes('level_5')) return 'from-blue-500 to-cyan-500';
     if (badgeKey.includes('10') || badgeKey.includes('7')) return 'from-green-500 to-emerald-500';

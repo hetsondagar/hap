@@ -100,7 +100,7 @@ const Gamification = () => {
     if (!earned) return 'bg-muted/50';
     
     // Tier-based colors
-    if (badgeKey.includes('100') || badgeKey.includes('level_20')) return 'bg-gradient-to-br from-purple-500 to-pink-500';
+    if (badgeKey.includes('100') || badgeKey.includes('level_20')) return 'bg-gradient-to-br from-orange-500 to-amber-500';
     if (badgeKey.includes('50') || badgeKey.includes('level_10')) return 'bg-gradient-to-br from-yellow-500 to-orange-500';
     if (badgeKey.includes('25') || badgeKey.includes('30') || badgeKey.includes('level_5')) return 'bg-gradient-to-br from-blue-500 to-cyan-500';
     if (badgeKey.includes('10') || badgeKey.includes('7')) return 'bg-gradient-to-br from-green-500 to-emerald-500';
@@ -108,7 +108,7 @@ const Gamification = () => {
   };
 
   const getLevelInfo = (level: number) => {
-    if (level >= 20) return { title: 'Legendary Scholar', color: 'text-purple-500' };
+    if (level >= 20) return { title: 'Legendary Scholar', color: 'text-primary' };
     if (level >= 15) return { title: 'Elite Learner', color: 'text-yellow-500' };
     if (level >= 10) return { title: 'Expert Student', color: 'text-blue-500' };
     if (level >= 5) return { title: 'Advanced Learner', color: 'text-green-500' };
@@ -196,14 +196,14 @@ const Gamification = () => {
                   </div>
                   <div className="text-center">
                     <div className="flex items-center justify-center gap-1 mb-1">
-                      <BookOpen className="h-3 w-3 text-blue-500" />
+                      <BookOpen className="h-3 w-3 text-primary" />
                       <p className="text-lg font-bold">{user.totalFlashcardsCreated || 0}</p>
                     </div>
                     <p className="text-xs text-muted-foreground">Cards</p>
                   </div>
                   <div className="text-center">
                     <div className="flex items-center justify-center gap-1 mb-1">
-                      <Layers className="h-3 w-3 text-purple-500" />
+                      <Layers className="h-3 w-3 text-primary" />
                       <p className="text-lg font-bold">{user.totalDecksCreated || 0}</p>
                     </div>
                     <p className="text-xs text-muted-foreground">Decks</p>
@@ -316,14 +316,14 @@ const Gamification = () => {
               <h2 className="text-2xl font-bold mb-6">How to Earn XP</h2>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
-                  <BookOpen className="h-5 w-5 text-blue-500" />
+                  <BookOpen className="h-5 w-5 text-primary" />
                   <div>
                     <p className="font-bold">+10 XP</p>
                     <p className="text-xs text-muted-foreground">per flashcard</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
-                  <Layers className="h-5 w-5 text-purple-500" />
+                  <Layers className="h-5 w-5 text-primary" />
                   <div>
                     <p className="font-bold">+25 XP</p>
                     <p className="text-xs text-muted-foreground">per deck</p>

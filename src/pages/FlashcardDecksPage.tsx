@@ -320,7 +320,7 @@ const FlashcardDecksPage: React.FC = () => {
                         </CardHeader>
                         <CardContent className="flex-1 flex flex-col justify-between">
                           <div className="text-xs text-muted-foreground mb-3">
-                            by <span className="font-semibold text-blue-600 dark:text-blue-400">{creatorName}</span>
+                            by <span className="font-semibold text-primary">{creatorName}</span>
                           </div>
 
                           {/* Actions */}

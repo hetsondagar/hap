@@ -290,7 +290,7 @@ const CreateFlashcardPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-subtle">
+    <div className="min-h-screen">
       <Header />
       <div className="pt-24 pb-16 px-8">
       <div className="max-w-2xl mx-auto">

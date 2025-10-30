@@ -11,7 +11,7 @@
         boxShadow: "0 4px 24px 0 rgba(0,0,0,0.25)",
       }}
     />
-    <span className="font-bold text-2xl bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent drop-shadow">
+    <span className="font-bold text-2xl bg-[linear-gradient(90deg,var(--accent-primary),var(--accent-secondary))] bg-clip-text text-transparent drop-shadow">
       Hap
     </span>
   </div>

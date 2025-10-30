@@ -189,7 +189,7 @@ const SubjectFlashcardsPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-subtle">
+    <div className="min-h-screen">
       <Header />
       <div className="pt-24 pb-16 px-8">
         <div className="max-w-4xl mx-auto">

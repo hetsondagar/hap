@@ -11,7 +11,7 @@ const badgeVariants = cva(
         default: "border-transparent bg-[linear-gradient(135deg,var(--accent-primary),var(--accent-secondary))] text-white hover:shadow-[0_0_18px_rgba(255,106,0,0.45)]",
         secondary: "border-transparent bg-[rgba(22,0,40,0.6)] text-[hsl(var(--muted-foreground))] hover:translate-y-[-1px]",
         destructive: "border-transparent bg-destructive text-destructive-foreground hover:shadow-[0_0_18px_rgba(255,71,71,0.45)]",
-        outline: "text-foreground border-[hsl(var(--border))]/60",
+        outline: "text-white border-[hsl(var(--border))]/70 bg-[rgba(21,21,21,0.65)]",
       },
     },
     defaultVariants: {

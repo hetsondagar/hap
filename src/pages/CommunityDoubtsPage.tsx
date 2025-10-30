@@ -298,7 +298,7 @@ const CommunityDoubtsPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-subtle">
+    <div className="min-h-screen">
       <Header />
       
       <div className="pt-24 pb-16 px-4 md:px-8">
@@ -423,7 +423,7 @@ const CommunityDoubtsPage: React.FC = () => {
                     </div>
                     <div className="flex items-center gap-2 mt-4 pt-3 border-t border-border/30 dark:border-border/20">
                       <span className="text-sm text-muted-foreground">Asked by</span>
-                      <span className={`font-bold text-sm ${isPostAuthor ? 'text-primary' : 'text-blue-600 dark:text-blue-400'}`}>
+                      <span className={`font-bold text-sm ${isPostAuthor ? 'text-primary' : 'text-primary'}`}>
                         {postUsername}
                       </span>
                       <Badge variant="default" className="text-xs bg-primary/20 dark:bg-primary/30 text-primary dark:text-primary-foreground border-primary/30 dark:border-primary/50">
@@ -482,7 +482,7 @@ const CommunityDoubtsPage: React.FC = () => {
                           return (
                             <div key={idx} className="relative group">
                               {/* Subtle animated background */}
-                              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-pink-500/5 dark:from-blue-400/10 dark:via-purple-400/10 dark:to-pink-400/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                              <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,106,0,0.06),rgba(255,157,66,0.06))] rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
                               
                               {/* Comment content */}
                               <div className="relative bg-card dark:bg-card/80 border border-border/40 dark:border-border/30 rounded-xl p-4 hover:border-primary/30 dark:hover:border-primary/50 transition-all duration-200">
@@ -514,7 +514,7 @@ const CommunityDoubtsPage: React.FC = () => {
                                   <div className="flex justify-between items-start gap-3">
                                     <div className="flex-1">
                                       <div className="flex items-center gap-2 mb-3">
-                                        <span className={`font-bold text-base ${isCommentAuthor ? 'text-primary' : 'text-blue-600 dark:text-blue-400'}`}>
+                                        <span className={`font-bold text-base ${isCommentAuthor ? 'text-primary' : 'text-primary'}`}>
                                           {comment.username}
                                         </span>
                                         <Badge variant="default" className="text-xs bg-emerald-500/20 dark:bg-emerald-500/30 text-emerald-700 dark:text-emerald-300 border-emerald-500/30 dark:border-emerald-500/50">

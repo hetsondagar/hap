@@ -29,6 +29,7 @@ const DeckDetailPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [deck, setDeck] = useState<Deck | null>(null);
   const [comment, setComment] = useState("");
+  const [posting, setPosting] = useState(false);
   const [currentUserId, setCurrentUserId] = useState("");
   const [currentUsername, setCurrentUsername] = useState("");
   const [currentUserYear, setCurrentUserYear] = useState("");
@@ -105,8 +106,9 @@ const DeckDetailPage: React.FC = () => {
   };
 
   const handleComment = async () => {
-    if (!id || !comment.trim()) return;
+    if (!id || !comment.trim() || posting) return;
     try {
+      setPosting(true);
       await communityAPI.commentDeck(id, { text: comment.trim() });
       
       // Add comment locally
@@ -128,6 +130,8 @@ const DeckDetailPage: React.FC = () => {
       toast.success("Comment added!");
     } catch (e: any) {
       toast.error("Failed to add comment");
+    } finally {
+      setPosting(false);
     }
   };
 
@@ -244,7 +248,7 @@ const DeckDetailPage: React.FC = () => {
                     <Badge variant="outline">{deck.flashcards?.length || 0} cards</Badge>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    Created by <span className="font-semibold text-blue-600 dark:text-blue-400">
+                    Created by <span className="font-semibold text-primary">
                       {deck.creatorId?.username || 'Unknown'}
                     </span>
                   </p>
@@ -349,7 +353,7 @@ const DeckDetailPage: React.FC = () => {
                     placeholder="Add a comment..."
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
-                    onKeyPress={(e) => {
+                    onKeyDown={(e) => {
                       if (e.key === 'Enter' && !e.shiftKey) {
                         e.preventDefault();
                         handleComment();
@@ -359,7 +363,7 @@ const DeckDetailPage: React.FC = () => {
                   <Button
                     size="sm"
                     onClick={handleComment}
-                    disabled={!comment.trim()}
+                    disabled={posting || !comment.trim()}
                     className="bg-gradient-primary"
                   >
                     <Send className="h-4 w-4" />
