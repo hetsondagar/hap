@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Midnight Violet Flux – Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800&family=Outfit:wght@300;400;500;600;700&display=swap');
+
 /* Badge Achievement Animations */
 @keyframes shine {
   0% {
@@ -79,73 +82,69 @@ All colors MUST be HSL. Dark theme with aqua-blue to purple gradient.
 
 @layer base {
   :root {
-    /* Techy Dark Theme Base Colors */
-    --background: 240 15% 5%;
-    --foreground: 210 40% 98%;
+    /* Midnight Violet Flux Base */
+    --background: 266 100% 5%;           /* #0A0018 */
+    --foreground: 0 0% 100%;             /* #FFFFFF */
 
-    --card: 240 8% 8%;
-    --card-foreground: 210 40% 98%;
+    --card: 282 100% 8%;                 /* deep violet, translucent handled in glass */
+    --card-foreground: 0 0% 100%;
 
-    --popover: 240 8% 8%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 282 100% 8%;
+    --popover-foreground: 0 0% 100%;
 
-    /* Electric Blue Primary (#4FACFE) */
-    --primary: 203 100% 64%;
-    --primary-foreground: 240 15% 5%;
+    /* Accents */
+    --primary: 282 87% 53%;              /* #A020F0 */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 322 100% 70%;           /* #FF6AD5 */
+    --secondary-foreground: 0 0% 100%;
 
-    /* Purple Secondary (#7366FF) */
-    --secondary: 247 100% 70%;
-    --secondary-foreground: 210 40% 98%;
+    --muted: 282 40% 18%;
+    --muted-foreground: 262 100% 86%;    /* #C9B9FF text secondary */
 
-    --muted: 240 6% 15%;
-    --muted-foreground: 215 20% 70%;
+    --accent: 282 87% 53%;
+    --accent-foreground: 0 0% 100%;
 
-    --accent: 203 80% 45%;
-    --accent-foreground: 210 40% 98%;
+    --destructive: 338 100% 63%;         /* #FF4081 */
+    --destructive-foreground: 0 0% 100%;
 
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 240 6% 15%;
-    --input: 240 6% 12%;
-    --ring: 203 100% 64%;
+    --border: 322 100% 70%;              /* magenta glow line */
+    --input: 282 35% 14%;
+    --ring: 282 87% 53%;                 /* neon violet ring */
 
     --radius: 0.75rem;
 
-    /* Techy Glassmorphic Design Tokens */
-    --gradient-primary: linear-gradient(135deg, hsl(203 100% 64%) 0%, hsl(247 100% 70%) 100%);
-    --gradient-subtle: linear-gradient(135deg, hsl(240 15% 5%) 0%, hsl(240 20% 8%) 100%);
-    --gradient-card: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
-    --gradient-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
-    
-    /* Circuit Board Pattern Colors */
-    --circuit-primary: 203 100% 64%;
-    --circuit-secondary: 247 100% 70%;
-    --circuit-accent: 180 100% 50%;
-    
-    /* Gamification Colors */
-    --success: 142 76% 36%;
+    /* Theme Gradients */
+    --gradient-primary: linear-gradient(135deg, #A020F0 0%, #FF6AD5 100%);
+    --gradient-subtle: linear-gradient(180deg, rgba(10,0,24,1) 0%, rgba(18,0,38,1) 100%);
+    --gradient-card: linear-gradient(135deg, rgba(22,0,40,0.82) 0%, rgba(22,0,40,0.65) 100%);
+    --gradient-glass: linear-gradient(135deg, rgba(22,0,40,0.66) 0%, rgba(22,0,40,0.52) 100%);
+
+    /* Circuit hues (for subtle orbs/lines) */
+    --circuit-primary: 282 87% 53%;
+    --circuit-secondary: 322 100% 70%;
+    --circuit-accent: 282 87% 53%;
+
+    /* Gamification */
+    --success: 88 100% 68%;              /* #B2FF59 */
     --warning: 48 96% 53%;
-    --info: 203 100% 64%;
-    --achievement: 47 100% 63%;
-    
-    /* Badge Colors */
+    --info: 282 87% 53%;
+    --achievement: 322 100% 70%;
+
+    /* Badges */
     --badge-bronze: 30 67% 45%;
     --badge-silver: 210 16% 60%;
     --badge-gold: 48 96% 53%;
     --badge-diamond: 283 100% 80%;
-    
-    /* Techy Shadows with glow */
-    --shadow-glow: 0 0 30px hsl(203 100% 64% / 0.4);
-    --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.3);
-    --shadow-intense: 0 0 50px hsl(247 100% 70% / 0.5);
-    --shadow-glass: 0 8px 32px rgba(31, 38, 135, 0.37);
-    
-    /* Animation & Transitions */
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
-    --radius: 0.75rem;
+    /* Shadows/Glow */
+    --shadow-glow: 0 0 30px rgba(255, 106, 213, 0.45); /* magenta bloom */
+    --shadow-card: 0 10px 40px rgba(0, 0, 0, 0.45);
+    --shadow-intense: 0 0 60px rgba(160, 32, 240, 0.55);
+    --shadow-glass: 0 16px 48px rgba(10, 0, 24, 0.6);
+
+    /* Transitions */
+    --transition-smooth: all 0.2s ease;
+    --transition-bounce: all 0.35s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
     --sidebar-background: 0 0% 98%;
 
@@ -195,6 +194,15 @@ All colors MUST be HSL. Dark theme with aqua-blue to purple gradient.
     position: relative;
     overflow-x: hidden;
   }
+  h1, h2, h3, .font-display {
+    font-family: 'Orbitron', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    letter-spacing: 0.5px;
+    text-shadow: 0 0 12px rgba(160,32,240,0.25);
+  }
+  body, p, span, li, input, textarea, button {
+    font-family: 'Outfit', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    letter-spacing: 0.2px;
+  }
   
   body::before {
     content: '';
@@ -234,6 +242,15 @@ All colors MUST be HSL. Dark theme with aqua-blue to purple gradient.
   html {
     scroll-behavior: smooth;
   }
+
+  /* Custom thin scrollbar */
+  *::-webkit-scrollbar { width: 10px; height: 10px; }
+  *::-webkit-scrollbar-track { background: transparent; }
+  *::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #A020F0 0%, #FF6AD5 100%);
+    border-radius: 9999px;
+  }
+  * { scrollbar-width: thin; scrollbar-color: #A020F0 transparent; }
 }
 
 @layer components {
@@ -248,7 +265,7 @@ All colors MUST be HSL. Dark theme with aqua-blue to purple gradient.
   }
   
   .gradient-text-engineering {
-    background: linear-gradient(135deg, #4FACFE 0%, #7366FF 100%);
+    background: var(--gradient-primary);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -262,9 +279,7 @@ All colors MUST be HSL. Dark theme with aqua-blue to purple gradient.
     border: 1px solid hsl(var(--border));
   }
 
-  .glow-effect {
-    box-shadow: var(--shadow-glow);
-  }
+  .glow-effect { box-shadow: var(--shadow-glow); }
 
   .hero-card {
     background: var(--gradient-card);
@@ -279,11 +294,7 @@ All colors MUST be HSL. Dark theme with aqua-blue to purple gradient.
     box-shadow: var(--shadow-intense);
   }
 
-  .badge-glow {
-    background: var(--gradient-primary);
-    box-shadow: 0 0 20px hsl(var(--primary) / 0.4);
-    animation: pulse-glow 2s ease-in-out infinite alternate;
-  }
+  .badge-glow { background: var(--gradient-primary); box-shadow: 0 0 28px rgba(255,106,213,0.45); animation: pulse-glow 2s ease-in-out infinite alternate; }
 
   .department-card {
     background-size: cover;
@@ -472,32 +483,20 @@ All colors MUST be HSL. Dark theme with aqua-blue to purple gradient.
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  .hover-lift:hover {
-    transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 20px 60px rgba(79, 172, 254, 0.3);
-  }
+  .hover-lift:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 24px 72px rgba(160,32,240,0.28), 0 0 64px rgba(255,106,213,0.25); }
 
   .hover-glow {
     transition: all 0.3s ease;
   }
 
-  .hover-glow:hover {
-    box-shadow: 0 0 40px rgba(79, 172, 254, 0.6), 0 0 60px rgba(115, 102, 255, 0.4);
-    transform: scale(1.05);
-  }
+  .hover-glow:hover { box-shadow: 0 0 48px rgba(255,106,213,0.6), 0 0 72px rgba(160,32,240,0.45); transform: scale(1.05); }
   
   /* Enhanced hover glow for feature cards */
   .feature-card-hover {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
   
-  .feature-card-hover:hover {
-    transform: translateY(-8px) scale(1.02);
-    box-shadow: 
-      0 20px 60px rgba(79, 172, 254, 0.3),
-      0 0 80px rgba(79, 172, 254, 0.2),
-      0 0 120px rgba(115, 102, 255, 0.1);
-  }
+  .feature-card-hover:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 24px 72px rgba(160,32,240,0.28), 0 0 80px rgba(255,106,213,0.22), 0 0 120px rgba(160,32,240,0.18); }
   
   .feature-card-hover:hover::before {
     content: '';
@@ -506,10 +505,7 @@ All colors MUST be HSL. Dark theme with aqua-blue to purple gradient.
     left: -2px;
     right: -2px;
     bottom: -2px;
-    background: linear-gradient(45deg, 
-      rgba(79, 172, 254, 0.3), 
-      rgba(115, 102, 255, 0.3), 
-      rgba(79, 172, 254, 0.3));
+    background: linear-gradient(45deg, rgba(160,32,240,0.35), rgba(255,106,213,0.35), rgba(160,32,240,0.35));
     border-radius: inherit;
     z-index: -1;
     animation: lightning-border 2s ease-in-out infinite;
