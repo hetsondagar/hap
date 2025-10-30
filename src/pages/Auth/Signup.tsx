@@ -227,7 +227,7 @@ const Signup: React.FC = () => {
             <img
               src={MAIN_LOGO}
               alt="HAP Logo"
-              className="h-16 w-auto object-contain -mt-2"
+              className="h-20 md:h-24 w-auto object-contain -mt-2"
               style={{ objectFit: "contain" }}
             />
           </div>

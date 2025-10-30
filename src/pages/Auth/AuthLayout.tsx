@@ -13,8 +13,13 @@ interface AuthLayoutProps {
 
 const AuthLayout: React.FC<AuthLayoutProps> = ({ title, children }) => {
   return (
-    <div className="flex items-center justify-center min-h-screen pt-24 pb-16">
-      <Card className="w-full max-w-md p-6 hero-card">
+    <div 
+      className="relative flex items-center justify-center min-h-screen pt-24 pb-16 bg-fixed bg-cover bg-center"
+      style={{ backgroundImage: "url('/bg.png')" }}
+    >
+      {/* Subtle dark overlay for readability */}
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]" />
+      <Card className="relative w-full max-w-md p-6 hero-card">
         <CardHeader className="flex flex-col items-center">
           {/* <img src={hapLogo} alt="Hap Logo" className="h-16 w-16 object-contain mb-3" /> */}
           <CardTitle className="text-2xl font-bold text-primary">{title}</CardTitle>
