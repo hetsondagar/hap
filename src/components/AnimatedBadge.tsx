@@ -6,7 +6,6 @@ import {
   CheckCircle2, 
   Lock, 
   Star, 
-  Sparkles,
   Award,
   BookOpen,
   Layers,
@@ -135,26 +134,7 @@ const AnimatedBadge: React.FC<AnimatedBadgeProps> = ({
           showCelebration && "animate-pulse shadow-2xl border-yellow-400/50"
         )}
       >
-        {/* Celebration Sparkles */}
-        {showCelebration && (
-          <div className="absolute inset-0 pointer-events-none">
-            {[...Array(12)].map((_, i) => (
-              <Sparkles
-                key={i}
-                className={cn(
-                  "absolute text-yellow-400 animate-ping",
-                  `w-${3 + (i % 3)} h-${3 + (i % 3)}`
-                )}
-                style={{
-                  top: `${20 + (i * 7)}%`,
-                  left: `${10 + (i * 8)}%`,
-                  animationDelay: `${i * 0.1}s`,
-                  animationDuration: '1s'
-                }}
-              />
-            ))}
-          </div>
-        )}
+        {/* Celebration overlays removed per request */}
 
         {/* Progress Ring for unearned badges */}
         {!isEarned && showProgress && progress > 0 && (
@@ -272,25 +252,7 @@ const AnimatedBadge: React.FC<AnimatedBadgeProps> = ({
         )}
       </Card>
 
-      {/* Floating celebration elements */}
-      {showCelebration && (
-        <div className="absolute inset-0 pointer-events-none">
-          {[...Array(8)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute animate-bounce text-yellow-400"
-              style={{
-                top: `${Math.random() * 100}%`,
-                left: `${Math.random() * 100}%`,
-                animationDelay: `${i * 0.2}s`,
-                animationDuration: '2s'
-              }}
-            >
-              <Sparkles className="w-4 h-4" />
-            </div>
-          ))}
-        </div>
-      )}
+      {/* Removed floating sparkles */}
     </div>
   );
 };
