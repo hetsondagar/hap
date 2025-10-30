@@ -572,8 +572,8 @@ const CommunityPage: React.FC = () => {
               <p className="text-sm text-muted-foreground">Your decks only.</p>
               <CreateDeckDialog onCreated={(id) => {
                 loadDecks();
-                toast.success('Deck created successfully! Reloading decks...');
-                setTimeout(() => navigate(`/community/${id}`), 500);
+                toast.success('Deck created successfully! Opening deck...');
+                setTimeout(() => navigate(`/decks/${id}`), 500);
               }} />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

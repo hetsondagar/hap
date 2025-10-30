@@ -41,6 +41,42 @@ export const BADGE_CRITERIA = {
   'level_20': { xp: 0, name: 'Learning Legend', description: 'Reach level 20', check: (user: any) => user.level >= 20 },
 };
 
+// Compute progress (0-100) toward a badge based on current user stats
+const computeBadgeProgress = (user: any, key: string): number => {
+  const clamp = (v: number) => Math.max(0, Math.min(100, Math.round(v)));
+  switch (key) {
+    // Flashcards
+    case 'first_flashcard': return clamp((user.totalFlashcardsCreated / 1) * 100);
+    case 'flashcard_creator_5': return clamp((user.totalFlashcardsCreated / 5) * 100);
+    case 'flashcard_creator_25': return clamp((user.totalFlashcardsCreated / 25) * 100);
+    case 'flashcard_creator_100': return clamp((user.totalFlashcardsCreated / 100) * 100);
+    // Decks
+    case 'first_deck': return clamp((user.totalDecksCreated / 1) * 100);
+    case 'deck_creator_5': return clamp((user.totalDecksCreated / 5) * 100);
+    case 'deck_creator_20': return clamp((user.totalDecksCreated / 20) * 100);
+    // Streaks
+    case 'streak_3': return clamp((user.streak / 3) * 100);
+    case 'streak_7': return clamp((user.streak / 7) * 100);
+    case 'streak_30': return clamp((user.streak / 30) * 100);
+    case 'streak_100': return clamp((user.streak / 100) * 100);
+    // Quizzes
+    case 'first_quiz': return clamp((user.totalQuizzesTaken / 1) * 100);
+    case 'quiz_taker_10': return clamp((user.totalQuizzesTaken / 10) * 100);
+    case 'quiz_taker_50': return clamp((user.totalQuizzesTaken / 50) * 100);
+    case 'perfect_score': return clamp((user.perfectQuizzes / 1) * 100);
+    case 'perfect_score_10': return clamp((user.perfectQuizzes / 10) * 100);
+    // Community
+    case 'social_butterfly': return clamp((user.totalCommentsPosted / 5) * 100);
+    case 'community_helper': return clamp((user.totalCommentsPosted / 25) * 100);
+    case 'discussion_leader': return clamp((user.totalCommentsPosted / 100) * 100);
+    // Level
+    case 'level_5': return clamp((user.level / 5) * 100);
+    case 'level_10': return clamp((user.level / 10) * 100);
+    case 'level_20': return clamp((user.level / 20) * 100);
+    default: return 0;
+  }
+};
+
 // XP thresholds for levels
 const XP_LEVELS = [
   0,      // Level 1
@@ -171,7 +207,8 @@ export const getUserGamificationStats = async (req: Request, res: Response): Pro
     const earnedBadges = user.badges.map(badgeKey => ({
       key: badgeKey,
       ...BADGE_CRITERIA[badgeKey as keyof typeof BADGE_CRITERIA],
-      earned: true
+      earned: true,
+      progress: 100
     }));
 
     // Get available badges (not yet earned)
@@ -180,7 +217,8 @@ export const getUserGamificationStats = async (req: Request, res: Response): Pro
       .map(([key, criteria]) => ({
         key,
         ...criteria,
-        earned: false
+        earned: false,
+        progress: computeBadgeProgress(user, key)
       }));
 
     res.status(200).json({

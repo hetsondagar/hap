@@ -241,8 +241,8 @@ const FlashcardDecksPage: React.FC = () => {
               </div>
               <CreateDeckDialog onCreated={(id) => {
                 loadDecks();
-                toast.success('Deck created successfully!');
-                setTimeout(() => navigate(`/community/${id}`), 500);
+                toast.success('Deck created successfully! Opening deck...');
+                setTimeout(() => navigate(`/decks/${id}`), 500);
               }} />
             </div>
 
