@@ -230,6 +230,8 @@ const Header = () => {
           </div>
         </div>
       )}
+      {/* Neon underline */}
+      <div className="pointer-events-none absolute left-0 right-0 -bottom-px h-[2px] bg-[linear-gradient(90deg,var(--accent-primary),var(--accent-secondary))] shadow-[0_0_12px_var(--glow)]" />
     </header>
   );
 };

@@ -225,7 +225,7 @@ const FlashcardDecksPage: React.FC = () => {
   const commentCount = (deck: Deck) => Array.isArray(deck.comments) ? deck.comments.length : Number(deck.comments || 0);
 
   return (
-    <div className="min-h-screen bg-gradient-subtle">
+    <div className="min-h-screen">
       <Header />
 
       <div className="pt-24 pb-16 px-4 md:px-8">

@@ -65,7 +65,7 @@ type ProgressResponse = {
   };
 };
 
-const COLORS = ["#4ade80", "#60a5fa", "#facc15", "#f87171"];
+const COLORS = ["#FF6A00", "#FF9D42", "#FFC58A", "#26D97B"];
 
 const AnalyticsPage: React.FC = () => {
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -200,9 +200,10 @@ const AnalyticsPage: React.FC = () => {
                   <Line
                     type="monotone"
                     dataKey="hours"
-                    stroke="#4ade80"
+                    stroke="#FF6A00"
                     strokeWidth={3}
-                    dot={{ r: 5 }}
+                    dot={{ r: 0 }}
+                    activeDot={{ r: 5, stroke: '#FF9D42', strokeWidth: 2 }}
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -239,7 +240,13 @@ const AnalyticsPage: React.FC = () => {
                   <XAxis dataKey="quiz" stroke="#6b7280" />
                   <YAxis stroke="#6b7280" />
                   <Tooltip />
-                  <Bar dataKey="score" fill="#60a5fa" radius={[6, 6, 0, 0]} />
+                  <defs>
+                    <linearGradient id="barOrange" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor="#FF6A00" />
+                      <stop offset="100%" stopColor="#FF9D42" />
+                    </linearGradient>
+                  </defs>
+                  <Bar dataKey="score" fill="url(#barOrange)" radius={[6, 6, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>

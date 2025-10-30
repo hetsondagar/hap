@@ -309,7 +309,7 @@ const DashboardPage = () => {
   } = dashboardData || {};
 
   return (
-    <div className="min-h-screen bg-gradient-subtle">
+    <div className="min-h-screen">
       <Header />
       
       <div className="container mx-auto px-4 pt-24 pb-16">

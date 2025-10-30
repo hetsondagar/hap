@@ -217,7 +217,7 @@ const DeckDetailPage: React.FC = () => {
   const likeCountNum = Array.isArray(deck.likes) ? deck.likes.length : 0;
 
   return (
-    <div className="min-h-screen bg-gradient-subtle">
+    <div className="min-h-screen">
       <Header />
 
       <div className="pt-24 pb-16 px-4 md:px-8">

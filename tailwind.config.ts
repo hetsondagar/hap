@@ -80,8 +80,8 @@ export default {
         "intense": "var(--shadow-intense)",
       },
       fontFamily: {
-        sans: ["Outfit", "system-ui", "sans-serif"],
-        display: ["Orbitron", "Outfit", "system-ui", "sans-serif"],
+        sans: ["Inter", "system-ui", "sans-serif"],
+        display: ["Orbitron", "Space Grotesk", "Inter", "system-ui", "sans-serif"],
       },
       borderRadius: {
         lg: "var(--radius)",

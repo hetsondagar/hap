@@ -212,60 +212,72 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Core Features */}
-      <section className="py-20 relative">
+      {/* Problem We Solve */}
+      <section className="py-20">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16 animate-fade-in">
-            <Badge className="mb-4 bg-secondary/10 text-secondary border-secondary/20">
-              <Star className="w-3 h-3 mr-1" />
-              Premium Features
-            </Badge>
-            <h2 className="text-4xl md:text-5xl font-display font-bold mb-6">
-              Everything You Need to <span className="gradient-text">Excel</span>
-            </h2>
-            <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              Powerful features designed specifically for engineering students to make learning efficient and engaging.
-            </p>
-          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+            <Card className="glass-effect p-8 border-2 border-white/10">
+              <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">The Problem</h2>
+              <p className="text-lg text-muted-foreground leading-relaxed">
+                Engineering students juggle dense syllabi, scattered notes, and last‑minute revisions. Traditional study methods make it hard to recall key concepts quickly, track progress, or collaborate with peers in a meaningful way.
+              </p>
+              <ul className="mt-6 space-y-2 text-muted-foreground">
+                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-secondary" /> Hard to organize topic-wise content by department and year</li>
+                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-secondary" /> No quick self‑test to find weak areas</li>
+                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-secondary" /> Little visibility into progress and consistency</li>
+              </ul>
+            </Card>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {features.map((feature, index) => (
-              <Link 
-                key={index} 
-                to={feature.link} 
-                className="block animate-scale-in"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <Card className="glass-effect circuit-pattern p-8 group cursor-pointer hover-lift border-2 border-white/10 h-full">
-                  <div className="flex items-start space-x-6">
-                    <div className={`w-20 h-20 bg-gradient-to-br ${feature.gradient} rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-2xl transition-all duration-300 group-hover:scale-110 group-hover:rotate-6`}>
-                      <feature.icon className="w-10 h-10 text-white" />
-                    </div>
-                    <div className="flex-grow">
-                      <h3 className="text-2xl font-display font-bold mb-3 group-hover:gradient-text transition-all duration-300">
-                        {feature.title}
-                      </h3>
-                      <p className="text-muted-foreground leading-relaxed text-base">
-                        {feature.description}
-                      </p>
-                      <div className="mt-4 flex items-center text-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <span className="text-sm font-semibold">Learn more</span>
-                        <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                      </div>
-                    </div>
-                  </div>
-                </Card>
-              </Link>
-            ))}
+            <Card className="glass-effect p-8 border-2 border-white/10">
+              <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">Our Solution</h2>
+              <p className="text-lg text-muted-foreground leading-relaxed">
+                hap makes studying fast and focused with smart flashcards, interactive quizzes, analytics, and a supportive community—built specifically for your department and year.
+              </p>
+              <div className="grid sm:grid-cols-2 gap-3 mt-6">
+                <Badge className="badge-glow">Create flashcards</Badge>
+                <Badge className="badge-glow">Quiz yourself</Badge>
+                <Badge className="badge-glow">Track analytics</Badge>
+                <Badge className="badge-glow">Earn achievements</Badge>
+                <Badge className="badge-glow">Share decks</Badge>
+                <Badge className="badge-glow">Discuss doubts</Badge>
+              </div>
+            </Card>
           </div>
+        </div>
+      </section>
 
-          <div className="text-center mt-12">
-            <Link to="/features">
-              <PremiumButton variant="outline" size="lg" className="group">
-                Explore All Features
-                <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-              </PremiumButton>
-            </Link>
+      {/* How It Works */}
+      <section className="py-16">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-display font-bold">How it works</h2>
+            <p className="text-muted-foreground mt-2">Only what exists in hap today</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Card className="glass-effect p-6 border-2 border-white/10">
+              <h3 className="text-xl font-semibold mb-2">1) Sign up and set profile</h3>
+              <p className="text-muted-foreground">Choose your department and year. This personalizes subjects and content.</p>
+            </Card>
+            <Card className="glass-effect p-6 border-2 border-white/10">
+              <h3 className="text-xl font-semibold mb-2">2) Create flashcards</h3>
+              <p className="text-muted-foreground">Add question/answer cards by subject with difficulty. Auto-fills dept/year.</p>
+            </Card>
+            <Card className="glass-effect p-6 border-2 border-white/10">
+              <h3 className="text-xl font-semibold mb-2">3) Take quizzes</h3>
+              <p className="text-muted-foreground">Timed MCQ quizzes per subject with instant results and XP.</p>
+            </Card>
+            <Card className="glass-effect p-6 border-2 border-white/10">
+              <h3 className="text-xl font-semibold mb-2">4) Track analytics</h3>
+              <p className="text-muted-foreground">Weekly study hours, streaks, quiz scores, and topic coverage.</p>
+            </Card>
+            <Card className="glass-effect p-6 border-2 border-white/10">
+              <h3 className="text-xl font-semibold mb-2">5) Earn achievements</h3>
+              <p className="text-muted-foreground">Badges, levels, and leaderboards to keep you motivated.</p>
+            </Card>
+            <Card className="glass-effect p-6 border-2 border-white/10">
+              <h3 className="text-xl font-semibold mb-2">6) Share & discuss</h3>
+              <p className="text-muted-foreground">Publish decks, like/comment, and ask questions in the community.</p>
+            </Card>
           </div>
         </div>
       </section>

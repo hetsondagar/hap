@@ -122,7 +122,7 @@ const Features = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-subtle">
+    <div className="min-h-screen">
       <Header />
 
       {/* Hero Section */}
