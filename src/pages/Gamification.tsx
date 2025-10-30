@@ -199,20 +199,8 @@ const Gamification = () => {
   const safeProgress = Math.max(0, Math.min(100, Number(levelProgress?.progress ?? 0)));
   const safeXpToNext = Math.max(0, Number(levelProgress?.xpToNextLevel ?? 0));
   const nextLevelXP = Math.max(Number(levelProgress?.nextLevelXP ?? 100), 1);
-  // Prefer backend achievements list if provided (no hooks to avoid conditional hook ordering issues)
-  const computedBadges = ((): any => {
-    if (achievements && achievements.length) {
-      const earned = achievements.filter((a: any) => a.earned);
-      const available = achievements.filter((a: any) => !a.earned);
-      return {
-        total: earned.length,
-        totalPossible: achievements.length,
-        earned,
-        available,
-      };
-    }
-    return stats.badges || { total: 0, totalPossible: 0, earned: [], available: [] };
-  })();
+  // Always trust stats.badges (includes earned + progress), achievements are for catalog only
+  const computedBadges = stats.badges || { total: 0, totalPossible: 0, earned: [], available: [] };
   const levelInfo = getLevelInfo(user.level);
 
   

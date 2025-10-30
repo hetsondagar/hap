@@ -24,7 +24,7 @@ const Signup: React.FC = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [department, setDepartment] = useState("");
+  const [department, setDepartment] = useState("cse");
   const [year, setYear] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -460,7 +460,7 @@ const Signup: React.FC = () => {
               <option value="" disabled>
                 Select your department
               </option>
-              {DEPARTMENTS.map(dept => (
+              {DEPARTMENTS.filter(dept => dept.id === 'cse').map(dept => (
                 <option
                   key={dept.id}
                   value={dept.id}

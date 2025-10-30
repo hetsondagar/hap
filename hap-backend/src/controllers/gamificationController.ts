@@ -197,6 +197,22 @@ export const getUserGamificationStats = async (req: Request, res: Response): Pro
       return;
     }
 
+    // Auto-award any newly completed badges before computing stats
+    const newlyEarned: string[] = [];
+    for (const [badgeKey, criteria] of Object.entries(BADGE_CRITERIA)) {
+      if (!user.badges.includes(badgeKey) && criteria.check(user)) {
+        user.badges.push(badgeKey);
+        newlyEarned.push(badgeKey);
+        if (criteria.xp > 0) {
+          user.xp += criteria.xp;
+        }
+      }
+    }
+    if (newlyEarned.length > 0) {
+      user.level = calculateLevel(user.xp);
+      await user.save();
+    }
+
     // Calculate next level XP
     const currentLevelXP = XP_LEVELS[user.level - 1] || 0;
     const nextLevelXP = XP_LEVELS[user.level] || XP_LEVELS[XP_LEVELS.length - 1];
@@ -296,12 +312,51 @@ export const getDepartmentLeaderboard = async (req: Request, res: Response): Pro
 // Get all achievements
 export const getAllAchievements = async (req: Request, res: Response): Promise<void> => {
   try {
-    const achievements = Object.entries(BADGE_CRITERIA).map(([key, criteria]) => ({
-      key,
-      name: criteria.name,
-      description: criteria.description,
-      xp: criteria.xp
-    }));
+    // If user is authenticated, include earned + progress in the response
+    const userId = (req as any).user?.userId;
+    let user: any = null;
+    if (userId) {
+      user = await User.findById(userId);
+    }
+
+    const achievements = Object.entries(BADGE_CRITERIA).map(([key, criteria]) => {
+      const earned = user ? user.badges.includes(key) : false;
+      const progress = user ? Math.max(0, Math.min(100, Math.round((() => {
+        switch (key) {
+          case 'first_flashcard': return (user.totalFlashcardsCreated / 1) * 100;
+          case 'flashcard_creator_5': return (user.totalFlashcardsCreated / 5) * 100;
+          case 'flashcard_creator_25': return (user.totalFlashcardsCreated / 25) * 100;
+          case 'flashcard_creator_100': return (user.totalFlashcardsCreated / 100) * 100;
+          case 'first_deck': return (user.totalDecksCreated / 1) * 100;
+          case 'deck_creator_5': return (user.totalDecksCreated / 5) * 100;
+          case 'deck_creator_20': return (user.totalDecksCreated / 20) * 100;
+          case 'streak_3': return (user.streak / 3) * 100;
+          case 'streak_7': return (user.streak / 7) * 100;
+          case 'streak_30': return (user.streak / 30) * 100;
+          case 'streak_100': return (user.streak / 100) * 100;
+          case 'first_quiz': return (user.totalQuizzesTaken / 1) * 100;
+          case 'quiz_taker_10': return (user.totalQuizzesTaken / 10) * 100;
+          case 'quiz_taker_50': return (user.totalQuizzesTaken / 50) * 100;
+          case 'perfect_score': return (user.perfectQuizzes / 1) * 100;
+          case 'perfect_score_10': return (user.perfectQuizzes / 10) * 100;
+          case 'social_butterfly': return (user.totalCommentsPosted / 5) * 100;
+          case 'community_helper': return (user.totalCommentsPosted / 25) * 100;
+          case 'discussion_leader': return (user.totalCommentsPosted / 100) * 100;
+          case 'level_5': return (user.level / 5) * 100;
+          case 'level_10': return (user.level / 10) * 100;
+          case 'level_20': return (user.level / 20) * 100;
+          default: return 0;
+        }
+      })()))) : 0;
+      return {
+        key,
+        name: criteria.name,
+        description: criteria.description,
+        xp: criteria.xp,
+        earned,
+        progress
+      };
+    });
 
     res.status(200).json({
       success: true,
