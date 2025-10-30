@@ -135,6 +135,49 @@ const Gamification = () => {
     return { title: 'Beginner Learner', color: 'text-muted-foreground' };
   };
 
+  // Confetti on new badge unlocks (must be before any early returns)
+  const fireConfetti = () => {
+    const container = document.createElement('div');
+    container.style.position = 'fixed';
+    container.style.inset = '0';
+    container.style.pointerEvents = 'none';
+    container.style.zIndex = '9999';
+    document.body.appendChild(container);
+    const colors = ['#FF6A00', '#FF8C00', '#FFA500', '#FFD180'];
+    const count = 28;
+    for (let i = 0; i < count; i++) {
+      const piece = document.createElement('span');
+      const size = 6 + Math.random() * 6;
+      piece.style.position = 'absolute';
+      piece.style.left = Math.random() * 100 + '%';
+      piece.style.top = '-10px';
+      piece.style.width = size + 'px';
+      piece.style.height = size + 'px';
+      piece.style.background = colors[i % colors.length];
+      piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+      piece.style.transform = `translateY(0) rotate(${Math.random()*360}deg)`;
+      piece.style.opacity = '0.9';
+      const fall = 800 + Math.random() * 700;
+      const drift = (Math.random() - 0.5) * 200;
+      piece.animate([
+        { transform: 'translate(0, -20px) scale(1)', opacity: 1 },
+        { transform: `translate(${drift}px, ${window.innerHeight + 40}px) rotate(720deg)`, opacity: 0.2 }
+      ], { duration: fall, easing: 'cubic-bezier(0.4,0,0.2,1)', fill: 'forwards' });
+      container.appendChild(piece);
+    }
+    setTimeout(() => document.body.removeChild(container), 1700);
+  };
+
+  useEffect(() => {
+    const currentEarned = new Set<string>();
+    achievements?.forEach((a: any) => { if (a?.earned && a?.key) currentEarned.add(a.key); });
+    let hasNew = false;
+    currentEarned.forEach(k => { if (!earnedKeysRef.current.has(k)) hasNew = true; });
+    if (hasNew && currentEarned.size > 0) fireConfetti();
+    earnedKeysRef.current = currentEarned;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [achievements]);
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -172,51 +215,7 @@ const Gamification = () => {
   })();
   const levelInfo = getLevelInfo(user.level);
 
-  // Confetti on new badge unlocks
-  const fireConfetti = () => {
-    const container = document.createElement('div');
-    container.style.position = 'fixed';
-    container.style.inset = '0';
-    container.style.pointerEvents = 'none';
-    container.style.zIndex = '9999';
-    document.body.appendChild(container);
-    const colors = ['#FF6A00', '#FF8C00', '#FFA500', '#FFD180'];
-    const count = 28;
-    for (let i = 0; i < count; i++) {
-      const piece = document.createElement('span');
-      const size = 6 + Math.random() * 6;
-      piece.style.position = 'absolute';
-      piece.style.left = Math.random() * 100 + '%';
-      piece.style.top = '-10px';
-      piece.style.width = size + 'px';
-      piece.style.height = size + 'px';
-      piece.style.background = colors[i % colors.length];
-      piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
-      piece.style.transform = `translateY(0) rotate(${Math.random()*360}deg)`;
-      piece.style.opacity = '0.9';
-      const fall = 800 + Math.random() * 700;
-      const drift = (Math.random() - 0.5) * 200;
-      piece.animate([
-        { transform: 'translate(0, -20px) scale(1)', opacity: 1 },
-        { transform: `translate(${drift}px, ${window.innerHeight + 40}px) rotate(720deg)`, opacity: 0.2 }
-      ], { duration: fall, easing: 'cubic-bezier(0.4,0,0.2,1)', fill: 'forwards' });
-      container.appendChild(piece);
-    }
-    setTimeout(() => document.body.removeChild(container), 1700);
-  };
-
-  useEffect(() => {
-    const earnedNow = new Set<string>();
-    computedBadges?.earned?.forEach((a: any) => earnedNow.add(a.key));
-    // Detect new keys
-    let hasNew = false;
-    earnedNow.forEach(k => { if (!earnedKeysRef.current.has(k)) hasNew = true; });
-    if (hasNew && earnedNow.size > 0) {
-      fireConfetti();
-    }
-    earnedKeysRef.current = earnedNow;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [achievements, stats]);
+  
 
   return (
     <div className="min-h-screen">

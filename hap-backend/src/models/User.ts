@@ -88,14 +88,34 @@ const userSchema = new Schema<IUser>({
   badges: [{
     type: String,
     enum: [
-      'first_quiz',
+      // Flashcards
+      'first_flashcard',
+      'flashcard_creator_5',
+      'flashcard_creator_25',
+      'flashcard_creator_100',
+      // Decks
+      'first_deck',
+      'deck_creator_5',
+      'deck_creator_20',
+      // Streaks
+      'streak_3',
       'streak_7',
       'streak_30',
+      'streak_100',
+      // Quizzes
+      'first_quiz',
+      'quiz_taker_10',
+      'quiz_taker_50',
       'perfect_score',
+      'perfect_score_10',
+      // Community
       'social_butterfly',
-      'quiz_master',
-      'flashcard_creator',
-      'community_helper'
+      'community_helper',
+      'discussion_leader',
+      // Level
+      'level_5',
+      'level_10',
+      'level_20'
     ]
   }],
   likedFlashcards: [{
