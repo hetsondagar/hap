@@ -16,7 +16,8 @@ const Progress = React.forwardRef<
       className="h-full w-full flex-1 transition-all bg-[length:200%_200%] animate-gradient-flow"
       style={{
         backgroundImage: 'linear-gradient(90deg, #D16BA5 0%, #86A8E7 50%, #5FFBF1 100%)',
-        transform: `translateX(-${100 - (value || 0)}%)`
+        transform: `translateX(-${100 - (value || 0)}%)`,
+        animationDuration: `${Math.max(0.8, 3 - ((value || 0) / 50))}s`
       }}
     />
   </ProgressPrimitive.Root>

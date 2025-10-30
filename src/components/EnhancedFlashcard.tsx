@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { flipSpring, hoverFloat } from '@/lib/motionConfig';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -59,11 +61,14 @@ const EnhancedFlashcard: React.FC<EnhancedFlashcardProps> = ({
   };
 
   return (
-    <div
+    <motion.div
       className={cn(
         "group relative perspective-1000",
         className
       )}
+      variants={hoverFloat}
+      initial="rest"
+      whileHover="hover"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -79,21 +84,23 @@ const EnhancedFlashcard: React.FC<EnhancedFlashcardProps> = ({
         )}
         onClick={() => onFlip?.(id)}
       >
-        {/* 3D Flip Effect */}
-        <div
+        {/* 3D Flip Effect via framer-motion */}
+        <motion.div
+          variants={flipSpring(Boolean(isFlipped))}
+          animate="animate"
+          initial="initial"
           className={cn(
-            "relative w-full h-full transition-transform duration-700 transform-style-preserve-3d",
-            isFlipped && "rotate-y-180"
+            "relative w-full h-full transform-gpu",
           )}
+          style={{ transformStyle: 'preserve-3d' }}
         >
           {/* Front Side */}
           <div
             className={cn(
               "absolute inset-0 w-full h-full backface-hidden",
               "flex flex-col justify-between p-6",
-              "bg-gradient-to-br from-slate-800 via-slate-700 to-slate-800",
-              "dark:from-slate-900 dark:via-slate-800 dark:to-slate-900",
-              "border border-slate-600 dark:border-slate-700"
+              "bg-gradient-card",
+              "border border-[hsl(var(--border))]/40"
             )}
           >
             {/* Header */}
@@ -186,9 +193,8 @@ const EnhancedFlashcard: React.FC<EnhancedFlashcardProps> = ({
             className={cn(
               "absolute inset-0 w-full h-full backface-hidden rotate-y-180",
               "flex flex-col justify-between p-6",
-              "bg-gradient-to-br from-slate-800 via-slate-700 to-slate-800",
-              "dark:from-slate-900 dark:via-slate-800 dark:to-slate-900",
-              "border border-slate-600 dark:border-slate-700"
+              "bg-gradient-card",
+              "border border-[hsl(var(--border))]/40"
             )}
           >
             {/* Header */}
@@ -273,7 +279,7 @@ const EnhancedFlashcard: React.FC<EnhancedFlashcardProps> = ({
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Flip Animation Overlay */}
         {isHovered && (
@@ -297,7 +303,7 @@ const EnhancedFlashcard: React.FC<EnhancedFlashcardProps> = ({
           </Button>
         </div>
       )}
-    </div>
+    </motion.div>
   );
 };
 

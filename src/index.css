@@ -189,7 +189,10 @@ All colors MUST be HSL. Dark theme with aqua-blue to purple gradient.
 
   body {
     @apply bg-background text-foreground font-sans;
-    background: var(--gradient-subtle);
+    background-image: linear-gradient(180deg, rgba(10,0,24,0.90) 0%, rgba(18,0,38,0.88) 100%), url('/bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
     min-height: 100vh;
     position: relative;
     overflow-x: hidden;
@@ -360,6 +363,46 @@ All colors MUST be HSL. Dark theme with aqua-blue to purple gradient.
 }
 
 @layer utilities {
+  /* Reactive glow: pulse on hover/focus, not idle */
+  .reactive-glow { transition: box-shadow 0.2s ease; }
+  .reactive-glow:hover, .reactive-glow:focus, .reactive-glow:focus-visible {
+    box-shadow: 0 0 32px rgba(255,106,213,0.45), 0 0 48px rgba(160,32,240,0.35);
+  }
+
+  /* Magnetic tilt (CSS approximation) */
+  .magnetic-tilt:hover { transform: translateY(-2px) rotateX(2deg) rotateY(-2deg); }
+
+  /* Click ripple (CSS-only, center-based) */
+  .ripple {
+    position: relative;
+    overflow: hidden;
+  }
+  .ripple:after {
+    content: "";
+    position: absolute;
+    inset: 50% auto auto 50%;
+    width: 0; height: 0;
+    background: radial-gradient(circle, rgba(255,106,213,0.45) 0%, rgba(255,106,213,0) 60%);
+    transform: translate(-50%, -50%);
+    border-radius: 9999px;
+    opacity: 0;
+  }
+  .ripple:active:after {
+    animation: ripple- burst 250ms ease forwards;
+  }
+  @keyframes ripple- burst {
+    0% { width: 0; height: 0; opacity: 0.6; }
+    100% { width: 220px; height: 220px; opacity: 0; }
+  }
+
+  /* Focus underline sweep for inputs */
+  .focus-underline { position: relative; }
+  .focus-underline:focus-within::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px;
+    background: linear-gradient(90deg, #A020F0, #FF6AD5);
+    animation: underline-sweep 300ms ease forwards;
+  }
+  @keyframes underline-sweep { from { transform: scaleX(0); } to { transform: scaleX(1); } }
   .animate-fade-in {
     animation: fade-in 0.6s ease-out forwards;
   }
@@ -735,4 +778,22 @@ All colors MUST be HSL. Dark theme with aqua-blue to purple gradient.
     opacity: 0.8;
     transform: scale(1.02);
   }
+}
+
+/* Particle burst for success/confetti */
+@keyframes particle-pop {
+  0% { transform: translate(-50%, -50%) translate(0, 0) scale(1); opacity: 1; }
+  100% { transform: translate(-50%, -50%) translate(var(--dx), var(--dy)) scale(0.9); opacity: 0; }
+}
+
+/* Leaderboard rank flare */
+@keyframes rank-flare {
+  0% { box-shadow: 0 0 0 rgba(255,106,213,0); }
+  50% { box-shadow: 0 0 32px rgba(255,106,213,0.45), 0 0 48px rgba(160,32,240,0.35); }
+  100% { box-shadow: 0 0 0 rgba(255,106,213,0); }
+}
+
+.rank-flare {
+  position: relative;
+  animation: rank-flare 600ms ease-out;
 }
