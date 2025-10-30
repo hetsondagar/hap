@@ -399,7 +399,7 @@ const CommunityPage: React.FC = () => {
           </TabsList>
 
           <TabsContent value="browse">
-            <Card className="glass-effect circuit-pattern feature-card-hover border-2 border-white/10">
+            <Card className="glass-effect circuit-pattern feature-card-hover border border-[hsl(var(--border))]/40 animate-ember-fade">
               <CardHeader>
                 <CardTitle>Browse Decks</CardTitle>
                 {userInfo && (
@@ -419,7 +419,7 @@ const CommunityPage: React.FC = () => {
                     <div className="col-span-full text-sm text-destructive">{error}</div>
                   )}
                   {!loading && !error && visibleDecks.map((deck) => (
-                    <Card key={deck._id} className="glass-effect circuit-pattern feature-card-hover border-2 border-white/10 cursor-pointer" onClick={() => navigate(`/community/${deck._id}`)}>
+                    <Card key={deck._id} className="glass-effect circuit-pattern feature-card-hover border border-[hsl(var(--border))]/40 cursor-pointer animate-ember-fade" onClick={() => navigate(`/community/${deck._id}`)}>
                       <CardHeader>
                         <CardTitle className="text-lg">
                           {deck.title || "Untitled Deck"}
@@ -438,7 +438,7 @@ const CommunityPage: React.FC = () => {
                             by {typeof deck.creator === 'string' ? deck.creator : deck.creator?.username || 'Unknown'}
                           </div>
                           <div className="flex items-center gap-4 text-xs">
-                            <button className="flex items-center gap-1 hover:text-primary" onClick={() => handleLike(deck._id)}>
+                            <button className="flex items-center gap-1 hover:text-primary reactive-glow" onClick={() => handleLike(deck._id)}>
                               <Heart className="w-4 h-4" /> {likeCount(deck)}
                             </button>
                             <div className="flex items-center gap-1">

@@ -3,8 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import AuthLayout from "./AuthLayout";
-import hapLogo from "../../assets/hap-logo-3.png"; // 👈 add your logo here
-import HapLogo from '../../assets/hap-logo.png';
+const MAIN_LOGO = '/assets/logo.png';
 import { authAPI } from "@/lib/api";
 
 const Login: React.FC = () => {
@@ -49,16 +48,10 @@ const Login: React.FC = () => {
         <div className="flex flex-col items-center justify-center mb-6">
           <div className="flex items-center justify-center">
             <img
-              src={hapLogo}
-              alt="Hap Logo"
-              className="h-24 w-24 object-contain scale-90 -mt-4"
+              src={MAIN_LOGO}
+              alt="HAP Logo"
+              className="h-16 w-auto object-contain -mt-2"
               style={{ objectFit: "contain" }}
-            />
-            <img
-              src={HapLogo}
-              alt="Hap Logo 3"
-              className="h-20 w-20 object-contain"
-              style={{ objectFit: "contain", marginLeft: '-30px' }}
             />
           </div>
           <span className="mt-4 font-bold text-2xl bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent drop-shadow">
@@ -67,8 +60,8 @@ const Login: React.FC = () => {
         </div>
       }
     >
-      <form className="space-y-4" onSubmit={handleSubmit}>
-        {error && <p className="text-sm text-destructive">{error}</p>}
+      <form className="space-y-4 animate-ember-fade" onSubmit={handleSubmit}>
+        {error && <p className="text-sm text-destructive animate-ember-pulse">{error}</p>}
         <Input
           type="email"
           placeholder="Email"
@@ -86,7 +79,7 @@ const Login: React.FC = () => {
         <Button
           disabled={loading}
           type="submit"
-          className="w-full bg-gradient-primary hover:opacity-90 text-white font-semibold"
+          className="w-full bg-gradient-primary hover:opacity-90 text-white font-semibold btn-power animate-ember-shimmer"
         >
           {loading ? "Logging in..." : "Login"}
         </Button>

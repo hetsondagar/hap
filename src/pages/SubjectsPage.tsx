@@ -125,7 +125,7 @@ const SubjectsPage = () => {
           {subjects.map((subject, index) => (
             <Card 
               key={subject.id} 
-              className="glass-effect circuit-pattern feature-card-hover p-8 cursor-pointer border-2 border-white/10 group animate-scale-in"
+              className="glass-effect circuit-pattern feature-card-hover p-8 cursor-pointer border border-[hsl(var(--border))]/40 group animate-ember-fade hover-glow"
               onClick={() => handleSubjectClick(subject)}
               style={{ animationDelay: `${index * 0.1}s` }}
             >

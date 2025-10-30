@@ -249,7 +249,7 @@ const QuizPage = () => {
         <div className="pt-24 pb-16">
           <div className="container mx-auto px-4">
             {/* Quiz Header */}
-            <Card className="mb-8 p-6 glass-effect circuit-pattern border-2 border-white/10 dark:border-white/20">
+            <Card className="mb-8 p-6 glass-effect circuit-pattern border border-[hsl(var(--border))]/40 animate-ember-fade">
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h1 className="text-2xl font-bold">
@@ -260,7 +260,7 @@ const QuizPage = () => {
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2">
                     <Timer className="w-5 h-5 text-red-500" />
-                    <span className="text-xl font-bold text-red-500">{formatTime(timeLeft)}</span>
+                    <span className="text-xl font-bold text-red-500 animate-ember-pulse">{formatTime(timeLeft)}</span>
                   </div>
                 </div>
               </div>
@@ -268,7 +268,7 @@ const QuizPage = () => {
             </Card>
 
             {/* Question */}
-            <Card className="mb-8 p-8 glass-effect circuit-pattern border-2 border-white/10 dark:border-white/20">
+            <Card className="mb-8 p-8 glass-effect circuit-pattern border border-[hsl(var(--border))]/40 animate-ember-fade">
               <h2 className="text-xl font-bold mb-6">{question?.question}</h2>
               <div className="space-y-4">
                 {question?.options.map((option: string, index: number) => (

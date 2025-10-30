@@ -3,8 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { PremiumButton } from '@/components/ui/premium-button';
 import { Menu, X, Trophy, BookOpen, Users, Home, BarChart3, LayoutDashboard, Sparkles, MessageSquare } from 'lucide-react';
-import hapLogo from '../assets/hap-logo-3.png';
-import HapLogo from '../assets/hap-logo.png';
+const MAIN_LOGO = '/assets/logo.png';
 import { authAPI } from '@/lib/api';
 
 const Header = () => {
@@ -86,16 +85,10 @@ const Header = () => {
       {/* Logo section - left aligned, compact and centered */}
       <div className="flex items-center">
         <img
-          src={hapLogo}
-          alt="Hap Logo"
-          className="h-14 w-14 object-contain"
+          src={MAIN_LOGO}
+          alt="HAP"
+          className="h-10 w-auto object-contain"
           style={{ objectFit: "contain" }}
-        />
-        <img
-          src={HapLogo}
-          alt="Hap Logo Text"
-          className="h-12 w-auto object-contain -ml-3"
-          style={{ objectFit: "contain", marginLeft: '-12px' }}
         />
       </div>
 

@@ -332,7 +332,7 @@ const DashboardPage = () => {
         </div>
 
         {/* User Profile Card */}
-        <Card className="p-6 glass-effect circuit-pattern border-2 border-white/10 mb-8">
+        <Card className="p-6 glass-effect circuit-pattern border border-[hsl(var(--border))]/40 mb-8 animate-ember-fade">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-4">
               <div className="p-4 bg-primary/20 rounded-full">
@@ -440,7 +440,7 @@ const DashboardPage = () => {
 
         {/* Statistics Cards */}
         <div className="grid md:grid-cols-4 gap-4 mb-8">
-          <Card className="p-6 glass-effect border-2 border-white/10 dark:border-white/20">
+          <Card className="p-6 glass-effect border border-[hsl(var(--border))]/40 animate-ember-fade">
             <div className="flex items-center gap-3">
               <div className="p-3 bg-blue-500/20 rounded-lg">
                 <BookOpen className="h-6 w-6 text-blue-500" />
@@ -452,7 +452,7 @@ const DashboardPage = () => {
             </div>
           </Card>
 
-          <Card className="p-6 glass-effect border-2 border-white/10 dark:border-white/20">
+          <Card className="p-6 glass-effect border border-[hsl(var(--border))]/40 animate-ember-fade">
             <div className="flex items-center gap-3">
               <div className="p-3 bg-purple-500/20 rounded-lg">
                 <Layers className="h-6 w-6 text-purple-500" />
@@ -464,7 +464,7 @@ const DashboardPage = () => {
             </div>
           </Card>
 
-          <Card className="p-6 glass-effect border-2 border-white/10 dark:border-white/20">
+          <Card className="p-6 glass-effect border border-[hsl(var(--border))]/40 animate-ember-fade">
             <div className="flex items-center gap-3">
               <div className="p-3 bg-pink-500/20 rounded-lg">
                 <Heart className="h-6 w-6 text-pink-500" />
@@ -476,7 +476,7 @@ const DashboardPage = () => {
             </div>
           </Card>
 
-          <Card className="p-6 glass-effect border-2 border-white/10 dark:border-white/20">
+          <Card className="p-6 glass-effect border border-[hsl(var(--border))]/40 animate-ember-fade">
             <div className="flex items-center gap-3">
               <div className="p-3 bg-green-500/20 rounded-lg">
                 <MessageSquare className="h-6 w-6 text-green-500" />

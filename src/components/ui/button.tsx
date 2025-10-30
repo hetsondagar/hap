@@ -9,11 +9,11 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-[linear-gradient(90deg,var(--accent-primary),var(--accent-secondary))] text-white shadow-[0_0_10px_rgba(255,106,0,0.3)] hover:-translate-y-[3px] hover:shadow-[0_0_22px_rgba(255,106,0,0.5)] active:scale-95 btn-power",
-        destructive: "bg-destructive text-destructive-foreground shadow-[0_0_18px_rgba(255,71,71,0.3)] hover:-translate-y-[3px] active:scale-95",
-        outline: "border-2 border-[var(--accent-primary)] text-white bg-transparent hover:-translate-y-[3px] hover:shadow-[0_0_20px_rgba(255,106,0,0.45)] hover:bg-[linear-gradient(180deg,rgba(255,106,0,0.12),rgba(255,157,66,0.12))]",
-        secondary: "bg-[rgba(21,21,21,0.7)] text-white border border-[var(--border)] hover:-translate-y-[3px] hover:shadow-[0_0_16px_rgba(255,106,0,0.35)]",
-        ghost: "hover:bg-[rgba(21,21,21,0.5)] hover:text-white hover:-translate-y-[3px]",
+        default: "bg-[linear-gradient(90deg,var(--accent-primary),var(--accent-secondary))] text-white shadow-[0_0_10px_rgba(255,106,0,0.3)] hover:-translate-y-[3px] hover:shadow-[0_0_22px_rgba(255,106,0,0.5)] active:scale-95 active:animate-ember-pulse btn-power",
+        destructive: "bg-destructive text-destructive-foreground shadow-[0_0_18px_rgba(255,71,71,0.3)] hover:-translate-y-[3px] active:scale-95 active:animate-ember-pulse",
+        outline: "border-2 border-[var(--accent-primary)] text-white bg-transparent hover:-translate-y-[3px] hover:shadow-[0_0_20px_rgba(255,106,0,0.45)] hover:bg-[linear-gradient(180deg,rgba(255,106,0,0.12),rgba(255,157,66,0.12))] hover:animate-ember-shimmer active:animate-ember-pulse",
+        secondary: "bg-[rgba(21,21,21,0.7)] text-white border border-[var(--border)] hover:-translate-y-[3px] hover:shadow-[0_0_16px_rgba(255,106,0,0.35)] hover:animate-ember-shimmer active:animate-ember-pulse",
+        ghost: "hover:bg-[rgba(21,21,21,0.5)] hover:text-white hover:-translate-y-[3px] active:animate-ember-pulse",
         link: "text-[var(--accent-primary)] underline-offset-4 hover:underline",
       },
       size: {

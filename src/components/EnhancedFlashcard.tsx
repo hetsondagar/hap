@@ -191,7 +191,7 @@ const EnhancedFlashcard: React.FC<EnhancedFlashcardProps> = ({
           <div
             className={cn(
               "absolute inset-0 w-full h-full backface-hidden rotate-y-180",
-              "flex flex-col justify-between p-6 gap-2",
+              "flex flex-col justify-between p-6 gap-2 animate-ember-glow",
               "bg-gradient-card",
               "border border-[hsl(var(--border))]/40"
             )}

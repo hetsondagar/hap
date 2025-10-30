@@ -13,13 +13,19 @@ const Progress = React.forwardRef<
     {...props}
   >
     <ProgressPrimitive.Indicator
-      className="h-full w-full flex-1 transition-all bg-[length:200%_200%] animate-gradient-flow"
+      className="relative h-full w-full flex-1 transition-all bg-[length:200%_100%] animate-ember-trace"
       style={{
         backgroundImage: 'linear-gradient(90deg, var(--accent-primary) 0%, var(--accent-secondary) 50%, #FFC58A 100%)',
         transform: `translateX(-${100 - (value || 0)}%)`,
         animationDuration: `${Math.max(0.8, 3 - ((value || 0) / 50))}s`
       }}
     />
+    <div
+      className="pointer-events-none absolute top-1/2 -translate-y-1/2"
+      style={{ left: `${Math.min(100, Math.max(0, value || 0))}%` }}
+    >
+      <span className="ember-spark" />
+    </div>
   </ProgressPrimitive.Root>
 ));
 Progress.displayName = ProgressPrimitive.Root.displayName;

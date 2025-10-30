@@ -193,6 +193,12 @@ const AnalyticsPage: React.FC = () => {
             <CardContent>
               <ResponsiveContainer width="100%" height={250}>
                 <LineChart data={studyTimeData}>
+                  <defs>
+                    <linearGradient id="lineOrange" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor="#FF6A00" />
+                      <stop offset="100%" stopColor="#FF9D42" />
+                    </linearGradient>
+                  </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                   <XAxis dataKey="day" stroke="#6b7280" />
                   <YAxis stroke="#6b7280" />
@@ -200,10 +206,13 @@ const AnalyticsPage: React.FC = () => {
                   <Line
                     type="monotone"
                     dataKey="hours"
-                    stroke="#FF6A00"
+                    stroke="url(#lineOrange)"
                     strokeWidth={3}
-                    dot={{ r: 0 }}
-                    activeDot={{ r: 5, stroke: '#FF9D42', strokeWidth: 2 }}
+                    dot={false}
+                    activeDot={{ r: 6, stroke: '#FF9D42', strokeWidth: 3, fill: '#FF6A00' }}
+                    isAnimationActive
+                    animationDuration={900}
+                    animationEasing="ease-out"
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -246,7 +255,7 @@ const AnalyticsPage: React.FC = () => {
                       <stop offset="100%" stopColor="#FF9D42" />
                     </linearGradient>
                   </defs>
-                  <Bar dataKey="score" fill="url(#barOrange)" radius={[6, 6, 0, 0]} />
+                  <Bar dataKey="score" fill="url(#barOrange)" radius={[6, 6, 0, 0]} isAnimationActive animationDuration={800} animationEasing="ease-out" />
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>
@@ -265,9 +274,12 @@ const AnalyticsPage: React.FC = () => {
                   <Radar
                     name="Mastery"
                     dataKey="mastery"
-                    stroke="#facc15"
-                    fill="#facc15"
-                    fillOpacity={0.6}
+                    stroke="#FF9D42"
+                    fill="#FF6A00"
+                    fillOpacity={0.45}
+                    isAnimationActive
+                    animationDuration={900}
+                    animationEasing="ease-out"
                   />
                   <Tooltip />
                 </RadarChart>
@@ -296,6 +308,9 @@ const AnalyticsPage: React.FC = () => {
                     cy="50%"
                     outerRadius={90}
                     label
+                    isAnimationActive
+                    animationDuration={900}
+                    animationEasing="ease-out"
                   >
                     {topicCoverageData.map((entry, index) => (
                       <Cell

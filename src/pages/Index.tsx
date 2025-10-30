@@ -20,9 +20,11 @@ import {
   Award
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { fadeIn, popIn } from '@/lib/motionConfig';
 import { useEffect, useState } from 'react';
 import { authAPI } from '@/lib/api';
-import heroImage from '@/assets/hero-flashcards.jpg';
+const heroImagePath = '/assets/hero.png';
 
 const Index = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -102,24 +104,25 @@ const Index = () => {
       <Header />
 
       {/* Hero Section */}
-      <section className="pt-24 pb-16 relative overflow-hidden">
-        {/* Techy background elements */}
+      <section className="pt-24 pb-20 relative overflow-hidden">
+        {/* Tech Ember background elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-float"></div>
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-secondary/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }}></div>
-          <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-accent/5 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }}></div>
+          <div className="ember-orb" style={{ width: 220, height: 220, top: 80, left: 60 }} />
+          <div className="ember-orb" style={{ width: 320, height: 320, bottom: 120, right: 80, animationDelay: '8s' }} />
+          <div className="ember-orb" style={{ width: 160, height: 160, top: '50%', left: '55%', animationDelay: '16s' }} />
+          {/* subtle circuit lines are provided by circuit-pattern on containers */}
         </div>
-        
+
         <div className="container mx-auto px-4 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Left Content */}
-            <div className="animate-slide-in-left space-y-6">
+            <motion.div variants={fadeIn} initial="initial" animate="animate" className="space-y-6">
               <Badge className="mb-2 bg-gradient-to-r from-primary/20 to-secondary/20 text-primary border-primary/20 hover-glow inline-flex items-center gap-2">
                 <Zap className="w-3 h-3" />
                 Gamified Learning Platform
               </Badge>
               
-              <h1 className="text-5xl md:text-7xl font-display font-bold leading-tight">
+              <h1 className="text-5xl md:text-7xl font-display font-bold leading-tight relative">
                 <span className="text-foreground">Master</span>
                 <br />
                 <span className="gradient-text-engineering">engineering</span>
@@ -127,6 +130,7 @@ const Index = () => {
                 <span className="text-foreground">with Smart</span>
                 <br />
                 <span className="text-foreground">flashcards</span>
+                <span className="block absolute left-0 -bottom-3 h-[3px] w-40 bg-[linear-gradient(90deg,var(--accent-primary),var(--accent-secondary))] shadow-[0_0_12px_var(--glow)]" />
               </h1>
               
               <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed max-w-lg">
@@ -171,33 +175,73 @@ const Index = () => {
                   <span>Join 60K+ students</span>
                 </div>
               </div>
-            </div>
+            </motion.div>
             
             {/* Right Content - Hero Image */}
-            <div className="animate-slide-in-right relative">
+            <motion.div variants={popIn} initial="initial" animate="animate" className="relative">
               <div className="relative group">
-                <div className="absolute -inset-1 bg-gradient-to-r from-primary to-secondary rounded-2xl blur-2xl opacity-30 group-hover:opacity-50 transition-opacity duration-500"></div>
+                <div className="absolute -inset-1 bg-[linear-gradient(135deg,var(--accent-primary),var(--accent-secondary))] rounded-2xl blur-2xl opacity-25 group-hover:opacity-45 transition-opacity duration-500"></div>
                 <img 
-                  src={heroImage} 
+                  src={heroImagePath} 
                   alt="Interactive flashcards floating in digital space"
-                  className="relative w-full rounded-2xl shadow-2xl hover-lift border-2 border-white/10"
+                  className="relative w-full rounded-2xl shadow-2xl hover-lift border border-[hsl(var(--border))]/40"
                 />
+                {/* Subtle animated orange tracer */}
+                <span className="pointer-events-none absolute -bottom-3 left-6 right-6 h-[2px] bg-[linear-gradient(90deg,var(--accent-primary),var(--accent-secondary))] opacity-60 shadow-[0_0_12px_var(--glow)]" />
               </div>
-            </div>
+            </motion.div>
           </div>
+        </div>
+      </section>
+
+      {/* Quick Links (Subjects/Actions) */}
+      <section className="pb-8 -mt-6">
+        <div className="container mx-auto px-4">
+          <motion.div variants={fadeIn} initial="initial" animate="animate" className="glass-effect border border-[hsl(var(--border))]/40 rounded-xl p-4">
+            <div className="flex flex-wrap gap-3 justify-center">
+              <Link to="/subjects" className="group">
+                <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[rgba(21,21,21,0.7)] border border-[hsl(var(--border))]/40 text-sm text-white hover-glow">
+                  <BookOpen className="w-4 h-4 text-primary" /> Subjects
+                </span>
+              </Link>
+              <Link to="/flashcards" className="group">
+                <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[rgba(21,21,21,0.7)] border border-[hsl(var(--border))]/40 text-sm text-white hover-glow">
+                  <Brain className="w-4 h-4 text-primary" /> Flashcards
+                </span>
+              </Link>
+              <Link to="/quiz" className="group">
+                <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[rgba(21,21,21,0.7)] border border-[hsl(var(--border))]/40 text-sm text-white hover-glow">
+                  <Target className="w-4 h-4 text-primary" /> Quiz
+                </span>
+              </Link>
+              <Link to="/community" className="group">
+                <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[rgba(21,21,21,0.7)] border border-[hsl(var(--border))]/40 text-sm text-white hover-glow">
+                  <Users className="w-4 h-4 text-primary" /> Community
+                </span>
+              </Link>
+              <Link to="/analytics" className="group">
+                <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[rgba(21,21,21,0.7)] border border-[hsl(var(--border))]/40 text-sm text-white hover-glow">
+                  <BarChart3 className="w-4 h-4 text-primary" /> Analytics
+                </span>
+              </Link>
+            </div>
+          </motion.div>
         </div>
       </section>
 
       {/* Stats Section */}
       <section className="py-16">
         <div className="container mx-auto px-4">
-          <Card className="glass-effect circuit-pattern p-12 hover-lift border-2 border-white/10 animate-scale-in">
+          <Card className="glass-effect circuit-pattern card-ember p-12 hover-lift border border-[hsl(var(--border))]/40">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               {stats.map((stat, index) => (
-                <div 
+                <motion.div 
                   key={index} 
                   className="text-center group cursor-default"
-                  style={{ animationDelay: `${index * 0.1}s` }}
+                  variants={fadeIn}
+                  initial="initial"
+                  animate="animate"
+                  transition={{ delay: index * 0.08 }}
                 >
                   <div className="text-5xl md:text-6xl font-bold gradient-text mb-3 group-hover:scale-110 transition-transform duration-300">
                     {stat.number}
@@ -205,7 +249,7 @@ const Index = () => {
                   <div className="text-muted-foreground text-sm md:text-base font-medium">
                     {stat.label}
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           </Card>

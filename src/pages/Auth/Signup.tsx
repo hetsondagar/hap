@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import AuthLayout from "./AuthLayout";
-import hapLogo from "../../assets/hap-logo-3.png";
+const MAIN_LOGO = '/assets/logo.png';
 import { authAPI } from "@/lib/api";
 import { Eye, EyeOff, Check, X, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -225,16 +225,10 @@ const Signup: React.FC = () => {
         <div className="flex flex-col items-center justify-center mb-6">
           <div className="flex items-center justify-center">
             <img
-              src={hapLogo}
-              alt="Hap Logo"
-              className="h-24 w-24 object-contain scale-90 -mt-4"
+              src={MAIN_LOGO}
+              alt="HAP Logo"
+              className="h-16 w-auto object-contain -mt-2"
               style={{ objectFit: "contain" }}
-            />
-            <img
-              src={HapLogo}
-              alt="Hap Logo 3"
-              className="h-20 w-20 object-contain"
-              style={{ objectFit: "contain", marginLeft: '-30px' }}
             />
           </div>
           <span className="mt-4 font-bold text-2xl bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent drop-shadow">
@@ -244,9 +238,9 @@ const Signup: React.FC = () => {
       )}
     >
       <SignupValidationGuide />
-      <form className="space-y-6" onSubmit={handleSubmit}>
+      <form className="space-y-6 animate-ember-fade" onSubmit={handleSubmit}>
         {error && (
-          <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-3 flex items-center gap-2">
+          <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-3 flex items-center gap-2 animate-ember-pulse">
             <AlertCircle className="h-4 w-4 text-destructive" />
             <p className="text-sm text-destructive">{error}</p>
           </div>
@@ -540,7 +534,7 @@ const Signup: React.FC = () => {
         <Button 
           disabled={loading || !isFormValid()} 
           type="submit" 
-          className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3"
+          className="w-full bg-gradient-primary hover:opacity-90 text-white font-semibold py-3 btn-power animate-ember-shimmer"
         >
           {loading ? (
             <div className="flex items-center gap-2">
