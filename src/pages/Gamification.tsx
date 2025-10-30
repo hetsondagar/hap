@@ -172,12 +172,14 @@ const Gamification = () => {
   // Fire a light confetti once when badges section is ready (not for whole page)
   const didIntroConfetti = useRef(false);
   useEffect(() => {
-    const hasBadges = (computedBadges?.earned?.length || 0) + (computedBadges?.available?.length || 0) > 0;
+    const totalFromStats = ((stats?.badges?.earned?.length || 0) + (stats?.badges?.available?.length || 0));
+    const totalFromAchievements = achievements?.length || 0;
+    const hasBadges = (totalFromStats || totalFromAchievements) > 0;
     if (!didIntroConfetti.current && hasBadges) {
       didIntroConfetti.current = true;
       setTimeout(() => fireConfetti(), 250);
     }
-  }, [computedBadges]);
+  }, [stats, achievements]);
 
   if (loading) {
     return (
