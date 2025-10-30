@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
@@ -121,6 +121,8 @@ const Features = () => {
     },
   ];
 
+  const isAuthenticated = useMemo(() => !!localStorage.getItem('token'), []);
+
   return (
     <div className="min-h-screen">
       <Header />
@@ -138,14 +140,16 @@ const Features = () => {
               A complete learning platform built specifically for engineering students
               with all the features you need to study smarter, not harder.
             </p>
-            <Button
-              size="lg"
-              className="bg-gradient-primary hover:opacity-90 text-white font-medium shadow-glow"
-              onClick={() => window.location.href = '/signup'}
-            >
-              <Zap className="w-5 h-5 mr-2" />
-              Get Started Free
-            </Button>
+            {!isAuthenticated && (
+              <Button
+                size="lg"
+                className="bg-gradient-primary hover:opacity-90 text-white font-medium shadow-glow"
+                onClick={() => window.location.href = '/signup'}
+              >
+                <Zap className="w-5 h-5 mr-2" />
+                Get Started Free
+              </Button>
+            )}
           </div>
         </div>
       </section>
@@ -249,15 +253,17 @@ const Features = () => {
               Join students who are already acing their exams with hap's comprehensive flashcard platform.
             </p>
             <div className="flex gap-4 justify-center">
-              <Link to="/signup">
-                <Button
-                  size="lg"
-                  className="bg-gradient-primary hover:opacity-90 text-white font-medium shadow-glow"
-                >
-                  Sign Up Now
-                  <ArrowRight className="w-5 h-5 ml-2" />
-                </Button>
-              </Link>
+              {!isAuthenticated && (
+                <Link to="/signup">
+                  <Button
+                    size="lg"
+                    className="bg-gradient-primary hover:opacity-90 text-white font-medium shadow-glow"
+                  >
+                    Sign Up Now
+                    <ArrowRight className="w-5 h-5 ml-2" />
+                  </Button>
+                </Link>
+              )}
               <Link to="/subjects">
                 <Button
                   size="lg"

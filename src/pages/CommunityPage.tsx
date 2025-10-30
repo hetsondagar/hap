@@ -430,8 +430,16 @@ const CommunityPage: React.FC = () => {
                           {deck.title || "Untitled Deck"}
                         </CardTitle>
                         <div className="flex gap-2">
-                          {deck.department && <Badge variant="secondary">{deck.department}</Badge>}
-                          {deck.difficulty && <Badge>{deck.difficulty}</Badge>}
+                          {deck.department && (
+                            <Badge variant="outline" className="bg-black/40 text-foreground border-primary/60">
+                              {String(deck.department).toUpperCase()}
+                            </Badge>
+                          )}
+                          {deck.difficulty && (
+                            <Badge variant="outline" className="bg-black/40 text-foreground border-amber-500/60">
+                              {deck.difficulty}
+                            </Badge>
+                          )}
                         </div>
                       </CardHeader>
                       <CardContent>
@@ -486,8 +494,16 @@ const CommunityPage: React.FC = () => {
                   <CardHeader>
                     <CardTitle className="text-lg">{deck.title || "Untitled Deck"}</CardTitle>
                     <div className="flex gap-2">
-                      {deck.department && <Badge variant="secondary">{deck.department}</Badge>}
-                      {deck.difficulty && <Badge>{deck.difficulty}</Badge>}
+                      {deck.department && (
+                        <Badge variant="outline" className="bg-black/40 text-foreground border-primary/60">
+                          {String(deck.department).toUpperCase()}
+                        </Badge>
+                      )}
+                      {deck.difficulty && (
+                        <Badge variant="outline" className="bg-black/40 text-foreground border-amber-500/60">
+                          {deck.difficulty}
+                        </Badge>
+                      )}
                     </div>
                   </CardHeader>
                   <CardContent>
@@ -540,8 +556,16 @@ const CommunityPage: React.FC = () => {
                   <CardHeader>
                     <CardTitle className="text-lg">{deck.title || "Untitled Deck"}</CardTitle>
                     <div className="flex gap-2">
-                      {deck.department && <Badge variant="secondary">{deck.department}</Badge>}
-                      {deck.difficulty && <Badge>{deck.difficulty}</Badge>}
+                      {deck.department && (
+                        <Badge variant="outline" className="bg-black/40 text-foreground border-primary/60">
+                          {String(deck.department).toUpperCase()}
+                        </Badge>
+                      )}
+                      {deck.difficulty && (
+                        <Badge variant="outline" className="bg-black/40 text-foreground border-amber-500/60">
+                          {deck.difficulty}
+                        </Badge>
+                      )}
                     </div>
                   </CardHeader>
                   <CardContent>
@@ -590,8 +614,16 @@ const CommunityPage: React.FC = () => {
                   <CardHeader>
                     <CardTitle className="text-lg">{deck.title || "Untitled Deck"}</CardTitle>
                     <div className="flex gap-2">
-                      {deck.department && <Badge variant="secondary">{deck.department}</Badge>}
-                      {deck.difficulty && <Badge>{deck.difficulty}</Badge>}
+                      {deck.department && (
+                        <Badge variant="outline" className="bg-black/40 text-foreground border-primary/60">
+                          {String(deck.department).toUpperCase()}
+                        </Badge>
+                      )}
+                      {deck.difficulty && (
+                        <Badge variant="outline" className="bg-black/40 text-foreground border-amber-500/60">
+                          {deck.difficulty}
+                        </Badge>
+                      )}
                     </div>
                   </CardHeader>
                   <CardContent>

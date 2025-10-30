@@ -34,6 +34,7 @@ const Gamification = () => {
   const [leaderboard, setLeaderboard] = useState<any[]>([]);
   const [achievements, setAchievements] = useState<any[]>([]);
   const [selectedDepartment, setSelectedDepartment] = useState('all');
+  const [showAllLeaderboard, setShowAllLeaderboard] = useState(false);
   const earnedKeysRef = useRef<Set<string>>(new Set());
 
   useEffect(() => {
@@ -168,15 +169,14 @@ const Gamification = () => {
     setTimeout(() => document.body.removeChild(container), 1700);
   };
 
+  // Fire a light confetti once on initial page open
+  const didIntroConfetti = useRef(false);
   useEffect(() => {
-    const currentEarned = new Set<string>();
-    achievements?.forEach((a: any) => { if (a?.earned && a?.key) currentEarned.add(a.key); });
-    let hasNew = false;
-    currentEarned.forEach(k => { if (!earnedKeysRef.current.has(k)) hasNew = true; });
-    if (hasNew && currentEarned.size > 0) fireConfetti();
-    earnedKeysRef.current = currentEarned;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [achievements]);
+    if (!didIntroConfetti.current) {
+      didIntroConfetti.current = true;
+      setTimeout(() => fireConfetti(), 250);
+    }
+  }, []);
 
   if (loading) {
     return (
@@ -336,14 +336,15 @@ const Gamification = () => {
                   </h3>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                     {computedBadges.earned.map((achievement: any, index: number) => (
-                      <AnimatedBadge
-                        key={achievement.key}
-                        achievement={achievement}
-                        isEarned={true}
-                        size="sm"
-                        className="animate-in"
-                        style={{ animationDelay: `${index * 50}ms` }}
-                      />
+                      <div key={achievement.key} onMouseEnter={() => fireConfetti()}>
+                        <AnimatedBadge
+                          achievement={achievement}
+                          isEarned={true}
+                          size="sm"
+                          className="animate-in"
+                          style={{ animationDelay: `${index * 50}ms` }}
+                        />
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -358,16 +359,17 @@ const Gamification = () => {
                   </h3>
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     {computedBadges.available.map((achievement: any, index: number) => (
-                      <AnimatedBadge
-                        key={achievement.key}
-                        achievement={achievement}
-                        isEarned={false}
-                        progress={achievement.progress || 0}
-                        showProgress={true}
-                        size="sm"
-                        className="animate-in"
-                        style={{ animationDelay: `${(index + (computedBadges.earned?.length || 0)) * 50}ms` }}
-                      />
+                      <div key={achievement.key} onMouseEnter={() => fireConfetti()}>
+                        <AnimatedBadge
+                          achievement={achievement}
+                          isEarned={false}
+                          progress={achievement.progress || 0}
+                          showProgress={true}
+                          size="sm"
+                          className="animate-in"
+                          style={{ animationDelay: `${(index + (computedBadges.earned?.length || 0)) * 50}ms` }}
+                        />
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -482,7 +484,7 @@ const Gamification = () => {
                     No players found
                   </p>
                 ) : (
-                  leaderboard.slice(0, 10).map((player: any, index: number) => {
+                  leaderboard.slice(0, showAllLeaderboard ? leaderboard.length : 10).map((player: any, index: number) => {
                     const isCurrentUser = player.username === user.username;
                     const rankIcon = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '';
                     
@@ -525,8 +527,12 @@ const Gamification = () => {
 
               {leaderboard.length > 10 && (
                 <div className="mt-4 text-center">
-                  <Button variant="outline" size="sm">
-                    View Full Leaderboard
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => setShowAllLeaderboard(!showAllLeaderboard)}
+                  >
+                    {showAllLeaderboard ? 'Show Top 10' : `View Full Leaderboard (${leaderboard.length})`}
                   </Button>
                 </div>
               )}
