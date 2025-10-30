@@ -334,7 +334,7 @@ All colors MUST be HSL. Dark theme with aqua-blue to purple gradient.
 
   .dark-select:focus, .dark-select:hover {
     background-color: #232329;
-    border-color: #6366f1; /* Tailwind's indigo-500 (primary) */
+    border-color: hsl(var(--accent-primary));
     outline: none;
   }
 
@@ -561,7 +561,7 @@ All colors MUST be HSL. Dark theme with aqua-blue to purple gradient.
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
   
-  .feature-card-hover:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 24px 72px rgba(160,32,240,0.28), 0 0 80px rgba(255,106,213,0.22), 0 0 120px rgba(160,32,240,0.18); }
+  .feature-card-hover:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 24px 72px rgba(255,106,0,0.28), 0 0 80px rgba(255,157,66,0.22), 0 0 120px rgba(255,106,0,0.18); }
   
   .feature-card-hover:hover::before {
     content: '';
@@ -570,7 +570,7 @@ All colors MUST be HSL. Dark theme with aqua-blue to purple gradient.
     left: -2px;
     right: -2px;
     bottom: -2px;
-    background: linear-gradient(45deg, rgba(160,32,240,0.35), rgba(255,106,213,0.35), rgba(160,32,240,0.35));
+    background: linear-gradient(45deg, rgba(255,106,0,0.35), rgba(255,157,66,0.35), rgba(255,106,0,0.35));
     border-radius: inherit;
     z-index: -1;
     animation: lightning-border 2s ease-in-out infinite;

@@ -48,19 +48,32 @@ const Gamification = () => {
   const loadData = async () => {
     try {
       setLoading(true);
-      // Trigger badge recalculation on backend first
-      await gamificationAPI.checkBadges();
-      const [statsRes, leaderboardRes, achievementsRes] = await Promise.all([
+      // Try to trigger badge recalculation on backend, but do not block on errors
+      try {
+        await gamificationAPI.checkBadges();
+      } catch (e) {
+        console.warn('checkBadges failed, continuing without it');
+      }
+
+      // Load core data first (must not fail silently)
+      const [statsRes, leaderboardRes] = await Promise.all([
         gamificationAPI.getStats(),
         gamificationAPI.getLeaderboard('all'),
-        gamificationAPI.getAllAchievements(),
       ]);
+
+      // Achievements are optional; ignore failure and fallback to stats.badges
+      let achievementsRes: any = null;
+      try {
+        achievementsRes = await gamificationAPI.getAllAchievements();
+      } catch (e) {
+        console.warn('getAllAchievements failed, using stats.badges fallback');
+      }
       
       console.log('Gamification stats:', statsRes);
       console.log('Leaderboard:', leaderboardRes);
       
       setStats(statsRes.data);
-      setAchievements(achievementsRes.data?.achievements || achievementsRes.achievements || []);
+      setAchievements(achievementsRes?.data?.achievements || achievementsRes?.achievements || []);
       setLeaderboard(leaderboardRes.data?.leaderboard || []);
       
       // Set user's department as default
